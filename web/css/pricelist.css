@@ -1,0 +1,227 @@
+/* =====================================================
+   GLOBAL STYLES
+===================================================== */
+body {
+    font-family: "Segoe UI", Arial, sans-serif;
+    background: #f8fafc;
+    scroll-behavior: smooth;
+
+    /* Fade In Animation */
+    animation: pageFadeIn 1.2s ease-in-out forwards;
+    opacity: 0;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-thumb {
+    background: #E20000;
+    border-radius: 10px;
+}
+::-webkit-scrollbar-track { background: #eee; }
+
+
+/* =====================================================
+   ANIMATIONS
+===================================================== */
+@keyframes pageFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(15px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+
+/* =====================================================
+   NAVBAR
+===================================================== */
+.navbar {
+    backdrop-filter: blur(10px);
+    background: rgba(255,255,255,0.9) !important;
+    border-bottom: 1px solid rgba(0,0,0,0.05);
+}
+
+.navbar-brand img {
+    height: 70px;
+    transition: transform 0.3s ease;
+}
+
+.navbar-brand img:hover {
+    transform: scale(1.05);
+}
+
+/* Nav Links */
+.nav-link-custom {
+    text-decoration: none;
+    color: #333;
+    font-weight: 500;
+    padding: 6px 12px;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+}
+
+.nav-link-custom:hover {
+    color: #E20000;
+    background: rgba(226,0,0,0.08);
+}
+
+/* Dropdown */
+.dropdown-menu {
+    border: none;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.dropdown-item {
+    padding: 10px 16px;
+    transition: all 0.2s ease;
+}
+
+.dropdown-item:hover {
+    background: #E20000;
+    color: #fff;
+}
+
+/*---Price-----*/
+ body {
+            margin: 0;
+            font-family: 'Roboto', sans-serif;
+            background: #0a0a0a;
+            color: #fff;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(90deg, #000, #1a1a1a);
+            padding: 20px 40px;
+            border-bottom: 3px solid #e60012;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-family: 'Orbitron', sans-serif;
+            color: #fff;
+            letter-spacing: 2px;
+        }
+
+        .header span {
+            color: #e60012;
+        }
+
+        /* Container */
+        .container {
+            padding: 40px;
+        }
+
+        /* Table */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            overflow: hidden;
+            border: 1px solid #333;
+        }
+
+        th {
+            background: #e60012;
+            color: #fff;
+            text-align: left;
+            padding: 15px;
+            font-size: 16px;
+        }
+
+        td {
+            padding: 14px;
+            border-bottom: 1px solid #222;
+            font-size: 15px;
+        }
+
+        tr:nth-child(even) {
+            background: #111;
+        }
+
+        tr:nth-child(odd) {
+            background: #000;
+        }
+
+        tr:hover {
+            background: #1f1f1f;
+            transition: 0.3s;
+        }
+
+        .price {
+            text-align: right;
+            font-weight: 500;
+            color: #e60012;
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 20px;
+            color: #777;
+            font-size: 13px;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+
+            th, td {
+                font-size: 13px;
+            }
+        }
+
+
+
+/* =====================================================
+   FOOTER
+===================================================== */
+.footer {
+    background-color: #000;
+    color: #fff;
+    padding: 50px 10%;
+}
+
+.footer-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 40px;
+}
+
+.footer-column h3 {
+    margin-bottom: 15px;
+    font-size: 18px;
+}
+
+.footer-column ul {
+    list-style: none;
+    padding: 0;
+}
+
+.footer-column ul li {
+    margin-bottom: 8px;
+}
+
+.footer-column ul li a {
+    text-decoration: none;
+    color: #ccc;
+    font-size: 14px;
+}
+
+.footer-column ul li a:hover {
+    color: #fff;
+}
+
+.footer-bottom {
+    margin-top: 40px;
+    text-align: center;
+    font-size: 13px;
+    color: #aaa;
+    border-top: 1px solid #333;
+    padding-top: 20px;
+}

@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CITI MOTORS | Compare Vehicles</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="../css/compare.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <!-- Navbar with Dropdowns -->
+<nav class="navbar navbar-light bg-light shadow-sm">
+  <div class="container d-flex justify-content-between align-items-center">
+
+    <!-- Logo -->
+    <a class="navbar-brand" href="../home.html">
+        <img src="../img/logo.png" alt="CITI MOTORS">
+    </a>
+
+    <!-- Navigation Links -->
+    <div class="d-flex gap-3 align-items-center">
+
+        <a href="../home.html" class="nav-link-custom">Home</a>
+
+        <!-- About Us Dropdown -->
+        <div class="dropdown">
+            <a class="nav-link-custom dropdown-toggle active-link" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                About Us
+            </a>
+            <ul class="dropdown-menu">
+                <li><a class="dropdown-item" href="../aboutus/aboutus.html#vision">Corporate Vision</a></li>
+                <li><a class="dropdown-item" href="../aboutus/aboutus.html#mission">Mission Statement</a></li>
+                <li><a class="dropdown-item" href="../aboutus/aboutus.html#history">Company History</a></li>
+            </ul>
+        </div>
+
+        <!-- Branches Dropdown -->
+        <div class="dropdown">
+            <a class="nav-link-custom dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                Branches
+            </a>
+            <ul class="dropdown-menu">
+                <li><a class="dropdown-item" href="../branches/branch.html#makati">Makati (Head Office)</a></li>
+                <li><a class="dropdown-item" href="../branches/branch.html#laspinas">Las Piñas Office</a></li>
+                <li><a class="dropdown-item" href="../branches/branch.html#alabang">Alabang Office</a></li>
+            </ul>
+        </div>
+ 
+
+       <!-- Products -->
+            <a href="../products/products.html" class="nav-link-custom">
+    Products
+</a>
+
+    <ul class="dropdown-menu">
+        <li><a class="dropdown-item" href="../products/products.html#commercial">Commercial Vehicles</a></li>
+        <li><a class="dropdown-item" href="../products/products.html#passenger">Passenger Cars</a></li>
+        <li><a class="dropdown-item" href="../products/products.html#trucks">Trucks and Buses</a></li>
+    </ul>
+</div>
+
+        <!-- Parts & Services Dropdown -->
+        <div class="dropdown">
+            <a class="nav-link-custom dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                Parts & Services
+            </a>
+            <ul class="dropdown-menu">
+                <li><a class="dropdown-item" href="../partsandservices/partsandservices.html#genuine">Genuine Parts</a></li>
+                <li><a class="dropdown-item" href="../partsandservices/partsandservices.html#service">Service & Body Shop</a></li>
+            </ul>
+        </div>
+
+        <!-- Jobs Dropdown -->
+        <div class="dropdown">
+            <a class="nav-link-custom dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                Jobs
+            </a>
+            <ul class="dropdown-menu">
+                <li><a class="dropdown-item" href="../jobs/jobs.html#accounting">Accounting Clerk</a></li>
+                <li><a class="dropdown-item" href="../jobs/jobs.html#credit">Credit & Collection Clerk</a></li>
+                <li><a class="dropdown-item" href="../jobs/jobs.html#insurance">Insurance Assistance Coordinator</a></li>
+                <li><a class="dropdown-item" href="../jobs/jobs.html#purchasing">Purchasing Clerk</a></li>
+                <li><a class="dropdown-item" href="../jobs/jobs.html#sales">Sales Executives</a></li>
+                <li><a class="dropdown-item" href="../jobs/jobs.html#marketing">Secretary</a></li>
+            </ul>
+        </div>
+
+        <a href="../contacts/contactus.html" class="nav-link-custom">Contact Us</a>
+
+    </div>
+  </div>
+</nav>
+
+<!-- Hero Section -->
+<section class="hero-section text-center text-white d-flex flex-column justify-content-center align-items-center">
+    <div class="overlay"></div>
+    <div class="hero-content">
+        <p class="subtitle">Compare our lineup</p>
+        <h1 class="title">Find your ideal drive</h1>
+    </div>
+</section>
+
+<div class="container my-5">
+    <h2 class="text-center mb-4 text-white">Select 2 vehicles to Compare</h2>
+
+    <!-- SELECT VEHICLES -->
+    <div class="row mb-4">
+        <div class="col-md-6 mb-3">
+            <select class="form-select" id="vehicle1Select">
+                <option value="" disabled selected>Select Vehicle 1</option>
+                <option value="destinator">Destinator</option>
+                <option value="l300">L300</option>
+                <option value="monterosport">Montero Sport</option>
+                <option value="triton">TRITON</option>
+                <option value="xforce">XFORCE</option>
+                <option value="xpander">XPANDER</option>
+                <option value="mirage">Mirage</option>
+                <option value="mirageg4">Mirage G4</option>
+                <option value="fuso">Fuso Canter</option>
+            </select>
+        </div>
+        <div class="col-md-6 mb-3">
+            <select class="form-select" id="vehicle2Select">
+                <option value="" disabled selected>Select Vehicle 2</option>
+                <option value="destinator">Destinator</option>
+                <option value="l300">L300</option>
+                <option value="monterosport">Montero Sport</option>
+                <option value="triton">TRITON</option>
+                <option value="xforce">XFORCE</option>
+                <option value="xpander">XPANDER</option>
+                <option value="mirage">Mirage</option>
+                <option value="mirageg4">Mirage G4</option>
+                <option value="fuso">Fuso Canter</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- COMPARISON TABLE -->
+    <div class="table-responsive">
+        <table class="table compare-table text-center align-middle">
+            <thead class="table-dark">
+                <tr>
+                    <th>Feature</th>
+                    <th id="vehicle1Name">Vehicle 1</th>
+                    <th id="vehicle2Name">Vehicle 2</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Visual</td>
+                    <td><img id="vehicle1Img" src="../img/blank.png" alt="Vehicle 1" class="vehicle-img"></td>
+                    <td><img id="vehicle2Img" src="../img/blank.png" alt="Vehicle 2" class="vehicle-img"></td>
+                </tr>
+                <tr>
+                    <td>Model Name</td>
+                    <td id="vehicle1Model"></td>
+                    <td id="vehicle2Model"></td>
+                </tr>
+                <tr>
+                    <td>Available Variants</td>
+                    <td id="vehicle1Variants"></td>
+                    <td id="vehicle2Variants"></td>
+                </tr>
+                <tr>
+                    <td>Price</td>
+                    <td id="vehicle1Price"></td>
+                    <td id="vehicle2Price"></td>
+                </tr>
+                <tr>
+                    <td>Capacity</td>
+                    <td id="vehicle1Capacity"></td>
+                    <td id="vehicle2Capacity"></td>
+                </tr>
+                <tr>
+                    <td>Key Features</td>
+                    <td><ul id="vehicle1Features"></ul></td>
+                    <td><ul id="vehicle2Features"></ul></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+const vehicles = {
+    destinator: {
+        model: 'Destinator',
+        variants: 'GT, GLS, GLX',
+        price: '₱1,939,000',
+        features: ['1.5L Turbocharged Engine', '12.3-inch Infotainment Display', 'T-Shaped LED Headlights', '18-inch Alloy Wheels','High Ground Clearance'],
+        capacity: '7 Persons',
+        image: '../img/cv1.png'
+    },
+    l300: {
+        model: 'L300',
+        variants: 'W/ DUAL A/C, W/ FRONT A/C, C/C 2.2D DSL MTT',
+        price: '₱1,939,000',
+        features: ['2.2L 16 Valve DOHC (4N14) with Turbocharged - Intercooler System (Euro 4)', 'Front Suspension: Independent Wishbone and Coil Spring', 'Rear Suspension: Semi-Elliptic Leaf Spring'],
+        capacity: '17 Persons',
+        image: '../img/cv2.png'
+    },
+    monterosport: {
+        model: 'Montero Sport',
+        variants: 'BLACK SERIES 2.4D 4WD AT, GLS 2.4D B/S RALLIART 2WD AT, BLACK SERIES 2.4D 2WD AT,  GLS 2.4D 2WD AT, GLX 2.4D 2WD MT',
+        price: '₱2,482,000',
+        features: ['1.5L Turbocharged Engine', '12.3-inch Infotainment Display', 'Touchscreen Display', 'T-Shaped LED Headlights', '18-inch Alloy Wheels', 'High Ground Clearance'],
+        capacity: '7 Persons',
+        image: '../img/cv3.png'
+    },
+    triton: {
+        model: 'Triton',
+        variants: 'GL, GLS, GLX',
+        price: '₱1,909,000',
+        features: ['Engine : 4N16 (2440cc) D4 I/C 2T/C', 'Engine power : Extra high power', 'Regulation conformity Exhaust emission regulation : EURO5B', 'Transmission : V6AWH (6A/T)/ Sport mode', 'Transfer Super select 4WD II', 'Hill start assist system',
+         'Active stability control', 'Traction control', 'Active yaw control', 'Power steering type : E.P.S', 'Locking system Keyless entry system', 'Tailgate assist', 'Center display : SDA DISP'],
+        capacity: '5 Persons',
+        image: '../img/cv4.png'
+    },
+    xforce: {
+        model: 'XFORCE',
+        variants: 'GT, GLS',
+        price: '₱1,511,000',
+        features: ['Tire pressure monitoring system', 'Leading car departure notification', 'Forward collision mitigation', 'Adaptive cruise contro','Blindspot Warning System (BSW)', 'Parking sensor','8" Color LCD Instrument Cluster Display', '12.3" Smart Phone Link Display Audio (SDA) Touchscreen'],
+        capacity: '5 Persons',
+        image: '../img/cv5.png'
+    },
+    xpander: {
+        model: 'XPANDER',
+        variants: '2WD AT OUTDOOR EDITION, 2WD AT TWOTONE,  2WD AT MONOTONE, GLS AT, GLX AT, GLX MT',
+        price: '₱1,297,000',
+        features: ['Multi-Around Monitor', 'LED Daytime Running Lights', '10-inch Smart Phone Link Display Audio(SDA)', 'Touchscreen',],
+        capacity: '7 Persons',
+        image: '../img/cv6.png'
+    },
+    mirage: {
+        model: 'MIRAGE',
+        variants: 'GLX CVT AT, GLX MT',
+        price: '₱667,000',
+        features: ['1.2L 12 Valve Inline 3-Cylinder DOHC MIVEC ECI-Multi (3A92)', 'INVECS III CVT (Continuously Variable Transmission)'],
+        capacity: '5 Persons',
+        image: '../img/pc1.png'
+    },
+    mirageg4: {
+        model: 'MIRAGE G4',
+        variants: 'GLS BLACK SERIES AT, GLS CVT AT, GLX CVT AT, GLX MT',
+        price: '₱824,000',
+        features: ['Engine Push Start System', '3-Spoke Leather-Wrapped','Embossed Fabric without Stitch','LED Headlamp with Daytime Running Lamp', 'Rear Combination Lamp', 'Active Stability Control', 'Anti-Lock Braking System', 'Hill Start Assist' ],
+        capacity: '5 Persons',
+        image: '../img/pc2.png'
+    },
+    fuso: {
+        model: 'Fuso Canter',
+        variants: 'FE84 C/C 3.0D MT, TF FE71 C/C 3.0D MT',
+        price: '₱1,562,506',
+        features: ['4P10 3.0L diesel engine with turbo & intercooler', 'Strong torque at 1,700 RPM', '5-speed manual or 6-speed DUONIC automatic', 'Rear-wheel drive with fully floating rear axle'],
+        capacity: '30 Persons',
+        image: '../img/t1.png'
+    }
+};
+
+function populateVehicle(vehicleId, slot) {
+    const vehicle = vehicles[vehicleId];
+    document.getElementById(`${slot}Name`).textContent = vehicle.model;
+    document.getElementById(`${slot}Model`).textContent = vehicle.model;
+    document.getElementById(`${slot}Variants`).textContent = vehicle.variants;
+    document.getElementById(`${slot}Price`).textContent = vehicle.price;
+    document.getElementById(`${slot}Capacity`).textContent = vehicle.capacity;
+    document.getElementById(`${slot}Img`).src = vehicle.image;
+
+    const featureList = document.getElementById(`${slot}Features`);
+    featureList.innerHTML = '';
+    vehicle.features.forEach(f => {
+        const li = document.createElement('li');
+        li.textContent = f;
+        featureList.appendChild(li);
+    });
+}
+
+document.getElementById('vehicle1Select').addEventListener('change', e => populateVehicle(e.target.value, 'vehicle1'));
+document.getElementById('vehicle2Select').addEventListener('change', e => populateVehicle(e.target.value, 'vehicle2'));
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>

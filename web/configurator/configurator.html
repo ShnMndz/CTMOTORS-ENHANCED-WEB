@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>CITI MOTORS - CONFIGURATOR</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="../css/configurator.css">
+<style>
+
+</style>
+</head>
+<body>
+
+<!-- Navbar with Dropdowns -->
+<nav class="navbar navbar-light bg-light shadow-sm">
+  <div class="container d-flex justify-content-between align-items-center">
+
+    <!-- Logo -->
+    <a class="navbar-brand" href="../home.html">
+        <img src="../img/logo.png" alt="CITI MOTORS">
+    </a>
+
+    <!-- Navigation Links -->
+    <div class="d-flex gap-3 align-items-center">
+
+        <a href="../home.html" class="nav-link-custom">Home</a>
+
+        <!-- About Us Dropdown -->
+        <div class="dropdown">
+            <a class="nav-link-custom dropdown-toggle active-link" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                About Us
+            </a>
+            <ul class="dropdown-menu">
+                <li><a class="dropdown-item" href="../aboutus/aboutus.html#vision">Corporate Vision</a></li>
+                <li><a class="dropdown-item" href="../aboutus/aboutus.html#mission">Mission Statement</a></li>
+                <li><a class="dropdown-item" href="../aboutus/aboutus.html#history">Company History</a></li>
+            </ul>
+        </div>
+
+        <!-- Branches Dropdown -->
+        <div class="dropdown">
+            <a class="nav-link-custom dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                Branches
+            </a>
+            <ul class="dropdown-menu">
+                <li><a class="dropdown-item" href="../branches/branch.html#makati">Makati (Head Office)</a></li>
+                <li><a class="dropdown-item" href="../branches/branch.html#laspinas">Las Piñas Office</a></li>
+                <li><a class="dropdown-item" href="../branches/branch.html#alabang">Alabang Office</a></li>
+            </ul>
+        </div>
+ 
+
+       <!-- Products -->
+            <a href="../products/products.html" class="nav-link-custom">
+    Products
+</a>
+
+    <ul class="dropdown-menu">
+        <li><a class="dropdown-item" href="../products/products.html#commercial">Commercial Vehicles</a></li>
+        <li><a class="dropdown-item" href="../products/products.html#passenger">Passenger Cars</a></li>
+        <li><a class="dropdown-item" href="../products/products.html#trucks">Trucks and Buses</a></li>
+    </ul>
+</div>
+
+        <!-- Parts & Services Dropdown -->
+        <div class="dropdown">
+            <a class="nav-link-custom dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                Parts & Services
+            </a>
+            <ul class="dropdown-menu">
+                <li><a class="dropdown-item" href="../partsandservices/partsandservices.html#genuine">Genuine Parts</a></li>
+                <li><a class="dropdown-item" href="../partsandservices/partsandservices.html#service">Service & Body Shop</a></li>
+            </ul>
+        </div>
+
+        <!-- Jobs Dropdown -->
+        <div class="dropdown">
+            <a class="nav-link-custom dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                Jobs
+            </a>
+            <ul class="dropdown-menu">
+                <li><a class="dropdown-item" href="../jobs/jobs.html#accounting">Accounting Clerk</a></li>
+                <li><a class="dropdown-item" href="../jobs/jobs.html#credit">Credit & Collection Clerk</a></li>
+                <li><a class="dropdown-item" href="../jobs/jobs.html#insurance">Insurance Assistance Coordinator</a></li>
+                <li><a class="dropdown-item" href="../jobs/jobs.html#purchasing">Purchasing Clerk</a></li>
+                <li><a class="dropdown-item" href="../jobs/jobs.html#sales">Sales Executives</a></li>
+                <li><a class="dropdown-item" href="../jobs/jobs.html#marketing">Secretary</a></li>
+            </ul>
+        </div>
+
+        <a href="../contacts/contactus.html" class="nav-link-custom">Contact Us</a>
+
+    </div>
+  </div>
+</nav>
+
+
+<!--CONFIGURE SECTION-->
+<div class="container my-5">
+  <div class="row">
+
+    <!-- IMAGE -->
+    <div class="col-md-6">
+        <img id="carImage" src="" class="car-img">
+    </div>
+
+    <!-- CONFIG -->
+    <div class="col-md-6 config-box">
+        <div class="d-flex justify-content-between align-items-center">
+    <h3 id="carName" class="mb-0"></h3>
+    <a href="selection-config.html" class="change-btn">Change Vehicle</a>
+</div>
+        <!-- VARIANT -->
+        <label class="mt-3">Variant</label>
+        <select id="variant" class="form-select"></select>
+
+        <!-- COLOR SELECTION -->
+        <label class="mt-3">Color</label>
+        <div class="d-flex gap-3 mt-2" id="colorGroup"></div>
+
+        <!-- PRICE -->
+        <h4 class="mt-4">Total Price:</h4>
+        <h2 id="totalPrice">₱0</h2>
+
+        <button class="btn btn-dark mt-3 w-100" onclick="goToSummary()">CONFIRM SELECTION</button>
+    </div>
+  </div>
+</div>
+
+<script>
+
+  function goToSummary() {
+    const variantText = document.getElementById("variant").selectedOptions[0].text;
+    const variantPrice = document.getElementById("variant").value;
+
+    const selectedColor = document.querySelector(".color-option.selected");
+    const colorName = selectedColor ? selectedColor.innerText.trim() : "None";
+
+    const totalPrice = document.getElementById("totalPrice").innerText;
+
+    // redirect with data
+    window.location.href = `configurator-summary.html?car=${carData.name}&variant=${encodeURIComponent(variantText)}&color=${encodeURIComponent(colorName)}&price=${encodeURIComponent(totalPrice)}&image=${encodeURIComponent(carData.image)}`;
+}
+// CAR DATA (all colors now have name + code)
+const cars = {
+  destinator: {
+    name: "DESTINATOR",
+    price: 1939000,
+    image: "../img/cv1.png",
+    variants: [
+      { name: "GT 1.5L Unleaded 2WD Automatic CVT", price: 1939000 },
+      { name: "GLS 1.5L Automatic CVT", price: 1599000 },
+      { name: "GLX 1.5L Automatic CVT", price: 1389000 }
+    ],
+    colors: [
+      { name: "Quartz White Pearl", code: "white" },
+      { name: "Blade Silver Metallic", code: "silver" },
+      { name: "Red Metallic", code: "red" },
+      { name: "Graphite Gray Metallic", code: "gray" }
+    ]
+  },
+  l300: {
+    name: "L300 FB EXCEED",
+    price: 1939000,
+    image: "../img/cv2.png",
+    variants: [
+      { name: "L300 FB EXCEED W/ DUAL A/C", price: 1939000 },
+      { name: "L300 FB EXCEED W/ FRONT A/C", price: 1599000 },
+      { name: "L300 EXCEED C/C 2.2D DSL MTT", price: 1389000 }
+    ],
+    colors: [
+      { name: "Pearl White", code: "white" }
+    ]
+  },
+  monterosport: {
+    name: "MONTERO SPORT",
+    price: 2482000,
+    image: "../img/cv3.png",
+    variants: [
+      { name: "BLACK SERIES 2.4D 4WD AT", price: 2482000 },
+      { name: "GLS 2.4D B/S RALLIART 2WD AT", price: 2225000 },
+      { name: "BLACK SERIES 2.4D 2WD AT", price: 2080000 },
+      { name: "GLS 2.4D 2WD AT", price: 1799000 },
+      { name: "GLX 2.4D 2WD MT", price: 1303000 }
+    ],
+    colors: [
+      { name: "White Diamond", code: "white" },
+      { name: "Jet Black Mica", code: "black" },
+      { name: "Graphite Gray Metallic", code: "gray" }
+    ]
+  },
+   triton: {
+    name: "TRITON",
+    price: 1909000,
+    image: "../img/cv4.png",
+    variants: [
+      { name: "TRITON ATHLETE 2.4D 4WD AT", price: 1909000 },
+      { name: "TRITON GLS 2.4D 2WD AT", price: 1582000 },
+      { name: "TRITON GLX 2.4D 4WD MT", price: 1531000 },
+      { name: "TRITON GLX 2.4D 2WD AT", price: 1303000 },
+      { name: "TRITON GLX 2.4D 2WD MT", price: 1251000 },
+      { name: "TRITON GL 2.4D 4WD MT", price: 1157000 },
+      { name: "TRITON GL 2.4D 2WD MT", price: 1134000 }
+    ],
+    colors: [
+      { name: "Red Solid", code: "red" },
+      { name: "Blade Silver Metallic", code: "silver" },
+      { name: "White Diamond", code: "white" },
+      { name: "Graphite Gray Mettalic", code: "gray" }
+    ]
+  },
+  xforce: {
+    name: "XFORCE",
+    price: 1909000,
+    image: "../img/cv5.png",
+    variants: [
+      { name: "XFORCE GT 1.5G 2WD CVT", price: 1909000 },
+      { name: "XFORCE GLS 1.5G 2WD CVT", price: 1582000 }
+    ],
+    colors: [
+      { name: "Blade Silver Metallic", code: "silver" },
+      { name: "Quartz White", code: "white" },
+      { name: "Graphite Gray Metallic", code: "gray" },
+      { name: "Energetic Yellow", code: "yellow" }
+    ]
+  },
+  xpander: {
+    name: "XPANDER",
+    price: 1297000,
+    image: "../img/cv6.png",
+    variants: [
+      { name: "XPANDER CROSS 1.5G 2WD AT OUTDOOR EDITION", price: 1297000 },
+      { name: "XPANDER CROSS 1.5G 2WD AT TWOTONE", price: 1266000 },
+      { name: "XPANDER CROSS 1.5G 2WD AT MONOTONE", price: 1256000 },
+      { name: "XPANDER GLS 1.5G 2WD AT", price: 1116000 },
+      { name: "XPANDER GLX 1.5G 2WD AT", price: 11160000 },
+      { name: "XPANDER GLX 1.5G 2WD MT", price: 978000 }
+    ],
+    colors: [
+      { name: "Green Bronze Metallic", code: "gray" },
+      { name: "Quartz White Pearl", code: "white" },
+      { name: "Red Metallic", code: "red" },
+      { name: "Graphite Gray Mettalic", code: "gray" }
+    ]
+  },
+  mirage: {
+    name: "MIRAGE",
+    price: 824000,
+    image: "../img/pc1.png",
+    variants: [
+      { name: "MIRAGE GLX 1.2G CVT AT", price: 824000 },
+      { name: "MIRAGE GLX 1.2G MT", price: 824000 }
+    ],
+    colors: [
+      { name: "Red Metallic", code: "red" },
+      { name: "Titanium Gray Metallic", code: "gray" }
+    ]
+  },
+  mirageg4: {
+    name: "MIRAGEG4",
+    price: 824000,
+    image: "../img/pc2.png",
+    variants: [
+      { name: "MIRAGE G4 GLS BLACK SERIES 1.2G AT", price: 824000 },
+      { name: "MIRAGE G4 GLS 1.2G CVT AT", price: 824000 },
+      { name: "MIRAGE G4 GLX 1.2G CVT AT", price: 737000 },
+      { name: "MIRAGE G4 GLX 1.2G MT", price: 701000 }
+    ],
+    colors: [
+      { name: "Cool Silver Metallic", code: "gray" },
+      { name: "Red Metallic", code: "red" },
+      { name: "Titanium Gray Metallic", code: "gray" },
+      { name: "White solid", code: "white" },
+      { name: "Graphite Gray Metallic", code: "gray" },
+      { name: "White Diamond", code: "white" },
+      { name: "Black Mica", code: "black" }
+    ]
+  },
+    fuso: {
+    name: "FUSO CANTER",
+    price: 824000,
+    image: "../img/t1.png",
+    variants: [
+      { name: "FUSO TF CANTER FE84 C/C 3.0D MT", price: 1562506 },
+      { name: "FUSO CANTER TF FE71 C/C 3.0D MT", price: 141268 }
+    ],
+    colors: [
+      { name: "Plain", code: "gray" }
+    ]
+  }
+  
+};
+
+// GET CAR FROM URL
+const params = new URLSearchParams(window.location.search);
+const carKey = params.get("car") || "destinator";
+const carData = cars[carKey];
+
+// POPULATE PAGE
+document.getElementById("carName").innerText = carData.name;
+document.getElementById("carImage").src = carData.image;
+
+// Generate variant select options
+const variantSelect = document.getElementById("variant");
+carData.variants.forEach(v => {
+    const opt = document.createElement("option");
+    opt.value = v.price;
+    opt.textContent = v.name;
+    variantSelect.appendChild(opt);
+});
+
+// Generate color buttons
+const colorGroup = document.getElementById("colorGroup");
+carData.colors.forEach(color => {
+    const div = document.createElement("div");
+    div.classList.add("color-option");
+    div.setAttribute("data-color", color.code);
+
+    const circle = document.createElement("div");
+    circle.classList.add("color-btn");
+    circle.style.background = color.code; // actual color
+
+    const label = document.createElement("small");
+    label.textContent = color.name; // friendly label
+
+    div.appendChild(circle);
+    div.appendChild(label);
+    colorGroup.appendChild(div);
+
+    // selection highlight and logging
+    div.addEventListener("click", () => {
+        document.querySelectorAll(".color-option").forEach(o => o.classList.remove("selected"));
+        div.classList.add("selected");
+        console.log("Selected color:", color.name, color.code);
+    });
+});
+
+// BASE PRICE
+let basePrice = carData.price;
+
+// PRICE UPDATE
+function updatePrice() {
+    const variantPrice = parseInt(document.getElementById("variant").value) || 0;
+    const total = basePrice + variantPrice;
+    document.getElementById("totalPrice").innerText = "₱" + total.toLocaleString();
+}
+
+// EVENTS
+variantSelect.addEventListener("change", updatePrice);
+
+// INIT
+updatePrice();
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>

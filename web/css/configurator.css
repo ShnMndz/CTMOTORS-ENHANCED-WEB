@@ -1,0 +1,500 @@
+/* =====================================================
+   GLOBAL STYLES
+===================================================== */
+body {
+    font-family: "Segoe UI", Arial, sans-serif;
+    background: #f8fafc;
+    scroll-behavior: smooth;
+
+    /* Fade In Animation */
+    animation: pageFadeIn 1.2s ease-in-out forwards;
+    opacity: 0;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-thumb {
+    background: #E20000;
+    border-radius: 10px;
+}
+::-webkit-scrollbar-track { background: #eee; }
+
+.section-title {
+    position: relative;
+    display: inline-block;  /* shrink underline to text width */
+    font-weight: 700;
+}
+
+.section-title::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: -8px; /* space between text and line */
+    width: 100%;
+    height: 4px; /* thickness of underline */
+    background-color: #e60012; /* Mitsubishi red */
+    border-radius: 2px;
+}
+
+
+/* =====================================================
+   ANIMATIONS
+===================================================== */
+@keyframes pageFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(15px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+
+/* =====================================================
+   NAVBAR
+===================================================== */
+.navbar {
+    backdrop-filter: blur(10px);
+    background: rgba(255,255,255,0.9) !important;
+    border-bottom: 1px solid rgba(0,0,0,0.05);
+}
+
+.navbar-brand img {
+    height: 70px;
+    transition: transform 0.3s ease;
+}
+
+.navbar-brand img:hover {
+    transform: scale(1.05);
+}
+
+/* Nav Links */
+.nav-link-custom {
+    text-decoration: none;
+    color: #333;
+    font-weight: 500;
+    padding: 6px 12px;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+}
+
+.nav-link-custom:hover {
+    color: #E20000;
+    background: rgba(226,0,0,0.08);
+}
+
+/* Dropdown */
+.dropdown-menu {
+    border: none;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.dropdown-item {
+    padding: 10px 16px;
+    transition: all 0.2s ease;
+}
+
+.dropdown-item:hover {
+    background: #E20000;
+    color: #fff;
+}
+
+
+.change-btn {
+    padding: 6px 12px;
+    background: #111;
+    color: #fff;
+    text-decoration: none;
+
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 500;
+
+    transition: 0.3s;
+}
+
+.change-btn:hover {
+    background: #333;
+}
+
+/* Arrow styling */
+.change-btn .arrow {
+    font-size: 16px;
+    transition: transform 0.3s ease;
+}
+
+/* Hover effect */
+.change-btn:hover {
+    background: #333;
+    transform: translateY(-2px);
+}
+
+/* Slide arrow on hover */
+.change-btn:hover .arrow {
+    transform: translateX(-4px);
+}
+
+/* Click effect */
+.change-btn:active {
+    transform: scale(0.95);
+}
+
+/*--style--*/
+body {
+    font-family: "Poppins", sans-serif;
+    background: #f8fafc;
+}
+
+.car-img {
+    width: 100%;
+    transition: 0.3s;
+}
+
+.color-btn {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    border: 2px solid #ddd;
+    cursor: pointer;
+    margin-bottom: 5px;
+    transition: all 0.2s;
+}
+
+.color-option {
+    text-align: center;
+    cursor: pointer;
+}
+
+/* Selected circle */
+.color-option.selected .color-btn {
+    border: 3px solid #007bff;
+    transform: scale(1.1);
+}
+
+/* Selected text */
+.color-option.selected small {
+    font-weight: 600;
+    color: #007bff;
+}
+
+.config-box {
+    background: #fff;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+/* ===== GLOBAL ===== */
+body {
+    font-family: "Poppins", Arial, sans-serif;
+    background: #f8fafc;
+    scroll-behavior: smooth;
+}
+
+/* ===== TYPOGRAPHY ===== */
+.section-title {
+    text-align: center;
+    margin-bottom: 40px;
+    font-weight: 600;
+}
+
+h2 {
+    border-bottom: 3px solid #c40000;
+    display: inline-block;
+    padding-bottom: 5px;
+}
+
+/* ===== NAVBAR ===== */
+.navbar {
+    backdrop-filter: blur(10px);
+    background: rgba(255,255,255,0.95) !important;
+    border-bottom: 1px solid rgba(0,0,0,0.05);
+}
+
+.navbar-brand img {
+    height: 70px;
+    transition: transform 0.3s ease;
+}
+
+.navbar-brand img:hover {
+    transform: scale(1.05);
+}
+
+/* NAV LINKS */
+.nav-link-custom {
+    text-decoration: none;
+    color: #333;
+    font-weight: 500;
+    padding: 6px 12px;
+    border-radius: 6px;
+    transition: 0.3s;
+}
+
+.nav-link-custom:hover {
+    color: #E20000;
+    background: rgba(226,0,0,0.08);
+}
+
+/* DROPDOWN */
+.dropdown-menu {
+    border: none;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+    border-radius: 12px;
+}
+
+.dropdown-item {
+    padding: 10px 16px;
+}
+
+.dropdown-item:hover {
+    background: #E20000;
+    color: #fff;
+}
+
+/* ===== HERO ===== */
+.hero-banner {
+    height: 60vh;
+    background: url("../img/background2.png") center/cover no-repeat;
+    display: flex;
+    align-items: center;
+    position: relative;
+}
+
+.hero-overlay {
+    background: rgba(0,0,0,0.55);
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+}
+
+.hero-content {
+    color: #fff;
+}
+
+.hero-content h1 {
+    font-size: 3rem;
+    font-weight: 700;
+}
+
+.hero-content p {
+    font-size: 1.2rem;
+    margin-top: 10px;
+}
+
+/* ===== BUTTON ===== */
+.btn-mitsubishi {
+    background: #e60012;
+    color: #fff;
+    border: none;
+    font-weight: 500;
+}
+
+.btn-mitsubishi:hover {
+    background: #c5000f;
+}
+
+/* ===== VEHICLE CARD ===== */
+.vehicle-card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 20px;
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: 0.3s;
+    height: 100%;
+}
+
+.vehicle-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+}
+
+.product-item.selected .vehicle-card {
+    border: 2px solid #e60012;
+}
+
+.vehicle-card img {
+    max-height: 140px;
+    object-fit: contain;
+}
+
+/* SELECT BADGE */
+.selected-badge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: #e60012;
+    color: #fff;
+    font-size: 12px;
+    padding: 4px 8px;
+    border-radius: 6px;
+    display: none;
+}
+
+.product-item.selected .selected-badge {
+    display: block;
+}
+
+/* ===== POSTER CARD ===== */
+.vehicle-poster {
+    position: relative;
+    height: 450px;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    transition: 0.3s;
+}
+
+.vehicle-poster:hover {
+    transform: translateY(-10px);
+}
+
+.vehicle-poster img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.vehicle-poster::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(0,0,0,0.8), rgba(0,0,0,0.2));
+}
+
+.poster-content {
+    position: absolute;
+    bottom: 25px;
+    left: 20px;
+    right: 20px;
+    z-index: 2;
+    color: #fff;
+}
+
+/* ===== FORM ===== */
+.form-container {
+    max-width: 700px;
+    margin: 60px auto;
+    padding: 30px;
+    background: #fff;
+    border-radius: 12px;
+    border: 1px solid #ddd;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+}
+
+/* ===== VARIANT SECTION ===== */
+.variant-section {
+    max-width: 500px;
+}
+
+.variant-card {
+    border: 1px solid #000;
+    padding: 15px;
+    cursor: pointer;
+    position: relative;
+}
+
+.variant-card.active {
+    border-top: 3px solid red;
+}
+
+/* RADIO */
+.radio-circle {
+    width: 16px;
+    height: 20px;
+    border: 2px solid #000;
+    border-radius: 50%;
+    display: inline-block;
+    margin-right: 10px;
+}
+
+.radio-circle.active {
+    background: red;
+}
+
+/* ===== COLOR PICKER ===== */
+.color-option {
+    text-align: center;
+    cursor: pointer;
+}
+
+.color-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: 0.2s;
+}
+
+.color-btn:hover {
+    transform: scale(1.1);
+}
+
+.color-option.selected .color-btn {
+    border: 3px solid #141414;
+    transform: scale(1.1);
+}
+
+/* ===== FOOTER ===== */
+.footer {
+    background: #000;
+    color: #fff;
+    padding: 50px 10%;
+}
+
+.footer-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 40px;
+}
+
+.footer-column h3 {
+    margin-bottom: 15px;
+}
+
+.footer-column ul {
+    list-style: none;
+    padding: 0;
+}
+
+.footer-column ul li {
+    margin-bottom: 8px;
+}
+
+.footer-column ul li a {
+    text-decoration: none;
+    color: #ccc;
+}
+
+.footer-column ul li a:hover {
+    color: #fff;
+}
+
+.footer-bottom {
+    margin-top: 40px;
+    text-align: center;
+    font-size: 13px;
+    color: #aaa;
+    border-top: 1px solid #333;
+    padding-top: 20px;
+}
+
+/* ===== SCROLLBAR ===== */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #E20000;
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: #eee;
+}

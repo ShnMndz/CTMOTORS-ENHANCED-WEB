@@ -1,0 +1,374 @@
+/* =====================================================
+   GLOBAL STYLES
+===================================================== */
+body {
+    font-family: "Segoe UI", Arial, sans-serif;
+    background: #f8fafc;
+    scroll-behavior: smooth;
+
+    /* Fade In Animation */
+    animation: pageFadeIn 1.2s ease-in-out forwards;
+    opacity: 0;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-thumb {
+    background: #E20000;
+    border-radius: 10px;
+}
+::-webkit-scrollbar-track { background: #eee; }
+
+/* Floating Sidebar */
+.floating-sidebar {
+    position: fixed;
+    top: 50%;
+    right: 0;
+    transform: translateY(-50%);
+    z-index: 999;
+    display: flex;
+    flex-direction: column;
+}
+
+.sidebar-btn {
+    width: 60px;
+    height: 60px;
+    background: #6c757d;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    border-bottom: 1px solid rgba(255,255,255,0.2);
+    transition: 0.3s;
+    font-size: 20px;
+}
+
+.sidebar-btn:hover {
+    background: #e60012; /* your red theme */
+}
+
+/* Sidebar Button */
+.sidebar-btn {
+    position: relative;
+    width: 60px;
+    height: 60px;
+    background: rgba(108, 117, 125, 0.85);
+    backdrop-filter: blur(10px);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    border-bottom: 1px solid rgba(255,255,255,0.2);
+    transition: 0.3s;
+    font-size: 20px;
+    overflow: visible;
+}
+
+/* Hover background */
+.sidebar-btn:hover {
+    background: #e60012;
+}
+
+/* Floating Text */
+.sidebar-btn span {
+    position: absolute;
+    right: 70px;
+    background: #111;
+    color: #fff;
+    padding: 6px 12px;
+    border-radius: 6px;
+    white-space: nowrap;
+    font-size: 14px;
+
+    opacity: 0;
+    transform: translateX(10px);
+    transition: 0.3s;
+}
+
+/* Show on hover */
+.sidebar-btn:hover span {
+    opacity: 1;
+    transform: translateX(0);
+}
+/* =====================================================
+   ANIMATIONS
+===================================================== */
+@keyframes pageFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(15px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+
+/* =====================================================
+   NAVBAR
+===================================================== */
+.navbar {
+    backdrop-filter: blur(10px);
+    background: rgba(255,255,255,0.9) !important;
+    border-bottom: 1px solid rgba(0,0,0,0.05);
+}
+
+.navbar-brand img {
+    height: 70px;
+    transition: transform 0.3s ease;
+}
+
+.navbar-brand img:hover {
+    transform: scale(1.05);
+}
+
+/* Nav Links */
+.nav-link-custom {
+    text-decoration: none;
+    color: #333;
+    font-weight: 500;
+    padding: 6px 12px;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+}
+
+.nav-link-custom:hover {
+    color: #E20000;
+    background: rgba(226,0,0,0.08);
+}
+
+.active-link {
+    color: #E20000;
+    font-weight: bold;
+    background: rgba(226,0,0,0.1);
+}
+
+/* Dropdown */
+.dropdown-menu {
+    border: none;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.dropdown-item {
+    padding: 10px 16px;
+    transition: all 0.2s ease;
+}
+
+.dropdown-item:hover {
+    background: #E20000;
+    color: #fff;
+}
+
+
+/* =====================================================
+   VISION SECTION
+===================================================== */
+.vision-section {
+    min-height: 100vh;
+}
+
+.vision-text {
+    background: #000;
+    color: #fff;
+    padding: 80px 60px;
+    min-height: 100vh;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.vision-text h1 {
+    font-size: 3rem;
+    font-weight: 700;
+    margin-bottom: 25px;
+}
+
+.vision-text p {
+    font-size: 1.1rem;
+    line-height: 1.8;
+    margin-bottom: 20px;
+}
+
+.vision-image {
+    min-height: 100vh;
+    background: url('../img/ourvisionpic.png') center/cover no-repeat;
+}
+
+
+/* =====================================================
+   MISSION SECTION
+===================================================== */
+.mission-section {
+    min-height: 100vh;
+}
+
+.mission-text {
+    background: #fff;
+    color: #222;
+    padding: 80px 60px;
+    min-height: 100vh;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.mission-text h1 {
+    font-size: 3rem;
+    font-weight: 700;
+    margin-bottom: 25px;
+    color: #0032bd;
+}
+
+.mission-text ol {
+    font-size: 1.1rem;
+    line-height: 1.8;
+    padding-left: 20px;
+}
+
+.mission-text li {
+    margin-bottom: 15px;
+}
+
+.mission-image {
+    min-height: 100vh;
+    background: url('../img/mission.png') center/cover no-repeat;
+}
+
+
+/* =====================================================
+   HISTORY SECTION
+===================================================== */
+.history-section {
+    min-height: 100vh;
+    position: relative;
+    background: url('../img/historypic.png') center/cover no-repeat;
+}
+
+.history-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.6);
+}
+
+.history-section h2 {
+    font-size: 3rem;
+    font-weight: 700;
+}
+
+.history-text {
+    max-width: 900px;
+    margin: auto;
+    font-size: 1.1rem;
+    line-height: 1.8;
+}
+
+
+/* =====================================================
+   VEHICLE POSTER CARD
+===================================================== */
+.vehicle-poster {
+    position: relative;
+    height: 450px;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    transition: transform 0.3s ease;
+}
+
+.vehicle-poster:hover {
+    transform: translateY(-10px);
+}
+
+.vehicle-poster img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Overlay */
+.vehicle-poster::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+        to top,
+        rgba(0,0,0,0.8),
+        rgba(0,0,0,0.2)
+    );
+}
+
+.poster-content {
+    position: absolute;
+    bottom: 25px;
+    left: 20px;
+    right: 20px;
+    z-index: 2;
+    color: white;
+}
+
+.poster-content h4 {
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.poster-content p {
+    font-size: 14px;
+    margin-bottom: 10px;
+    opacity: 0.9;
+}
+
+
+/* =====================================================
+   FOOTER
+===================================================== */
+.footer {
+    background-color: #000;
+    color: #fff;
+    padding: 50px 10%;
+}
+
+.footer-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 40px;
+}
+
+.footer-column h3 {
+    margin-bottom: 15px;
+    font-size: 18px;
+}
+
+.footer-column ul {
+    list-style: none;
+    padding: 0;
+}
+
+.footer-column ul li {
+    margin-bottom: 8px;
+}
+
+.footer-column ul li a {
+    text-decoration: none;
+    color: #ccc;
+    font-size: 14px;
+}
+
+.footer-column ul li a:hover {
+    color: #fff;
+}
+
+.footer-bottom {
+    margin-top: 40px;
+    text-align: center;
+    font-size: 13px;
+    color: #aaa;
+    border-top: 1px solid #333;
+    padding-top: 20px;
+}

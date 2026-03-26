@@ -1,0 +1,207 @@
+/* =====================================================
+   GLOBAL STYLES
+===================================================== */
+body {
+    font-family: "Segoe UI", Arial, sans-serif;
+    background: #f8fafc;
+    scroll-behavior: smooth;
+
+    /* Fade In Animation */
+    animation: pageFadeIn 1.2s ease-in-out forwards;
+    opacity: 0;
+}
+
+/* Scrollbar Styling */
+::-webkit-scrollbar {
+    width: 8px;
+}
+::-webkit-scrollbar-thumb {
+    background: #E20000;
+    border-radius: 10px;
+}
+::-webkit-scrollbar-track {
+    background: #eee;
+}
+
+/* =====================================================
+   ANIMATIONS
+===================================================== */
+@keyframes pageFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(15px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* =====================================================
+   TYPOGRAPHY & HEADINGS
+===================================================== */
+.section-title {
+    position: relative;
+    display: inline-block;  /* underline matches text width */
+    font-weight: 700;
+}
+
+.section-title::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: -8px; /* spacing between text and line */
+    width: 100%;
+    height: 4px; /* thickness of underline */
+    background-color: #e60012; /* Mitsubishi red */
+    border-radius: 2px;
+}
+
+h2 {
+    font-size: 2.2rem;
+    margin-bottom: 20px;
+}
+
+h3 {
+    font-size: 1.6rem;
+    margin-bottom: 15px;
+}
+
+h4 {
+    font-size: 1.4rem;
+    margin: 20px 0 10px 0;
+}
+
+p {
+    font-size: 1.1rem;
+    margin: 8px 0;
+}
+
+/* =====================================================
+   NAVBAR
+===================================================== */
+.navbar {
+    backdrop-filter: blur(10px);
+    background: rgba(255,255,255,0.9) !important;
+    border-bottom: 1px solid rgba(0,0,0,0.05);
+    z-index: 1000; 
+}
+
+.navbar-brand img {
+    height: 70px;
+    transition: transform 0.3s ease;
+}
+.navbar-brand img:hover {
+    transform: scale(1.05);
+}
+
+/* Nav Links */
+.nav-link-custom {
+    text-decoration: none;
+    color: #333;
+    font-weight: 500;
+    padding: 6px 10px;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+}
+.nav-link-custom:hover {
+    color: #E20000;
+    background: rgba(226,0,0,0.08);
+}
+
+/* Dropdown Menu */
+.dropdown-menu {
+    border: none;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.dropdown-item {
+    padding: 10px 16px;
+    transition: all 0.2s ease;
+}
+.dropdown-item:hover {
+    background: #E20000;
+    color: #fff;
+}
+
+/* =====================================================
+   CONTAINER & LAYOUT
+===================================================== */
+.container {
+    max-width: 900px;
+    width: 100%;
+    padding: 20px;
+    text-align: center;
+}
+
+/* Car Section */
+.car-section {
+    position: relative;
+    width: 100%;
+    margin-bottom: 40px;
+    background: transparent;
+    overflow: visible;
+}
+
+.car-img {
+    width: 80%;
+    max-width: 600px;
+    display: block;
+    margin: 0 auto;
+    background: transparent;
+}
+
+/* =====================================================
+   PRICE
+===================================================== */
+.price {
+    font-size: 2rem;
+    color: #e60012; /* highlight price */
+    margin-bottom: 20px;
+}
+
+/* =====================================================
+   BUTTONS
+===================================================== */
+.btn {
+    font-size: 1rem;
+    padding: 10px 15px;
+    width: 100%;
+    max-width: 300px;
+    margin: 10px 0;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.btn-success {
+    background: #000000;
+    border: none;
+    color: #ffffff;
+}
+.btn-success:hover {
+    background: #333333;
+}
+
+.btn-outline-secondary {
+    color: #000000;
+    border: 1px solid #000000;
+    background: transparent;
+}
+.btn-outline-secondary:hover {
+    background: #000000;
+    color: #ffffff;
+}
+
+/* =====================================================
+   RESPONSIVE
+===================================================== */
+@media (max-width: 600px) {
+    .car-img {
+        width: 90%;
+    }
+    .btn {
+        max-width: 100%;
+    }
+}

@@ -1,0 +1,241 @@
+/* ===== GLOBAL ===== */
+body {
+    font-family: "Poppins", Arial, sans-serif;
+    background: #f8fafc;
+    scroll-behavior: smooth;
+}
+
+/* ===== NAVBAR ===== */
+.navbar {
+    backdrop-filter: blur(10px);
+    background: rgba(255,255,255,0.95) !important;
+    border-bottom: 1px solid rgba(0,0,0,0.05);
+}
+
+.navbar-brand img {
+    height: 70px;
+    transition: transform 0.3s ease;
+}
+
+.navbar-brand img:hover {
+    transform: scale(1.05);
+}
+
+/* NAV LINKS */
+.nav-link-custom {
+    text-decoration: none;
+    color: #333;
+    font-weight: 500;
+    padding: 6px 12px;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+}
+
+.nav-link-custom:hover {
+    color: #E20000;
+    background: rgba(226,0,0,0.08);
+}
+
+.active-link {
+    color: #E20000;
+    font-weight: bold;
+    background: rgba(226,0,0,0.1);
+}
+
+/* DROPDOWNS */
+.dropdown-menu {
+    border: none;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+    border-radius: 12px;
+}
+
+.dropdown-item {
+    padding: 10px 16px;
+}
+
+.dropdown-item:hover {
+    background: #E20000;
+    color: #fff;
+}
+
+/* ===== HERO ===== */
+.hero-brochure {
+    height: 80vh;
+    background: linear-gradient(rgba(0,0,0,0.65), rgba(0,0,0,0.65));
+    animation: fadeIn 1.2s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* ===== CARDS ===== */
+.brochure-card {
+    position: relative;
+    overflow: hidden;
+    border-radius: 16px;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+    transition: transform 0.4s ease;
+}
+
+.brochure-card:hover {
+    transform: translateY(-8px);
+}
+
+.brochure-card img {
+    width: 100%;
+    height: 250px;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+}
+
+.brochure-card:hover img {
+    transform: scale(1.15);
+}
+
+/* ===== SECTIONS ===== */
+section {
+    opacity: 0;
+    transform: translateY(30px);
+    animation: slideUp 0.8s ease forwards;
+}
+
+@keyframes slideUp {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ===== FOOTER ===== */
+footer {
+    background: linear-gradient(135deg, #111, #222);
+    letter-spacing: 1px;
+}
+
+/* ===== SCROLLBAR ===== */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #E20000;
+    border-radius: 10px;
+}
+
+/* Footer */
+footer {
+    background: linear-gradient(135deg, #111, #222);
+    color: white;
+    text-align: center;
+    letter-spacing: 1px;
+    margin-top: 80px;
+    padding: 15px 0;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-thumb { background: #E20000; border-radius: 10px; }
+::-webkit-scrollbar-track { background: #eee; }
+
+/* Poster Card */
+.vehicle-poster {
+    position: relative;
+    height: 450px; /* Poster height */
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    transition: transform 0.3s ease;
+}
+
+/* Hover Effect */
+.vehicle-poster:hover {
+    transform: translateY(-10px);
+}
+
+/* Image */
+.vehicle-poster img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Dark Overlay */
+.vehicle-poster::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+        to top,
+        rgba(0,0,0,0.8),
+        rgba(0,0,0,0.2)
+    );
+}
+
+/* Text Content */
+.poster-content {
+    position: absolute;
+    bottom: 25px;
+    left: 20px;
+    right: 20px;
+    z-index: 2;
+    color: white;
+}
+
+.poster-content h4 {
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.poster-content p {
+    font-size: 14px;
+    margin-bottom: 10px;
+    opacity: 0.9;
+}
+
+.footer {
+  background-color: #000;
+  color: #fff;
+  padding: 50px 10%;
+}
+
+/* Footer */
+.footer-container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); /* Always 3 columns */
+  gap: 40px;
+}
+
+.footer-column h3 {
+  margin-bottom: 15px;
+  font-size: 18px;
+}
+
+.footer-column ul {
+  list-style: none;
+  padding: 0;
+}
+
+.footer-column ul li {
+  margin-bottom: 8px;
+}
+
+.footer-column ul li a {
+  text-decoration: none;
+  color: #ccc;
+  font-size: 14px;
+}
+
+.footer-column ul li a:hover {
+  color: #fff;
+}
+
+.footer-bottom {
+  margin-top: 40px;
+  text-align: center;
+  font-size: 13px;
+  color: #aaa;
+  border-top: 1px solid #333;
+  padding-top: 20px;
+}

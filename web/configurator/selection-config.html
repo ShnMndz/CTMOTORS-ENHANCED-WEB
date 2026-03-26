@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>CITI MOTORS - VEHICLE CONFIGURATOR</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../css/selection-config.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<!-- Navbar with Dropdowns -->
+<nav class="navbar navbar-light bg-light shadow-sm">
+  <div class="container d-flex justify-content-between align-items-center">
+
+    <!-- Logo -->
+    <a class="navbar-brand" href="../home.html">
+        <img src="../img/logo.png" alt="CITI MOTORS">
+    </a>
+
+    <!-- Navigation Links -->
+    <div class="d-flex gap-3 align-items-center">
+
+        <a href="../home.html" class="nav-link-custom">Home</a>
+
+        <!-- About Us Dropdown -->
+        <div class="dropdown">
+            <a class="nav-link-custom dropdown-toggle active-link" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                About Us
+            </a>
+            <ul class="dropdown-menu">
+                <li><a class="dropdown-item" href="../aboutus/aboutus.html#vision">Corporate Vision</a></li>
+                <li><a class="dropdown-item" href="../aboutus/aboutus.html#mission">Mission Statement</a></li>
+                <li><a class="dropdown-item" href="../aboutus/aboutus.html#history">Company History</a></li>
+            </ul>
+        </div>
+
+        <!-- Branches Dropdown -->
+        <div class="dropdown">
+            <a class="nav-link-custom dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                Branches
+            </a>
+            <ul class="dropdown-menu">
+                <li><a class="dropdown-item" href="../branches/branch.html#makati">Makati (Head Office)</a></li>
+                <li><a class="dropdown-item" href="../branches/branch.html#laspinas">Las Piñas Office</a></li>
+                <li><a class="dropdown-item" href="../branches/branch.html#alabang">Alabang Office</a></li>
+            </ul>
+        </div>
+ 
+
+       <!-- Products -->
+            <a href="../products/products.html" class="nav-link-custom">
+    Products
+</a>
+
+    <ul class="dropdown-menu">
+        <li><a class="dropdown-item" href="../products/products.html#commercial">Commercial Vehicles</a></li>
+        <li><a class="dropdown-item" href="../products/products.html#passenger">Passenger Cars</a></li>
+        <li><a class="dropdown-item" href="../products/products.html#trucks">Trucks and Buses</a></li>
+    </ul>
+</div>
+
+        <!-- Parts & Services Dropdown -->
+        <div class="dropdown">
+            <a class="nav-link-custom dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                Parts & Services
+            </a>
+            <ul class="dropdown-menu">
+                <li><a class="dropdown-item" href="../partsandservices/partsandservices.html#genuine">Genuine Parts</a></li>
+                <li><a class="dropdown-item" href="../partsandservices/partsandservices.html#service">Service & Body Shop</a></li>
+            </ul>
+        </div>
+
+        <!-- Jobs Dropdown -->
+        <div class="dropdown">
+            <a class="nav-link-custom dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                Jobs
+            </a>
+            <ul class="dropdown-menu">
+                <li><a class="dropdown-item" href="../jobs/jobs.html#accounting">Accounting Clerk</a></li>
+                <li><a class="dropdown-item" href="../jobs/jobs.html#credit">Credit & Collection Clerk</a></li>
+                <li><a class="dropdown-item" href="../jobs/jobs.html#insurance">Insurance Assistance Coordinator</a></li>
+                <li><a class="dropdown-item" href="../jobs/jobs.html#purchasing">Purchasing Clerk</a></li>
+                <li><a class="dropdown-item" href="../jobs/jobs.html#sales">Sales Executives</a></li>
+                <li><a class="dropdown-item" href="../jobs/jobs.html#marketing">Secretary</a></li>
+            </ul>
+        </div>
+
+        <a href="../contacts/contactus.html" class="nav-link-custom">Contact Us</a>
+
+    </div>
+  </div>
+</nav>
+
+<!-- HERO BANNER -->
+<section class="hero-banner">
+<div class="hero-overlay">
+<div class="container text-center hero-content">
+
+<h1>VEHICLE CONFIGURATOR</h1>
+<p>Start your journey to the perfect vehicle today.</p>
+
+</div>
+</div>
+</section>
+
+
+<!-- VEHICLES -->
+<div class="container my-5">
+
+<h2 class="text-center mb-4 section-title"><strong>SELECT VEHICLE TO CONFIGURE</strong></h2>
+
+<div class="row g-4" id="vehiclesGrid">
+
+<!-- VEHICLE TEMPLATE -->
+<div class="col-lg-4 col-md-6 product-item" data-vehicle="destinator">
+<div class="vehicle-card text-center">
+<img src="../img/cv1.png" class="img-fluid mb-3">
+<h5 class="fw-bold">DESTINATOR</h5>
+</div>
+</div>
+
+
+<div class="col-lg-4 col-md-6 product-item" data-vehicle="l300">
+<div class="vehicle-card text-center">
+<img src="../img/cv2.png" class="img-fluid mb-3">
+<h5 class="fw-bold">L300 FB EXCEED</h5>
+</div>
+</div>
+
+<div class="col-lg-4 col-md-6 product-item" data-vehicle="monterosport">
+<div class="vehicle-card text-center">
+<img src="../img/cv3.png" class="img-fluid mb-3">
+<h5 class="fw-bold">MONTERO SPORT</h5>
+</div>
+</div>
+
+<div class="col-lg-4 col-md-6 product-item" data-vehicle="triton">
+<div class="vehicle-card text-center">
+<img src="../img/cv4.png" class="img-fluid mb-3">
+<h5 class="fw-bold">TRITON</h5>
+</div>
+</div>
+
+<div class="col-lg-4 col-md-6 product-item" data-vehicle="xforce">
+<div class="vehicle-card text-center">
+<img src="../img/cv5.png" class="img-fluid mb-3">
+<h5 class="fw-bold">XFORCE</h5>
+</div>
+</div>
+
+<div class="col-lg-4 col-md-6 product-item" data-vehicle="xpander">
+<div class="vehicle-card text-center">
+<img src="../img/cv6.png" class="img-fluid mb-3">
+<h5 class="fw-bold">XPANDER</h5>
+</div>
+</div>
+
+<div class="col-lg-4 col-md-6 product-item" data-vehicle="mirage">
+<div class="vehicle-card text-center">
+<img src="../img/pc1.png" class="img-fluid mb-3">
+<h5 class="fw-bold">MIRAGE</h5>
+</div>
+</div>
+
+<div class="col-lg-4 col-md-6 product-item" data-vehicle="mirageg4">
+<div class="vehicle-card text-center">
+<img src="../img/pc2.png" class="img-fluid mb-3">
+<h5 class="fw-bold">MIRAGE G4</h5>
+</div>
+</div>
+
+<div class="col-lg-4 col-md-6 product-item" data-vehicle="fuso">
+<div class="vehicle-card text-center">
+<img src="../img/t1.png" class="img-fluid mb-3">
+<h5 class="fw-bold">CANTER</h5>
+</div>
+
+
+<!-- SCRIPT -->
+<script>
+
+const vehicleItems = document.querySelectorAll('.product-item');
+
+vehicleItems.forEach(item => {
+
+    item.addEventListener('dblclick', () => {
+
+        const vehicle = item.dataset.vehicle;
+
+        window.location.href = "configurator.html?car=" + encodeURIComponent(vehicle);
+
+    });
+
+});
+
+</script>
+
+  <div class="footer-bottom">
+    © Disclaimer: This website is made for test only by a student. No copyright
+infringement intended.
+  </div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
