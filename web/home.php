@@ -77,18 +77,17 @@
             <a href="contacts/contactus.html" class="nav-link-custom">Contact Us</a>
         </div>
 
-        
 
          <!--Login/Signup-->
         <?php if(isset($_SESSION['user'])): ?>
     <span>Welcome, <?php echo $_SESSION['user']; ?></span>
     <a href="logout.php" class="btn btn-outline-dark btn-sm">Logout</a>
-<?php else: ?>
+    <?php else: ?>
     <a href="login.php" class="btn btn-outline-danger btn-sm">Login</a>
     <a href="signup.php" class="btn btn-danger btn-sm">Sign Up</a>
-<?php endif; ?>
+    <?php endif; ?>
     </div>
-</nav>
+    </nav>
 
 <!-- Hero Section -->
 <section class="hero-brochure d-flex align-items-center text-white">

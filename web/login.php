@@ -81,13 +81,14 @@ if (isset($_POST['login'])) {
         if (password_verify($pass, $user['password'])) {
             // Store user info in session
             $_SESSION['user'] = $user['fullname'];
-            $_SESSION['role'] = $user['role']; // <-- store role
+            $_SESSION['role'] = $user['role'];
+            $_SESSION['user_id'] = $user['id'];
 
             // Redirect based on role
-            if($user['role'] == 'admin'){
-                header("Location: admin/admin_dashboard.php"); // admins go to dashboard
+            if ($user['role'] === 'admin') {
+                header("Location: admin/admin_dashboard.php"); // <-- admin page
             } else {
-                header("Location: home.php"); // regular users go to homepage
+                header("Location: home.php"); // <-- normal user page
             }
             exit();
         } else {
