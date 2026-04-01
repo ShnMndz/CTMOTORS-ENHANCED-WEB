@@ -28,18 +28,16 @@ $vehicles_result = $conn->query($sql);
 <title>CITI MOTORS - Products</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/products.css">
 <style>
 body { font-family: 'Poppins', sans-serif; background:#f8fafc; margin:0; padding:0; }
 
 /* Product grid */
 .product-item img { max-height: 180px; object-fit: cover; border-radius:8px; }
-.card-body { padding: 0.75rem; text-align:center; }
-.card-title { font-size:1rem; font-weight:600; margin-bottom:5px; }
+.product-item h5 { font-size:1rem; font-weight:600; margin-top:0.5rem; }
 
 /* HIDE PRICE */
-.card-body p {
-    display: none;
-}
+.product-item p { display: none; }
 
 /* Footer */
 .footer { background-color: #f8f9fa; padding: 30px 0; margin-top: 50px; }
@@ -134,14 +132,11 @@ input { background-color: #f8f9fa !important; }
             <?php while($row = $vehicles_result->fetch_assoc()): ?>
             <div class="col-lg-4 col-md-6 col-sm-12 product-item" data-type="<?php echo $row['vehicle_type']; ?>">
                 <a href="product-details.php?id=<?php echo $row['id']; ?>" style="text-decoration:none; color:inherit;">
-                    <div class="card h-100 shadow-sm text-center">
-                        <img src="../img/<?php echo htmlspecialchars($row['image']); ?>" 
-                             class="card-img-top" alt="<?php echo htmlspecialchars($row['model_name']); ?>" 
-                             style="height:180px; object-fit:cover;">
-                        <div class="card-body">
-                            <h5 class="mb-2"><?php echo htmlspecialchars($row['model_name']); ?></h5>
-                            <p class="fw-bold mb-0">₱<?php echo number_format($row['price'],2); ?></p>
-                        </div>
+                    <img src="../img/<?php echo htmlspecialchars($row['image']); ?>" 
+                         alt="<?php echo htmlspecialchars($row['model_name']); ?>" 
+                         style="width:100%; height:180px; object-fit:cover; border-radius:8px;">
+                    <div class="text-center mt-2">
+                        <h5 class="mb-0"><?php echo htmlspecialchars($row['model_name']); ?></h5>
                     </div>
                 </a>
             </div>

@@ -2,285 +2,84 @@
 session_start();
 include '../db.php';
 
-// Protect page: only admins
 if (!isset($_SESSION['user']) || $_SESSION['role'] !== 'admin') {
     header("Location: home.php");
     exit();
 }
 
-// ---------------------
-// UPDATE USER ROLE
-// ---------------------
-if(isset($_POST['update_role'])){
-    $id = intval($_POST['id']);
-    $role = $conn->real_escape_string($_POST['role']);
-    $conn->query("UPDATE users SET role='$role' WHERE id=$id");
-    header("Location: admin_dashboard.php");
-    exit();
-}
+$currentPage = 'dashboard'; // mark this page as active
 
-// ---------------------
-// DELETE USER
-// ---------------------
-if(isset($_GET['delete_user'])){
-    $id = intval($_GET['delete_user']);
-    if($id == $_SESSION['user_id']){
-        echo "<script>alert('You cannot delete your own account');</script>";
-    } else {
-        $conn->query("DELETE FROM users WHERE id=$id");
-        header("Location: admin_dashboard.php");
-        exit();
-    }
-}
+// FETCH STATS
+$total_users = $conn->query("SELECT COUNT(*) as total FROM users")->fetch_assoc()['total'];
 
-// ---------------------
-// HANDLE ADD/UPDATE VEHICLE
-// ---------------------
-if(isset($_POST['save_vehicle'])){
-    $id = isset($_POST['vehicle_id']) ? intval($_POST['vehicle_id']) : 0;
-    $model_name = $conn->real_escape_string($_POST['model_name']);
-    $model_variant = $conn->real_escape_string($_POST['model_variant']);
-    $vehicle_type = $conn->real_escape_string($_POST['vehicle_type']);
-    $description = $conn->real_escape_string($_POST['description']);
-    $price = floatval($_POST['price']);
-    $features = $conn->real_escape_string($_POST['features']);
+$user_counts = ['admin'=>0,'user'=>0];
+$res_roles = $conn->query("SELECT role, COUNT(*) as total FROM users GROUP BY role");
+while($row = $res_roles->fetch_assoc()) { $user_counts[$row['role']] = $row['total']; }
 
-    // Handle image upload
-    $image_file = null;
-    if(!empty($_FILES['image_file']['name'])){
-        $target_dir = "../img/";
-        $image_file = basename($_FILES['image_file']['name']);
-        $target_file = $target_dir . $image_file;
-        $ext = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
-        $allowed = ['jpg','jpeg','png','gif'];
+// VEHICLE MODEL COUNTS
+$model_counts = [];
+$res_models = $conn->query("SELECT model_name, COUNT(*) as total FROM vehicles GROUP BY model_name");
+while($row = $res_models->fetch_assoc()) { $model_counts[$row['model_name']] = $row['total']; }
 
-        if(in_array($ext, $allowed)){
-            if(!move_uploaded_file($_FILES['image_file']['tmp_name'], $target_file)){
-                $image_file = null;
-                echo "<script>alert('Error uploading image.');</script>";
-            }
-        } else {
-            $image_file = null;
-            echo "<script>alert('Invalid image type.');</script>";
-        }
-    }
-
-    // Insert or Update
-    if($id > 0){
-        $sql = $image_file ?
-            "UPDATE vehicles SET model_name='$model_name', model_variant='$model_variant', vehicle_type='$vehicle_type', description='$description', price='$price', features='$features', image='$image_file' WHERE id=$id" :
-            "UPDATE vehicles SET model_name='$model_name', model_variant='$model_variant', vehicle_type='$vehicle_type', description='$description', price='$price', features='$features' WHERE id=$id";
-        $msg = "Vehicle updated successfully!";
-    } else {
-        $sql = "INSERT INTO vehicles (model_name, model_variant, vehicle_type, description, price, features, image)
-                VALUES ('$model_name','$model_variant','$vehicle_type','$description','$price','$features','$image_file')";
-        $msg = "Vehicle added successfully!";
-    }
-
-    if($conn->query($sql)){
-        echo "<script>alert('$msg'); window.location='admin_dashboard.php';</script>";
-        exit();
-    } else {
-        echo "<script>alert('Database error: ".$conn->error."');</script>";
-    }
-}
-
-// ---------------------
-// DELETE VEHICLE
-// ---------------------
-if(isset($_GET['delete_vehicle'])){
-    $id = intval($_GET['delete_vehicle']);
-    $conn->query("DELETE FROM vehicles WHERE id=$id");
-    header("Location: admin_dashboard.php");
-    exit();
-}
-
-// ---------------------
-// FETCH USERS & VEHICLES
-// ---------------------
-$result_users = $conn->query("SELECT id, fullname, email, role, created_at FROM users ORDER BY id DESC");
-$result_vehicles = $conn->query("SELECT * FROM vehicles ORDER BY id DESC");
-
-$total_users = $result_users->num_rows;
-$total_vehicles = $result_vehicles->num_rows;
+// TOTAL VEHICLES
+$total_vehicles = array_sum($model_counts);
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Admin Dashboard - CITI MOTORS</title>
+<title>Admin Dashboard</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 <style>
-body { font-family:'Poppins',sans-serif; background:#f8f9fa; }
-.sidebar { height:100vh;width:240px;position:fixed;top:0;left:0;background:#dc3545;color:#fff;padding:20px; }
-.sidebar h4{text-align:center;margin-bottom:15px;}
-.sidebar a{display:block;color:#fff;text-decoration:none;padding:10px;margin-bottom:5px;border-radius:6px;}
-.sidebar a:hover{background:#c82333;}
-.content{margin-left:260px;padding:20px;}
-.table th,.table td{vertical-align:middle;}
-.form-control,.btn{border-radius:6px;}
-.product-img{max-width:80px; max-height:60px; object-fit:contain;}
+body {background:#f8f9fa;}
+.sidebar {width:230px;position:fixed;height:100%;background:#dc3545;color:#fff;padding:20px;}
+.sidebar a{color:#fff;display:block;margin:10px 0;text-decoration:none;padding:5px;}
+.sidebar a.active{background:#b52a34;border-radius:5px;}
+.content {margin-left:250px;padding:20px;}
+.card {border-left:5px solid #dc3545;}
 </style>
 </head>
 <body>
+
 <div class="sidebar">
-    <h4>Admin Panel</h4>
-    <a href="#" onclick="showSection('dashboard')">Dashboard</a>
-    <a href="#" onclick="showSection('users')">Users</a>
-    <a href="#" onclick="showSection('vehicles')">Vehicles</a>
-    <a href="../logout.php">Logout</a>
+<h4>Admin Panel</h4>
+<a href="admin_dashboard.php" class="<?= $currentPage=='dashboard'?'active':'' ?>">Dashboard</a>
+<a href="admin_users.php" class="<?= $currentPage=='users'?'active':'' ?>">Manage Users</a>
+<a href="admin_vehicles.php" class="<?= $currentPage=='vehicles'?'active':'' ?>">Manage Vehicles</a>
+<a href="../logout.php">Logout</a>
 </div>
 
 <div class="content">
-    <!-- DASHBOARD -->
-    <div id="dashboardSection">
-        <h2>Welcome, <?php echo htmlspecialchars($_SESSION['user']); ?> (Admin)</h2>
-        <p>Total Users: <strong><?php echo $total_users; ?></strong></p>
-        <p>Total Vehicles: <strong><?php echo $total_vehicles; ?></strong></p>
-        <hr>
-    </div>
+<h2>Welcome, <?= htmlspecialchars($_SESSION['user']) ?></h2>
 
-    <!-- USERS -->
-    <div id="usersSection" style="display:none;">
-        <h4>User List</h4>
-        <div class="table-responsive">
-        <table class="table table-striped table-hover">
-            <thead class="table-danger">
-                <tr><th>#</th><th>Name</th><th>Email</th><th>Role</th><th>Registered</th><th>Action</th></tr>
-            </thead>
-            <tbody>
-            <?php if($total_users>0): while($user=$result_users->fetch_assoc()): ?>
-                <tr>
-                    <td><?php echo $user['id']; ?></td>
-                    <td><?php echo htmlspecialchars($user['fullname']); ?></td>
-                    <td><?php echo htmlspecialchars($user['email']); ?></td>
-                    <td>
-                        <form method="POST" class="d-flex gap-2">
-                            <input type="hidden" name="id" value="<?php echo $user['id']; ?>">
-                            <select name="role" class="form-select form-select-sm">
-                                <option value="user" <?php if($user['role']=='user') echo 'selected'; ?>>User</option>
-                                <option value="admin" <?php if($user['role']=='admin') echo 'selected'; ?>>Admin</option>
-                            </select>
-                            <button name="update_role" class="btn btn-sm btn-primary">Save</button>
-                        </form>
-                    </td>
-                    <td><?php echo $user['created_at']; ?></td>
-                    <td><a href="?delete_user=<?php echo $user['id']; ?>" class="btn btn-danger btn-sm" onclick="return confirm('Delete this user?')">Delete</a></td>
-                </tr>
-            <?php endwhile; else: ?>
-                <tr><td colspan="6" class="text-center">No users found</td></tr>
-            <?php endif; ?>
-            </tbody>
-        </table>
-        </div>
-    </div>
+<div class="row mb-4">
+<div class="col-md-3"><div class="card p-3"><h6>Total Users</h6><h3><?= $total_users ?></h3></div></div>
+<div class="col-md-3"><div class="card p-3"><h6>Admins</h6><h3><?= $user_counts['admin'] ?></h3></div></div>
+<div class="col-md-3"><div class="card p-3"><h6>Users</h6><h3><?= $user_counts['user'] ?></h3></div></div>
+</div>
 
-    <!-- VEHICLES -->
-    <div id="vehiclesSection" style="display:none;">
-        <h4>Vehicle List</h4>
-        <button class="btn btn-success mb-3" onclick="openEditModal();">+ Add Vehicle</button>
-        <div class="table-responsive">
-        <table class="table table-striped table-hover">
-            <thead class="table-success">
-                <tr>
-                    <th>#</th><th>Name</th><th>Variant</th><th>Type</th><th>Description</th>
-                    <th>Price</th><th>Features</th><th>Image</th><th>Action</th>
-                </tr>
-            </thead>
-            <tbody>
-            <?php if($total_vehicles>0): while($v=$result_vehicles->fetch_assoc()): ?>
-                <tr>
-                    <td><?php echo $v['id']; ?></td>
-                    <td><?php echo htmlspecialchars($v['model_name']); ?></td>
-                    <td><?php echo htmlspecialchars($v['model_variant']); ?></td>
-                    <td><?php echo htmlspecialchars($v['vehicle_type']); ?></td>
-                    <td><?php echo htmlspecialchars($v['description']); ?></td>
-                    <td>₱<?php echo number_format($v['price'],2); ?></td>
-                    <td><?php echo htmlspecialchars($v['features']); ?></td>
-                    <td>
-                        <?php if(!empty($v['image'])): ?>
-                            <img src="../img/<?php echo htmlspecialchars($v['image']); ?>" class="product-img" alt="Vehicle Image">
-                        <?php else: ?> N/A <?php endif; ?>
-                    </td>
-                    <td>
-                        <a href="?delete_vehicle=<?php echo $v['id']; ?>" class="btn btn-danger btn-sm" onclick="return confirm('Delete this vehicle?')">Delete</a>
-                        <a href="#" class="btn btn-warning btn-sm"
-                           onclick="openEditModal('<?php echo $v['id']; ?>','<?php echo htmlspecialchars($v['model_name'], ENT_QUOTES); ?>','<?php echo htmlspecialchars($v['model_variant'], ENT_QUOTES); ?>','<?php echo htmlspecialchars($v['vehicle_type'], ENT_QUOTES); ?>','<?php echo htmlspecialchars($v['description'], ENT_QUOTES); ?>','<?php echo $v['price']; ?>','<?php echo htmlspecialchars($v['features'], ENT_QUOTES); ?>','<?php echo htmlspecialchars($v['image'], ENT_QUOTES); ?>')">Edit</a>
-                    </td>
-                </tr>
-            <?php endwhile; else: ?>
-                <tr><td colspan="9" class="text-center">No vehicles found</td></tr>
-            <?php endif; ?>
-            </tbody>
-        </table>
-        </div>
+<hr>
+<h5>Vehicle Breakdown</h5>
+<div class="row">
+<!-- Total Vehicles card first -->
+<div class="col-md-3">
+    <div class="card p-3 mb-2">
+        <h6>Total Vehicles</h6>
+        <h4><?= $total_vehicles ?></h4>
     </div>
 </div>
 
-<!-- VEHICLE MODAL -->
-<div class="modal fade" id="editVehicleModal" tabindex="-1" aria-hidden="true">
-  <div class="modal-dialog modal-lg">
-    <div class="modal-content">
-      <form method="POST" enctype="multipart/form-data">
-        <div class="modal-header">
-          <h5 class="modal-title">Vehicle</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-        </div>
-        <div class="modal-body">
-            <input type="hidden" name="vehicle_id" id="modal_vehicle_id">
-            <input type="text" name="model_name" id="modal_model_name" class="form-control mb-2" placeholder="Model Name" required>
-            <input type="text" name="model_variant" id="modal_model_variant" class="form-control mb-2" placeholder="Variant" required>
-            <select name="vehicle_type" id="modal_vehicle_type" class="form-select mb-2" required>
-                <option value="passenger">Passenger</option>
-                <option value="commercial">Commercial</option>
-            </select>
-            <textarea name="description" id="modal_description" class="form-control mb-2" placeholder="Description" required></textarea>
-            <input type="number" step="0.01" name="price" id="modal_price" class="form-control mb-2" placeholder="Price" required>
-            <textarea name="features" id="modal_features" class="form-control mb-2" placeholder="Features"></textarea>
-            <img id="modal_current_image" style="max-width:80px; max-height:60px; margin-bottom:5px; display:none;">
-            <input type="file" name="image_file" class="form-control mb-2">
-        </div>
-        <div class="modal-footer">
-          <button name="save_vehicle" class="btn btn-primary">Save</button>
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-        </div>
-      </form>
+<!-- Individual model counts -->
+<?php foreach($model_counts as $model=>$count): ?>
+<div class="col-md-3">
+    <div class="card p-3 mb-2">
+        <h6><?= htmlspecialchars($model) ?></h6>
+        <h4><?= $count ?></h4>
     </div>
-  </div>
+</div>
+<?php endforeach; ?>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-<script>
-function showSection(section){
-    ['dashboardSection','usersSection','vehiclesSection'].forEach(s=>document.getElementById(s).style.display='none');
-    document.getElementById(section+'Section').style.display='block';
-}
-showSection('dashboard');
-
-function openEditModal(id='',name='',variant='',type='',desc='',price='',features='',img=''){
-    document.getElementById('modal_vehicle_id').value = id || '';
-    document.getElementById('modal_model_name').value = name || '';
-    document.getElementById('modal_model_variant').value = variant || '';
-    document.getElementById('modal_description').value = desc || '';
-    document.getElementById('modal_price').value = price || '';
-    document.getElementById('modal_features').value = features || '';
-
-    // Vehicle type select
-    const typeSelect = document.getElementById('modal_vehicle_type');
-    typeSelect.value = type || 'passenger';
-
-    // Image preview
-    const imgEl = document.getElementById('modal_current_image');
-    if(img){ 
-        imgEl.src='../img/'+img; 
-        imgEl.style.display='block'; 
-    } else { 
-        imgEl.style.display='none'; 
-    }
-
-    // Show modal
-    new bootstrap.Modal(document.getElementById('editVehicleModal')).show();
-}
-</script>
+</div>
 </body>
 </html>
