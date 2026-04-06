@@ -21,7 +21,7 @@
 <!-- Navbar -->
 <nav class="navbar navbar-light bg-light shadow-sm">
     <div class="container d-flex justify-content-between align-items-center">
-        <a class="navbar-brand" href="home.html">
+        <a class="navbar-brand" href="home.php">
             <img src="img/logo.png" alt="CITI MOTORS">
         </a>
         <div class="d-flex gap-3 align-items-center">
