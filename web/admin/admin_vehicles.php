@@ -7,13 +7,12 @@ if (!isset($_SESSION['user']) || $_SESSION['role'] !== 'admin') {
     exit();
 }
 
-$currentPage = 'vehicles'; // sidebar highlight
+$currentPage = 'vehicles';
 
 // ---------------------
 // ADD / UPDATE VEHICLE
 // ---------------------
 if(isset($_POST['save_vehicle'])){
-
     $id = intval($_POST['vehicle_id'] ?? 0);
     $model_name = $_POST['model_name'];
     $model_variant = $_POST['model_variant'];
@@ -22,7 +21,6 @@ if(isset($_POST['save_vehicle'])){
     $features = $_POST['features'];
     $image_file = null;
 
-    // Handle image upload
     if(!empty($_FILES['image_file']['name'])){
         $target_dir = "../img/";
         $image_file = time().'_'.basename($_FILES['image_file']['name']);
@@ -30,7 +28,6 @@ if(isset($_POST['save_vehicle'])){
     }
 
     if($id > 0){
-        // UPDATE VEHICLE
         if($image_file){
             $sql = "UPDATE vehicles SET model_name=?, model_variant=?, vehicle_type=?, price=?, features=?, image=? WHERE id=?";
             $stmt = $conn->prepare($sql);
@@ -41,7 +38,6 @@ if(isset($_POST['save_vehicle'])){
             $stmt->bind_param("sssdsi", $model_name, $model_variant, $vehicle_type, $price, $features, $id);
         }
     } else {
-        // INSERT NEW VEHICLE
         $sql = "INSERT INTO vehicles (model_name, model_variant, vehicle_type, price, features, image) VALUES (?,?,?,?,?,?)";
         $stmt = $conn->prepare($sql);
         if(!$image_file) $image_file = null;
@@ -67,7 +63,7 @@ if(isset($_GET['delete_vehicle'])){
 }
 
 // ---------------------
-// FETCH VEHICLES (with optional search & filter)
+// FETCH VEHICLES
 // ---------------------
 $search = $_GET['search'] ?? '';
 $filter = $_GET['filter'] ?? '';
@@ -103,50 +99,38 @@ $result = $stmt->get_result();
 ?>
 
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+<meta charset="UTF-8">
 <title>Admin - Vehicles</title>
+
+<!-- BOOTSTRAP -->
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-<style>
-body{background:#f8f9fa;}
-.sidebar{
-    width:240px;
-    height:100vh;
-    position:fixed;
-    background:#dc3545;
-    color:#fff;
-    padding:20px;
-}
-.sidebar a{
-    color:#fff;
-    display:block;
-    margin:10px 0;
-    text-decoration:none;
-    padding:5px;
-}
-.sidebar a.active{background:#b52a34;border-radius:5px;}
-.content{margin-left:260px;padding:20px;}
-.product-img{width:80px;}
-.features-box{
-    max-width:200px;
-    white-space:pre-wrap;
-}
-#image-preview{
-    max-width:100%;
-    margin-top:10px;
-}
-</style>
+
+<!-- FONT AWESOME -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+
+<!-- CUSTOM CSS -->
+<link href="admin_vehicles.css" rel="stylesheet">
 </head>
 
 <body>
 
 <!-- SIDEBAR -->
 <div class="sidebar">
-<h4>Admin Panel</h4>
-<a href="admin_dashboard.php" class="<?= $currentPage=='dashboard'?'active':'' ?>">Dashboard</a>
-<a href="admin_users.php" class="<?= $currentPage=='users'?'active':'' ?>">Manage Users</a>
-<a href="admin_vehicles.php" class="<?= $currentPage=='vehicles'?'active':'' ?>">Manage Vehicles</a>
-<a href="../logout.php">Logout</a>
+    <h4>Admin Panel</h4>
+    <a href="admin_dashboard.php" class="<?= $currentPage=='dashboard'?'active':'' ?>">
+        <i class="fas fa-chart-line"></i> Dashboard
+    </a>
+    <a href="admin_users.php" class="<?= $currentPage=='users'?'active':'' ?>">
+        <i class="fas fa-users"></i> Manage Users
+    </a>
+    <a href="admin_vehicles.php" class="<?= $currentPage=='vehicles'?'active':'' ?>">
+        <i class="fas fa-car"></i> Manage Vehicles
+    </a>
+    <a href="../logout.php">
+        <i class="fas fa-sign-out-alt"></i> Logout
+    </a>
 </div>
 
 <!-- CONTENT -->
@@ -221,7 +205,7 @@ data-image="<?= $v['image'] ?>"
 <input type="hidden" name="vehicle_id" id="id">
 <input type="text" name="model_name" id="name" class="form-control mb-2" placeholder="Model Name" required>
 <input type="text" name="model_variant" id="variant" class="form-control mb-2" placeholder="Variant">
-<select name="vehicle_type" id="type" class="form-control mb-2">
+<select name="vehicle_type" id="type" class="form-select mb-2">
 <option value="passenger">Passenger</option>
 <option value="commercial">Commercial</option>
 </select>
@@ -277,7 +261,7 @@ document.querySelectorAll('.edit-btn').forEach(btn=>{
     }
 });
 
-// Image preview on file select
+// Image preview
 function previewImage(event){
     const imgPreview = document.getElementById('image-preview');
     imgPreview.src = URL.createObjectURL(event.target.files[0]);

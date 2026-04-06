@@ -7,7 +7,7 @@ if (!isset($_SESSION['user']) || $_SESSION['role'] !== 'admin') {
     exit();
 }
 
-$currentPage = 'users'; // sidebar highlight
+$currentPage = 'users';
 
 // ---------------------
 // UPDATE USER ROLE
@@ -36,53 +36,71 @@ if(isset($_GET['delete_user'])){
 }
 
 // ---------------------
-// FETCH USERS
+// FETCH USERS & STATS
 // ---------------------
 $result_users = $conn->query("SELECT * FROM users ORDER BY id DESC");
-?>
 
+// User stats
+$total_users = $conn->query("SELECT COUNT(*) as total FROM users")->fetch_assoc()['total'];
+$total_admins = $conn->query("SELECT COUNT(*) as total FROM users WHERE role='admin'")->fetch_assoc()['total'];
+$total_regular = $conn->query("SELECT COUNT(*) as total FROM users WHERE role='user'")->fetch_assoc()['total'];
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <title>Admin - Users</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-<style>
-body {background:#f8f9fa;}
-.sidebar {
-    width:230px;
-    position:fixed;
-    height:100%;
-    background:#dc3545;
-    color:#fff;
-    padding:20px;
-}
-.sidebar a {
-    color:#fff;
-    display:block;
-    margin:10px 0;
-    text-decoration:none;
-    padding:5px;
-}
-.sidebar a.active {background:#b52a34; border-radius:5px;}
-.content {margin-left:250px; padding:20px;}
-</style>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+<link rel="stylesheet" href="users.css">
 </head>
 <body>
 
 <!-- SIDEBAR -->
 <div class="sidebar">
-<h4>Admin Panel</h4>
-<a href="admin_dashboard.php" class="<?= $currentPage=='dashboard'?'active':'' ?>">Dashboard</a>
-<a href="admin_users.php" class="<?= $currentPage=='users'?'active':'' ?>">Manage Users</a>
-<a href="admin_vehicles.php" class="<?= $currentPage=='vehicles'?'active':'' ?>">Manage Vehicles</a>
-<a href="../logout.php">Logout</a>
+    <h4>Admin Panel</h4>
+    <a href="admin_dashboard.php" class="<?= $currentPage=='dashboard'?'active':'' ?>">
+        <i class="fas fa-chart-line"></i> Dashboard
+    </a>
+    <a href="admin_users.php" class="<?= $currentPage=='users'?'active':'' ?>">
+        <i class="fas fa-users"></i> Manage Users
+    </a>
+    <a href="admin_vehicles.php" class="<?= $currentPage=='vehicles'?'active':'' ?>">
+        <i class="fas fa-car"></i> Manage Vehicles
+    </a>
+    <a href="../logout.php">
+        <i class="fas fa-sign-out-alt"></i> Logout
+    </a>
 </div>
 
 <!-- CONTENT -->
 <div class="content">
+
 <h2>Users</h2>
 
+<!-- USER STAT CARDS -->
+<div class="row mb-4">
+    <div class="col-md-4">
+        <div class="card stat-card">
+            <h2><?= $total_users ?></h2>
+            <small>Total Users</small>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card stat-card">
+            <h2><?= $total_admins ?></h2>
+            <small>Admins</small>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card stat-card">
+            <h2><?= $total_regular ?></h2>
+            <small>Users</small>
+        </div>
+    </div>
+</div>
+
+<!-- SEARCH & FILTER -->
 <div class="row mb-3">
     <div class="col-md-4">
         <input type="text" id="searchName" class="form-control" placeholder="Search by Name">
@@ -96,6 +114,7 @@ body {background:#f8f9fa;}
     </div>
 </div>
 
+<!-- USER TABLE -->
 <table class="table table-bordered" id="usersTable">
 <thead class="table-success">
 <tr>
@@ -126,7 +145,6 @@ data-role="<?= $u['role'] ?>"
 <?php endwhile; ?>
 </tbody>
 </table>
-</div>
 
 <!-- MODAL -->
 <div class="modal fade" id="modal">

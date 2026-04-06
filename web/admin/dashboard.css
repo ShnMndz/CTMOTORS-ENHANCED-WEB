@@ -1,0 +1,74 @@
+body {
+    background: #f4f6f9;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+/* SIDEBAR */
+.sidebar {
+    width: 240px;
+    position: fixed;
+    height: 100%;
+    background: linear-gradient(180deg, #dc3545, #b52a34);
+    color: #fff;
+    padding: 20px;
+}
+
+.sidebar a {
+    color: #fff;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 10px 0;
+    text-decoration: none;
+    padding: 10px;
+    border-radius: 8px;
+}
+
+.sidebar a.active,
+.sidebar a:hover {
+    background: rgba(0,0,0,0.2);
+}
+
+/* CONTENT */
+.content {
+    margin-left: 260px;
+    padding: 30px;
+}
+
+/* CARD STYLE */
+.card {
+    border: none;
+    border-radius: 15px;
+    padding: 20px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+    transition: 0.3s;
+    text-align: center;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+}
+
+/* STAT STYLE (TOP NUMBER) */
+.stat-card h2 {
+    font-size: 28px;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.stat-card small {
+    color: #777;
+    letter-spacing: 1px;
+}
+
+/* MOBILE */
+@media (max-width: 768px) {
+    .sidebar {
+        position: relative;
+        width: 100%;
+    }
+
+    .content {
+        margin-left: 0;
+    }
+}

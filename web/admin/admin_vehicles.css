@@ -1,0 +1,65 @@
+body {
+    background:#f4f6f9;
+    font-family:'Segoe UI',sans-serif;
+}
+
+/* SIDEBAR */
+.sidebar {
+    width:240px;
+    height:100vh;
+    position:fixed;
+    background:linear-gradient(180deg,#dc3545,#b52a34);
+    color:#fff;
+    padding:20px;
+}
+
+.sidebar h4 {
+    font-weight:bold;
+    margin-bottom:20px;
+}
+
+.sidebar a {
+    color:#fff;
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin:10px 0;
+    text-decoration:none;
+    padding:10px;
+    border-radius:8px;
+    transition:0.3s;
+}
+
+.sidebar a:hover {
+    background:rgba(255,255,255,0.15);
+}
+
+.sidebar a.active {
+    background:rgba(0,0,0,0.2);
+}
+
+/* CONTENT */
+.content {
+    margin-left:260px;
+    padding:30px;
+}
+
+/* TABLE */
+.table img.product-img {
+    width:80px;
+}
+
+.features-box {
+    max-width:200px;
+    white-space:pre-wrap;
+}
+
+#image-preview{
+    max-width:100%;
+    margin-top:10px;
+}
+
+/* MODAL */
+.modal .form-control, .modal .form-select {
+    margin-bottom:10px;
+}

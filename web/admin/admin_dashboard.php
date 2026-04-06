@@ -7,7 +7,7 @@ if (!isset($_SESSION['user']) || $_SESSION['role'] !== 'admin') {
     exit();
 }
 
-$currentPage = 'dashboard'; // mark this page as active
+$currentPage = 'dashboard';
 
 // FETCH STATS
 $total_users = $conn->query("SELECT COUNT(*) as total FROM users")->fetch_assoc()['total'];
@@ -29,57 +29,93 @@ $total_vehicles = array_sum($model_counts);
 <head>
 <meta charset="UTF-8">
 <title>Admin Dashboard</title>
+
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-<style>
-body {background:#f8f9fa;}
-.sidebar {width:230px;position:fixed;height:100%;background:#dc3545;color:#fff;padding:20px;}
-.sidebar a{color:#fff;display:block;margin:10px 0;text-decoration:none;padding:5px;}
-.sidebar a.active{background:#b52a34;border-radius:5px;}
-.content {margin-left:250px;padding:20px;}
-.card {border-left:5px solid #dc3545;}
-</style>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+
+<!-- LINK EXTERNAL CSS -->
+<link rel="stylesheet" href="dashboard.css">
+
 </head>
 <body>
 
+<!-- SIDEBAR -->
 <div class="sidebar">
-<h4>Admin Panel</h4>
-<a href="admin_dashboard.php" class="<?= $currentPage=='dashboard'?'active':'' ?>">Dashboard</a>
-<a href="admin_users.php" class="<?= $currentPage=='users'?'active':'' ?>">Manage Users</a>
-<a href="admin_vehicles.php" class="<?= $currentPage=='vehicles'?'active':'' ?>">Manage Vehicles</a>
-<a href="../logout.php">Logout</a>
+    <h4>Admin Panel</h4>
+
+    <a href="admin_dashboard.php" class="<?= $currentPage=='dashboard'?'active':'' ?>">
+        <i class="fas fa-chart-line"></i> Dashboard
+    </a>
+
+    <a href="admin_users.php">
+        <i class="fas fa-users"></i> Manage Users
+    </a>
+
+    <a href="admin_vehicles.php">
+        <i class="fas fa-car"></i> Manage Vehicles
+    </a>
+
+    <a href="../logout.php">
+        <i class="fas fa-sign-out-alt"></i> Logout
+    </a>
 </div>
 
+<!-- CONTENT -->
 <div class="content">
+
 <h2>Welcome, <?= htmlspecialchars($_SESSION['user']) ?></h2>
 
+<!-- USER STATS -->
 <div class="row mb-4">
-<div class="col-md-3"><div class="card p-3"><h6>Total Users</h6><h3><?= $total_users ?></h3></div></div>
-<div class="col-md-3"><div class="card p-3"><h6>Admins</h6><h3><?= $user_counts['admin'] ?></h3></div></div>
-<div class="col-md-3"><div class="card p-3"><h6>Users</h6><h3><?= $user_counts['user'] ?></h3></div></div>
+
+    <div class="col-md-4">
+        <div class="card stat-card">
+            <h2><?= $total_users ?></h2>
+            <small>Total Users</small>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card stat-card">
+            <h2><?= $user_counts['admin'] ?></h2>
+            <small>Admins</small>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card stat-card">
+            <h2><?= $user_counts['user'] ?></h2>
+            <small>Users</small>
+        </div>
+    </div>
+
 </div>
 
 <hr>
+
 <h5>Vehicle Breakdown</h5>
+
 <div class="row">
-<!-- Total Vehicles card first -->
+
 <div class="col-md-3">
-    <div class="card p-3 mb-2">
-        <h6>Total Vehicles</h6>
-        <h4><?= $total_vehicles ?></h4>
+    <div class="card stat-card">
+        <h2><?= $total_vehicles ?></h2>
+        <small>Total Vehicles</small>
     </div>
 </div>
 
-<!-- Individual model counts -->
 <?php foreach($model_counts as $model=>$count): ?>
 <div class="col-md-3">
-    <div class="card p-3 mb-2">
-        <h6><?= htmlspecialchars($model) ?></h6>
-        <h4><?= $count ?></h4>
+    <div class="card stat-card">
+        <h2><?= $count ?></h2>
+        <small><?= htmlspecialchars($model) ?></small>
     </div>
 </div>
 <?php endforeach; ?>
+
 </div>
 
 </div>
+
 </body>
 </html>
