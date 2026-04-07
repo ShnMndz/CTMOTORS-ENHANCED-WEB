@@ -2,6 +2,8 @@
 session_start();
 include '../db.php';
 
+
+
 // Check if admin (optional read-only mode)
 $isAdmin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
 
@@ -21,6 +23,9 @@ if($filter_type === 'passenger' || $filter_type === 'commercial'){
 $sql .= " ORDER BY id ASC";
 $vehicles_result = $conn->query($sql);
 ?>
+
+<?php include '../includes/navbar.php'; ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -30,6 +35,8 @@ $vehicles_result = $conn->query($sql);
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../css/products.css">
 <style>
+
+    
 body { font-family: 'Poppins', sans-serif; background:#f8fafc; margin:0; padding:0; }
 
 /* Product grid */
@@ -60,53 +67,7 @@ input { background-color: #f8f9fa !important; }
 </head>
 <body>
 
-<!-- Navbar -->
-<nav class="navbar navbar-light bg-light shadow-sm">
-  <div class="container d-flex justify-content-between align-items-center">
-    <a class="navbar-brand" href="../home.php">
-        <img src="../img/logo.png" alt="CITI MOTORS" style="height:50px;">
-    </a>
-    <div class="d-flex gap-3 align-items-center">
-        <a href="../home.php" class="nav-link-custom">Home</a>
-        <div class="dropdown">
-            <a class="nav-link-custom dropdown-toggle" href="#" data-bs-toggle="dropdown">About Us</a>
-            <ul class="dropdown-menu">
-                <li><a class="dropdown-item" href="../aboutus/aboutus.html#vision">Corporate Vision</a></li>
-                <li><a class="dropdown-item" href="../aboutus/aboutus.html#mission">Mission Statement</a></li>
-                <li><a class="dropdown-item" href="../aboutus/aboutus.html#history">Company History</a></li>
-            </ul>
-        </div>
-        <div class="dropdown">
-            <a class="nav-link-custom dropdown-toggle" href="#" data-bs-toggle="dropdown">Branches</a>
-            <ul class="dropdown-menu">
-                <li><a class="dropdown-item" href="../branches/branch.html#makati">Makati (Head Office)</a></li>
-                <li><a class="dropdown-item" href="../branches/branch.html#laspinas">Las Piñas Office</a></li>
-                <li><a class="dropdown-item" href="../branches/branch.html#alabang">Alabang Office</a></li>
-            </ul>
-        </div>
-        <a class="nav-link-custom active-link" href="products.php">Products</a>
-        <div class="dropdown">
-            <a class="nav-link-custom dropdown-toggle" href="#" data-bs-toggle="dropdown">Parts & Services</a>
-            <ul class="dropdown-menu">
-                <li><a class="dropdown-item" href="../partsandservices/partsandservices.html#genuineparts">Genuine Parts</a></li>
-                <li><a class="dropdown-item" href="../partsandservices/partsandservices.html#servicebody">Service & Body Shop</a></li>
-            </ul>
-        </div>
-        <div class="dropdown">
-            <a class="nav-link-custom dropdown-toggle" href="#" data-bs-toggle="dropdown">Jobs</a>
-            <ul class="dropdown-menu">
-                <li><a class="dropdown-item" href="../jobs/jobs.html#accounting">Accounting Clerk</a></li>
-                <li><a class="dropdown-item" href="../jobs/jobs.html#credit">Credit & Collection Clerk</a></li>
-                <li><a class="dropdown-item" href="../jobs/jobs.html#insurance">Insurance Assistance Coordinator</a></li>
-                <li><a class="dropdown-item" href="../jobs/jobs.html#purchase">Purchasing Clerk</a></li>
-                <li><a class="dropdown-item" href="../jobs/jobs.html#sales">Sales Executives</a></li>
-                <li><a class="dropdown-item" href="../jobs/jobs.html#secretary">Secretary</a></li>
-            </ul>
-        </div>
-        <a href="../contacts/contactus.html" class="nav-link-custom">Contact Us</a>
-    </div>
-  </div>
-</nav>
+
 
 <!-- Search + Filter -->
 <div class="container my-4">

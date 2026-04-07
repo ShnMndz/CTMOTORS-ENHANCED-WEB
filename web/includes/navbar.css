@@ -1,0 +1,37 @@
+/* ===== Navbar ===== */
+.navbar {
+    position: sticky;
+    top: 0;
+    z-index: 9999;
+    backdrop-filter: blur(10px);
+    background: rgba(255,255,255,0.95) !important;
+    border-bottom: 1px solid rgba(0,0,0,0.05);
+}
+
+.navbar-brand img {
+    height: 70px;
+    transition: transform 0.3s ease;
+}
+.navbar-brand img:hover { transform: scale(1.05); }
+
+.nav-link-custom {
+    text-decoration: none;
+    color: #333;
+    font-weight: 500;
+    padding: 6px 12px;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+}
+.nav-link-custom:hover { color: #E20000; background: rgba(226,0,0,0.08); }
+.active-link { color: #E20000; font-weight: bold; background: rgba(226,0,0,0.1); }
+
+/* Dropdown */
+.dropdown-menu {
+    border: none;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+    border-radius: 12px;
+    overflow: hidden;
+    z-index: 10000;
+}
+.dropdown-item { padding: 10px 16px; transition: all 0.2s ease; }
+.dropdown-item:hover { background: #E20000; color: #fff; }

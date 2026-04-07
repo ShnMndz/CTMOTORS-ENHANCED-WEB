@@ -1,4 +1,7 @@
-<?php session_start(); ?>
+<?php
+session_start(); // MUST be first
+include 'db.php'; // or wherever your DB connection is
+?>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -9,84 +12,16 @@
 <!-- Bootstrap CSS -->
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="home.css">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
-
+<link rel="stylesheet" href="css/navbar.css">
+<link rel="stylesheet" href="home.css">
 
 </head>
 <body>
   
-
-<!-- Navbar -->
-<nav class="navbar navbar-light bg-light shadow-sm">
-    <div class="container d-flex justify-content-between align-items-center">
-        <a class="navbar-brand" href="home.php">
-            <img src="img/logo.png" alt="CITI MOTORS">
-        </a>
-        <div class="d-flex gap-3 align-items-center">
-            <a href="home.html" class="nav-link-custom active-link">Home</a>
-
-            <!-- About Us -->
-            <div class="dropdown">
-                <a class="nav-link-custom dropdown-toggle" href="#" data-bs-toggle="dropdown">About Us</a>
-                <ul class="dropdown-menu">
-                    <li><a class="dropdown-item" href="aboutus/aboutus.html#vision">Corporate Vision</a></li>
-                    <li><a class="dropdown-item" href="aboutus/aboutus.html#mission">Mission Statement</a></li>
-                    <li><a class="dropdown-item" href="aboutus/aboutus.html#history">Company History</a></li>
-                </ul>
-            </div>
-
-            <!-- Customer Tools -->
-            <div class="dropdown">
-                <a class="nav-link-custom dropdown-toggle" href="#" data-bs-toggle="dropdown">Customer Tools</a>
-                <ul class="dropdown-menu">
-                    <li><a class="dropdown-item" href="tools/vehicle_price_list.php">Price List</a></li>
-                    <li><a class="dropdown-item" href="branches/branch.html#laspinas">Configurator</a></li>
-                </ul>
-            </div>
-
-            <!-- Products -->
-            <a href="products/products.php" class="nav-link-custom">
-    Products
-</a>
-
-            <!-- Parts & Services -->
-            <div class="dropdown">
-                <a class="nav-link-custom dropdown-toggle" href="#" data-bs-toggle="dropdown">Parts & Services</a>
-                <ul class="dropdown-menu">
-                    <li><a class="dropdown-item" href="partsandservices/partsandservices.html#genuineparts">Genuine Parts</a></li>
-                    <li><a class="dropdown-item" href="partsandservices/partsandservices.html#servicebody">Service & Body Shop</a></li>
-                </ul>
-            </div>
-
-            <!-- Jobs -->
-            <div class="dropdown">
-                <a class="nav-link-custom dropdown-toggle" href="#" data-bs-toggle="dropdown">Jobs</a>
-                <ul class="dropdown-menu">
-                    <li><a class="dropdown-item" href="jobs/jobs.html#accounting">Accounting Clerk</a></li>
-                    <li><a class="dropdown-item" href="jobs/jobs.html#credit">Credit & Collection Clerk</a></li>
-                    <li><a class="dropdown-item" href="jobs/jobs.html#insurance">Insurance Assistance Coordinator</a></li>
-                    <li><a class="dropdown-item" href="jobs/jobs.html#purchase">Purchasing Clerk</a></li>
-                    <li><a class="dropdown-item" href="jobs/jobs.html#sales">Sales Executives</a></li>
-                    <li><a class="dropdown-item" href="jobs/jobs.html#secretary">Secretary</a></li>
-                </ul>
-            </div>
-
-            <a href="contacts/contactus.html" class="nav-link-custom">Contact Us</a>
-        </div>
-
-
-         <!--Login/Signup-->
-        <?php if(isset($_SESSION['user'])): ?>
-    <span>Welcome, <?php echo $_SESSION['user']; ?></span>
-    <a href="logout.php" class="btn btn-outline-dark btn-sm">Logout</a>
-    <?php else: ?>
-    <a href="login.php" class="btn btn-outline-danger btn-sm">Login</a>
-    <a href="signup.php" class="btn btn-danger btn-sm">Sign Up</a>
-    <?php endif; ?>
-    </div>
-    </nav>
+<!-- PHP -->
+<?php include 'includes/navbar.php'; ?>
 
 <!-- Hero Section -->
 <section class="hero-brochure d-flex align-items-center text-white">
