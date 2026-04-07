@@ -37,13 +37,12 @@
                 </ul>
             </div>
 
-            <!-- Branches -->
+            <!-- Customer Tools -->
             <div class="dropdown">
-                <a class="nav-link-custom dropdown-toggle" href="#" data-bs-toggle="dropdown">Branches</a>
+                <a class="nav-link-custom dropdown-toggle" href="#" data-bs-toggle="dropdown">Customer Tools</a>
                 <ul class="dropdown-menu">
-                    <li><a class="dropdown-item" href="branches/branch.html#makati">Makati (Head Office)</a></li>
-                    <li><a class="dropdown-item" href="branches/branch.html#laspinas">Las Piñas Office</a></li>
-                    <li><a class="dropdown-item" href="branches/branch.html#alabang">Alabang Office</a></li>
+                    <li><a class="dropdown-item" href="tools/vehicle_price_list.php">Price List</a></li>
+                    <li><a class="dropdown-item" href="branches/branch.html#laspinas">Configurator</a></li>
                 </ul>
             </div>
 

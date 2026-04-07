@@ -1,18 +1,19 @@
 <?php
 session_start();
-include 'db.php';
+include '../db.php';
 
-// 🔒 Protect page
 if (!isset($_SESSION['user_id'])) {
     header("Location: login.php");
     exit();
 }
 
-$user_id = $_SESSION['user_id'];
+$id = $_SESSION['user_id'];
 
-// Get user data
-$result = mysqli_query($conn, "SELECT * FROM users WHERE id = $user_id");
-$user = mysqli_fetch_assoc($result);
+$stmt = $conn->prepare("SELECT * FROM users WHERE id = ?");
+$stmt->bind_param("i", $id);
+$stmt->execute();
+$result = $stmt->get_result();
+$user = $result->fetch_assoc();
 ?>
 
 <!DOCTYPE html>
@@ -21,44 +22,25 @@ $user = mysqli_fetch_assoc($result);
 <meta charset="UTF-8">
 <title>My Profile</title>
 
-<style>
-body {
-    font-family: Arial;
-    background: #f4f6f9;
-}
-
-.container {
-    max-width: 500px;
-    margin: 50px auto;
-    background: white;
-    padding: 25px;
-    border-radius: 10px;
-    text-align: center;
-}
-
-img {
-    border-radius: 50%;
-    object-fit: cover;
-}
-</style>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 
-<body>
+<body class="bg-light">
 
-<div class="container">
+<div class="container mt-5">
 
-    <h2>My Profile</h2>
+    <div class="card p-4 mx-auto" style="max-width:500px;">
 
-    <img src="uploads/<?php echo $user['profile_image']; ?>" width="120" height="120">
+        <h3 class="text-center mb-4">My Profile</h3>
 
-    <p><b>Username:</b> <?php echo $user['username']; ?></p>
-    <p><b>Email:</b> <?php echo $user['email']; ?></p>
+        <p><strong>Name:</strong> <?php echo $user['fullname']; ?></p>
+        <p><strong>Email:</strong> <?php echo $user['email']; ?></p>
+        <p><strong>Role:</strong> <?php echo $user['role']; ?></p>
 
-    <p><b>Bio:</b></p>
-    <p><?php echo !empty($user['bio']) ? $user['bio'] : 'No bio yet'; ?></p>
+        <a href="home.php" class="btn btn-secondary w-100 mt-3">Back</a>
+        <a href="../logout.php" class="btn btn-danger w-100 mt-2">Logout</a>
 
-    <a href="edit_profile.php">Edit Profile</a><br><br>
-    <a href="logout.php">Logout</a>
+    </div>
 
 </div>
 

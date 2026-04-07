@@ -165,30 +165,25 @@ body { font-family: 'Poppins', sans-serif; background: #f8fafc; }
 document.querySelectorAll('.variant-card').forEach(card => {
     card.addEventListener('click', function() {
 
-        // Highlight
         document.querySelectorAll('.variant-card').forEach(c => c.classList.remove('variant-selected'));
         this.classList.add('variant-selected');
 
-        // Update content
         document.getElementById('vehicle-image').src = this.dataset.image;
         document.getElementById('vehicle-variant').textContent = this.dataset.variant;
 
         document.getElementById('vehicle-price').textContent =
             "₱" + parseFloat(this.dataset.price).toLocaleString('en-PH', {minimumFractionDigits: 2});
 
-        // Features
         let features = this.dataset.features
             ? this.dataset.features.split("\n").map(f => "<li>"+f+"</li>").join("")
             : "<li>No features listed</li>";
 
         document.getElementById('vehicle-features').innerHTML = features;
 
-        // ✅ UPDATE BUTTON LINKS
         const id = this.dataset.id;
         document.getElementById('testDriveBtn').href = "book_test_drive.php?id=" + id;
         document.getElementById('configureBtn').href = "configure.php?id=" + id;
 
-        // Spotlight effect
         const imgBox = document.querySelector('.vehicle-image');
         imgBox.classList.add('spotlight');
         setTimeout(() => imgBox.classList.remove('spotlight'), 1000);
