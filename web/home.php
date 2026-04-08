@@ -181,54 +181,6 @@ include 'db.php'; // or wherever your DB connection is
 </section>
 
 
-<!-- Footer -->
-<footer class="footer">
-  <div class="footer-container">
-    
-    <div class="footer-column">
-      <h3>About Us</h3>
-      <ul>
-        <li><a href="aboutus/aboutus.html#vision">Corporate Vision</a></li>
-        <li><a href="aboutus/aboutus.html#mission">Mission Statement</a></li>
-        <li><a href="aboutus/aboutus.html#history">Corporate History</a></li>
-      </ul>
-    </div>
-
-    <div class="footer-column">
-      <h3>Branches</h3>
-      <ul>
-        <li><a href="branches/branch.html#makati">Makati Office</a></li>
-        <li><a href="branches/branch.html#laspinas">Las Pinas Office</a></li>
-        <li><a href="branches/branch.html#alabang">Alabang Office</a></li>
-      </ul>
-    </div>
-
-    <div class="footer-column">
-      <h3>Product Vehicles</h3>
-      <ul>
-        <li><a href="products/vehicles/commercial/l200/l200.html">DESTINATOR</a></li>
-        <li><a href="products/vehicles/commercial/l300/l300fb.html">L300 FB EXCEED</a></li>
-        <li><a href="products/vehicles/commercial/monterosport/monterosport.html">MONTERO SPORT</a></li>
-        <li><a href="products/vehicles/commercial/triton/triton.html">TRITON</a></li>
-        <li><a href="products/vehicles/commercial/xforce/xforce.html">XFORCE</a></li>
-        <li><a href="products/vehicles/commercial/xpander/xpander.html">XPANDER</a></li>
-        <li><a href="products/vehicles/passenger/mirage/mirage.html">MIRAGE</a></li>
-        <li><a href="products/vehicles/passenger/mirageg4/mirageg4.html">MIRAGE G4</a></li>
-        <li><a href="products/vehicles/trucks/canter.html">CANTER</a></li>
-      </ul>
-    </div>
-
-    <div class="footer-column">
-      <h3>Parts and Services</h3>
-      <ul>
-        <li><a href="partsandservices/partsandservices.html#genuine">Genuine Parts</a></li>
-        <li><a href="partsandservices/partsandservices.html#serviceandbodyshop">Service and Body Shop</a></li>
-      </ul>
-    </div>
-
-
-  </div>
-
   <div class="footer-bottom">
     © Disclaimer: This website is made for test only by a student. No copyright
 infringement intended

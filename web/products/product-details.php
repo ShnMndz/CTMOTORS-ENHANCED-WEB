@@ -125,6 +125,8 @@ body { font-family: 'Poppins', sans-serif; background: #f8fafc; }
                 </a>
             </div>
 
+            
+
             <div class="features-title">Key Features</div>
             <ul id="vehicle-features">
                 <?php 

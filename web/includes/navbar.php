@@ -32,7 +32,7 @@ $current = basename($_SERVER['PHP_SELF']);
                 <a class="nav-link-custom dropdown-toggle" href="#" data-bs-toggle="dropdown">Tools and Service</a>
                 <ul class="dropdown-menu">
                     <li><a class="dropdown-item" href="<?= $base ?>/tools/vehicle_price_list.php">Price List</a></li>
-                    <li><a class="dropdown-item" href="<?= $base ?>/branches/branch.html#laspinas">Configurator</a></li>
+                    <li><a class="dropdown-item" href="<?= $base ?>/tools/compare.php">Compare Vehicles</a></li>
                 </ul>
             </div>
 
