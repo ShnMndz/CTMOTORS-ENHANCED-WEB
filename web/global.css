@@ -1,0 +1,145 @@
+/* =====================================================
+   GLOBAL STYLES
+===================================================== */
+
+/* Base Body */
+body {
+    font-family: "Poppins", Arial, sans-serif;
+    background: #f8fafc;
+    scroll-behavior: smooth;
+    margin: 0;
+    padding: 0;
+    color: #333;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-thumb { background: #E20000; border-radius: 10px; }
+::-webkit-scrollbar-track { background: #eee; }
+
+/* Links */
+a {
+    text-decoration: none;
+    color: inherit;
+    transition: color 0.3s ease;
+}
+a:hover { color: #E20000; }
+
+/* =====================================================
+   NAVBAR (Global Component)
+===================================================== */
+.navbar {
+    position: sticky;
+    top: 0;
+    z-index: 9999;
+    backdrop-filter: blur(10px);
+    background: rgba(255,255,255,0.95) !important;
+    border-bottom: 1px solid rgba(0,0,0,0.05);
+}
+
+.navbar-brand img {
+    height: 70px;
+    transition: transform 0.3s ease;
+}
+.navbar-brand img:hover {
+    transform: scale(1.05);
+}
+
+.nav-link-custom {
+    text-decoration: none;
+    color: #333;
+    font-weight: 500;
+    padding: 6px 12px;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+}
+.nav-link-custom:hover {
+    color: #E20000;
+    background: rgba(226,0,0,0.08);
+}
+.active-link {
+    color: #E20000;
+    font-weight: bold;
+    background: rgba(226,0,0,0.1);
+}
+
+/* Dropdown Menu */
+.dropdown-menu {
+    border: none;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+    border-radius: 12px;
+    overflow: hidden;
+    z-index: 10000;
+}
+.dropdown-item {
+    padding: 10px 16px;
+    transition: all 0.2s ease;
+}
+.dropdown-item:hover {
+    background: #E20000;
+    color: #fff;
+}
+
+/* =====================================================
+   HERO SECTION (Optional Global Component)
+===================================================== */
+.hero-brochure {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('img/background4.png');
+    background-size: cover;
+    background-position: center;
+    animation: fadeInHero 1s ease forwards;
+}
+.hero-brochure h1 { 
+    color: #fff; 
+    font-size: 3rem; 
+    font-weight: 700; 
+    margin-bottom: 1rem; 
+}
+.hero-brochure p { 
+    color: #f8f9fa; 
+    font-size: 1.2rem; 
+    margin-bottom: 2rem; 
+}
+.hero-brochure .btn { 
+    border-radius: 50px; 
+    padding: 12px 30px; 
+    font-weight: 500; 
+    transition: all 0.3s ease; 
+}
+.hero-brochure .btn:hover { 
+    transform: translateY(-2px); 
+    box-shadow: 0 8px 20px rgba(0,0,0,0.2); 
+}
+
+@keyframes fadeInHero { 
+    from { opacity:0; transform: translateY(20px); } 
+    to { opacity:1; transform: translateY(0); } 
+}
+
+/* =====================================================
+   FOOTER (Global Component)
+===================================================== */
+footer {
+    background: linear-gradient(135deg, #111, #222);
+    color: white;
+    text-align: center;
+    letter-spacing: 1px;
+    margin-top: 80px;
+    padding: 15px 0;
+}
+
+.footer-bottom {
+    margin-top: 40px;
+    text-align: center;
+    font-size: 13px;
+    color: #aaa;
+    border-top: 1px solid #333;
+    padding-top: 20px;
+}
+

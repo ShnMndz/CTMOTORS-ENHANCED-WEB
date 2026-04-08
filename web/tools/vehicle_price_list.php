@@ -9,7 +9,6 @@ $sql = "SELECT model_name, model_variant, price
 
 $result = $conn->query($sql);
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -17,122 +16,125 @@ $result = $conn->query($sql);
 <title>Price List - CITI MOTORS</title>
 
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css" rel="stylesheet">
+<link rel="stylesheet" href="/citimotorsweb/web/global.css">
 
 <style>
 body {
-    background: #0a0a0a;
-    font-family: 'Poppins', sans-serif;
-    color: #fff;
+    background:#0a0a0a;
+    color:#fff;
+    font-family:'Poppins',sans-serif;
+    overflow-x: hidden;
 }
 
-/* Container */
-.container {
+/* ✅ FIX: sariling container (hindi bootstrap) */
+.price-container {
     margin-top: 40px;
-}
-
-/* TITLE */
-.page-title {
-    text-align: center;
-    margin-bottom: 30px;
-}
-
-.page-title h1 {
-    font-weight: 700;
-    font-size: 36px;
-    letter-spacing: 2px;
-}
-
-.page-title span {
-    color: #dc3545; /* red accent */
+    max-width: 900px;
 }
 
 /* Table */
 .price-table {
     background: #111;
-    border-radius: 6px;
+    border-radius: 12px;
     overflow: hidden;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
 }
 
-/* Header */
 .price-header {
     background: #dc3545;
     padding: 12px 20px;
     font-weight: 600;
+    font-size: 16px;
 }
 
-/* Row */
 .price-row {
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 12px 20px;
-    border-bottom: 1px solid #222;
-    transition: 0.2s;
+    border-bottom:1px solid #222;
+    transition:0.2s;
 }
 
 .price-row:hover {
     background: #1a1a1a;
 }
 
-/* Left text */
 .model-text {
     font-size: 14px;
     color: #fff;
 }
 
-/* Price */
 .price {
     color: #ff3b3b;
     font-weight: 600;
     font-size: 14px;
 }
 
-/* Remove last border */
 .price-row:last-child {
-    border-bottom: none;
+    border-bottom:none;
 }
+
+/* Hero */
+.tools-hero { 
+    background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)),
+                url('../img/tools-hero-bg.jpg') center/cover no-repeat; 
+    min-height: 200px; 
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    text-align: center; 
+    color: #fff; 
+    margin-bottom: 30px;
+    position: relative;
+    z-index: 1;
+}
+
+.tools-hero h1 { font-size: 2.5rem; font-weight: 700; }
+.tools-hero p { font-size: 1.2rem; margin-top: 10px; }
 </style>
 </head>
-
 <body>
 
-<div class="container">
+<!-- Navbar -->
+<?php include $_SERVER['DOCUMENT_ROOT'].'/citimotorsweb/web/includes/navbar.php'; ?>
 
-    <!-- 🔥 TITLE -->
-    <div class="page-title">
-        <h1>VEHICLE <span>PRICE LIST</span></h1>
+<!-- Hero -->
+<div class="tools-hero">
+    <div>
+        <h1>Tools & Services</h1>
+        <p>Check our Vehicle Price List</p>
     </div>
+</div>
 
+<!-- ✅ FIXED CONTAINER -->
+<div class="container price-container">
     <div class="price-table">
+        <div class="price-header">Model</div>
 
-        <!-- HEADER -->
-        <div class="price-header">
-            Model
-        </div>
-
-        <!-- DATA -->
         <?php while ($row = $result->fetch_assoc()): ?>
-
             <div class="price-row">
-
                 <div class="model-text">
-                    <?php 
-                        echo htmlspecialchars($row['model_name']) . " " . 
-                             htmlspecialchars($row['model_variant']); 
-                    ?>
+                    <?= htmlspecialchars($row['model_name'].' '.$row['model_variant']); ?>
                 </div>
-
                 <div class="price">
-                    ₱<?php echo number_format($row['price'], 2); ?>
+                    ₱<?= number_format($row['price'],2); ?>
                 </div>
-
             </div>
-
         <?php endwhile; ?>
 
     </div>
-
 </div>
 
+<!-- Footer -->
+<footer class="footer mt-5">
+    <div class="footer-container text-center">
+        <p>© Disclaimer: This website is made for test only by a student. No copyright infringement intended.</p>
+    </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
