@@ -41,6 +41,7 @@ $current = basename($_SERVER['PHP_SELF']);
                     <ul class="dropdown-menu">
                         <li><a class="dropdown-item <?= ($current=='vehicle_price_list.php')?'active-link':'' ?>" href="<?= $base ?>/tools/vehicle_price_list.php">Price List</a></li>
                         <li><a class="dropdown-item <?= ($current=='compare.php')?'active-link':'' ?>" href="<?= $base ?>/tools/compare.php">Compare Vehicles</a></li>
+                        <li><a class="dropdown-item <?= ($current=='testdrive.php')?'active-link':'' ?>" href="<?= $base ?>/tools/testdrive.php">Book a Test Drive</a></li>
                     </ul>
                 </li>
 

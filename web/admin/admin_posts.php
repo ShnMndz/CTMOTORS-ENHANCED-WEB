@@ -132,7 +132,7 @@ $result = $conn->query("SELECT * FROM posts ORDER BY id DESC");
     <a href="admin_dashboard.php"><i class="fas fa-chart-line"></i> Dashboard</a>
     <a href="admin_users.php"><i class="fas fa-users"></i>Manage Users</a>
     <a href="admin_vehicles.php"><i class="fas fa-car"></i>Manage Vehicles</a>
-    <a href="admin_posts.php" class="active"><i class="fas fa-newspaper"></i> Posts</a>
+    <a href="admin_posts.php" class="active"><i class="fas fa-newspaper"></i>Posts(News/Articles)</a>
     <a href="../logout.php"><i class="fas fa-sign-out-alt"></i> Logout</a>
 </div>
 

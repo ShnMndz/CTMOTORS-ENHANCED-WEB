@@ -30,7 +30,6 @@ if ($selected) {
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css" rel="stylesheet">
 
 <style>
-/* ARTICLE ROW STYLE */
 .article-row {
     border-bottom: 1px solid #ddd;
     padding: 30px 0;
@@ -76,29 +75,26 @@ if ($selected) {
     opacity: 0.7;
 }
 
-/* PAGINATION TOP RIGHT - MITSUBISHI STYLE */
+/* PAGINATION TOP RIGHT */
 .pagination {
-    justify-content: flex-end; /* push to right */
+    justify-content: flex-end;
 }
 
-/* base link style */
 .pagination-sm .page-link {
     padding: 5px 12px;
     font-size: 13px;
     color: #fff;
-    background-color: #111;   /* black base */
+    background-color: #111;
     border: 1px solid #333;
     transition: 0.2s ease-in-out;
 }
 
-/* hover */
 .pagination-sm .page-link:hover {
-    background-color: #e60012; /* mitsubishi red */
-    color: #fff;
+    background-color: #e60012;
     border-color: #e60012;
+    color: #fff;
 }
 
-/* active page */
 .pagination-sm .page-item.active .page-link {
     background-color: #e60012;
     border-color: #e60012;
@@ -106,14 +102,12 @@ if ($selected) {
     font-weight: 600;
 }
 
-/* disabled */
 .pagination-sm .page-item.disabled .page-link {
     background-color: #222;
     color: #666;
     border-color: #333;
 }
 
-/* focus remove blue outline */
 .pagination-sm .page-link:focus {
     box-shadow: none;
 }
@@ -212,17 +206,22 @@ if ($selected) {
     <?php if($result->num_rows > 0): ?>
         <?php while($row = $result->fetch_assoc()): ?>
 
+        <?php
+            // ✅ NEW LOGIC FOR READ ARTICLE LINK
+            $readLink = !empty($row['link']) 
+                ? $row['link'] 
+                : "articles.php?id=" . $row['id'];
+        ?>
+
         <div class="article-row">
             <div class="row align-items-center">
 
-                <!-- IMAGE -->
                 <div class="col-md-4">
                     <?php if (!empty($row['image'])): ?>
                         <img src="<?= $imgPath . $row['image']; ?>" class="article-img">
                     <?php endif; ?>
                 </div>
 
-                <!-- CONTENT -->
                 <div class="col-md-8">
 
                     <p class="article-date">
@@ -237,7 +236,10 @@ if ($selected) {
                         <?= substr(strip_tags($row['content']), 0, 180); ?>...
                     </p>
 
-                    <a href="articles.php?id=<?= $row['id']; ?>" class="article-link">
+                    <!-- ✅ UPDATED -->
+                    <a href="<?= htmlspecialchars($readLink); ?>" 
+                       class="article-link"
+                       <?= !empty($row['link']) ? 'target="_blank"' : '' ?>>
                         READ ARTICLE
                     </a>
 
