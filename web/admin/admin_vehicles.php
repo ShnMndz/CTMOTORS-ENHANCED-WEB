@@ -128,6 +128,10 @@ $result = $stmt->get_result();
     <a href="admin_vehicles.php" class="<?= $currentPage=='vehicles'?'active':'' ?>">
         <i class="fas fa-car"></i> Manage Vehicles
     </a>
+    
+    <a href="admin_posts.php" class="<?= $currentPage=='posts'?'active':'' ?>">
+    <i class="fas fa-newspaper"></i> Posts (News/Articles)
+</a>
     <a href="../logout.php">
         <i class="fas fa-sign-out-alt"></i> Logout
     </a>

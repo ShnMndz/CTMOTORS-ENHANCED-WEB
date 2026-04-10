@@ -60,6 +60,15 @@ $current = basename($_SERVER['PHP_SELF']);
     </ul>
 </li>
 
+
+<!-- NEWS -->
+<li class="nav-item">
+    <a class="nav-link-custom <?= ($current == 'articles.php')?'active-link':'' ?>" 
+       href="<?= $base ?>/news/articles.php">
+        News
+    </a>
+</li>
+
                <!-- CONTACT US -->
                 <li class="nav-item">
                     <a class="nav-link-custom <?= ($current == 'contacts.php')?'active-link':'' ?>" href="<?= $base ?>/contacts/contacts.php">Contact Us</a>
