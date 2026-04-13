@@ -20,7 +20,7 @@
         .hero {
             position: relative;
             height: 100vh;
-            background: url('../img/contact-bg.jpg') no-repeat center center/cover;
+            background: url('../img/contactus.png') no-repeat center center/cover;
             display: flex;
             align-items: center;
             color: white;

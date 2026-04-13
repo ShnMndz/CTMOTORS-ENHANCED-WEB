@@ -176,10 +176,9 @@ body {
 <div class="container">
 
     <!-- BACK BUTTON -->
-    <a href="javascript:history.back()" class="btn btn-secondary mt-4">
-        ← Change Vehicle
-    </a>
-
+   <a href="javascript:history.back()" style="color:#d60000;">
+    ← Change Vehicle
+</a>
     <!-- HERO -->
     <div class="hero-section">
 

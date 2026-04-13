@@ -24,26 +24,44 @@ body {
     font-family: 'Poppins', sans-serif;
 }
 
+/* Smooth global transitions */
+* {
+    transition: all 0.25s ease-in-out;
+}
+
 /* ===== VISION SECTION ===== */
 .vision-section {
     background-color: #000;
 }
 
+/* Image styling + hover zoom */
 .vision-image {
     background: url('../img/ourvisionpic.png') center/cover no-repeat;
     height: 400px;
     border-radius: 10px;
+    transition: transform 0.5s ease, filter 0.5s ease;
+}
+
+.vision-image:hover {
+    transform: scale(1.05);
+    filter: brightness(1.2);
 }
 
 /* ===== MISSION SECTION ===== */
 .mission-section {
-    background-color: #111; /* slight contrast */
+    background-color: #111;
 }
 
 .mission-image {
     background: url('../img/missionpic.png') center/cover no-repeat;
     height: 400px;
     border-radius: 10px;
+    transition: transform 0.5s ease, filter 0.5s ease;
+}
+
+.mission-image:hover {
+    transform: scale(1.05);
+    filter: brightness(1.2);
 }
 
 /* ===== HISTORY SECTION ===== */
@@ -53,6 +71,16 @@ body {
     min-height: 400px;
     display: flex;
     align-items: center;
+    text-align: center;
+    color: #fff;
+
+    /* Parallax feel */
+    background-attachment: fixed;
+    transition: transform 0.5s ease;
+}
+
+.history-section:hover {
+    transform: scale(1.02);
 }
 
 .history-section::before {
@@ -74,6 +102,51 @@ h1, h2 {
 
 p, li {
     color: #ccc;
+}
+
+/* ===== TEXT HOVER LIFT EFFECT ===== */
+.vision-section .col-lg-6:first-child,
+.mission-section .col-lg-6:last-child {
+    transition: transform 0.3s ease;
+}
+
+.vision-section .col-lg-6:first-child:hover,
+.mission-section .col-lg-6:last-child:hover {
+    transform: translateY(-8px);
+}
+
+/* ===== OPTIONAL BUTTON STYLE ===== */
+.btn-custom {
+    background: #fff;
+    color: #000;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+}
+
+.btn-custom:hover {
+    background: #0d6efd;
+    color: #fff;
+    box-shadow: 0 0 15px #0d6efd;
+}
+
+/* ===== FADE-IN ANIMATION ===== */
+@keyframes fadeUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Apply animation to sections */
+.vision-section,
+.mission-section,
+.history-section {
+    animation: fadeUp 1s ease forwards;
 }
 
 /* ===== FOOTER ===== */
