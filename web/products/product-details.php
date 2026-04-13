@@ -2,10 +2,8 @@
 session_start();
 include '../db.php';
 
-// Get vehicle ID safely
 $vehicle_id = isset($_GET['id']) ? intval($_GET['id']) : 0;
 
-// Fetch selected vehicle
 $stmt = $conn->prepare("SELECT * FROM vehicles WHERE id = ?");
 $stmt->bind_param("i", $vehicle_id);
 $stmt->execute();
@@ -18,7 +16,6 @@ if ($vehicle_result->num_rows === 0) {
 
 $vehicle = $vehicle_result->fetch_assoc();
 
-// Fetch all variants of the same model
 $stmt2 = $conn->prepare("SELECT * FROM vehicles WHERE model_name = ? ORDER BY id ASC");
 $stmt2->bind_param("s", $vehicle['model_name']);
 $stmt2->execute();
@@ -29,152 +26,241 @@ $variants_result = $stmt2->get_result();
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title><?php echo htmlspecialchars($vehicle['model_name']); ?> - CITI MOTORS</title>
+<title><?= htmlspecialchars($vehicle['model_name']); ?> - CITI MOTORS</title>
 
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
 <style>
-body { font-family: 'Poppins', sans-serif; background: #f8fafc; }
-
-.vehicle-details { display: flex; flex-wrap: wrap; gap: 30px; }
-
-.vehicle-image img {
-    width: 100%;
-    max-width: 500px;
-    border-radius: 10px;
-    transition: 0.3s;
+body{
+    font-family:'Poppins',sans-serif;
+    background:#f4f6f9;
 }
 
-.vehicle-image.spotlight img {
-    transform: scale(1.1);
-    box-shadow: 0 20px 40px rgba(0,0,0,0.25);
+/* PAGE LAYOUT */
+.product-wrapper{
+    display:flex;
+    gap:40px;
+    align-items:flex-start;
 }
 
-.vehicle-info h1 { font-size: 48px; font-weight: 700; }
-.vehicle-info h3 { font-size: 32px; font-weight: 600; }
-
-.vehicle-price {
-    font-size: 36px;
-    font-weight: 700;
-    color: #dc3545;
-    margin: 15px 0;
+/* IMAGE SECTION */
+.image-box{
+    flex:1;
+    position:sticky;
+    top:100px;
 }
 
-.features-title { font-size: 20px; font-weight: 600; margin-top: 25px; }
-
-.variant-card {
-    cursor: pointer;
-    border: 2px solid transparent;
-    padding: 15px;
-    border-radius: 8px;
-    background: #fff;
-    min-width: 120px;
-    text-align: center;
-    transition: 0.2s;
+.image-box img{
+    width:100%;
+    border-radius:18px;
+    transition:.4s ease;
+    box-shadow:0 10px 30px rgba(0,0,0,0.08);
 }
 
-.variant-card:hover { border-color: #dc3545; transform: scale(1.05); }
-.variant-selected { border-color: #dc3545; }
+.image-box.active img{
+    transform:scale(1.03);
+}
 
-.variant-scroll-container {
-    display: flex;
-    gap: 10px;
-    overflow-x: auto;
-    padding: 10px 0;
+/* INFO SECTION */
+.info-box{
+    flex:1;
+    background:#fff;
+    padding:30px;
+    border-radius:18px;
+    box-shadow:0 10px 30px rgba(0,0,0,0.05);
+}
+
+h1{
+    font-size:38px;
+    font-weight:700;
+    margin-bottom:5px;
+}
+
+.variant-text{
+    font-size:22px;
+    font-weight:500;
+    color:#555;
+}
+
+.price{
+    font-size:34px;
+    font-weight:700;
+    color:#dc3545;
+    margin:15px 0;
+}
+
+/* BUTTONS */
+.actions{
+    display:flex;
+    gap:15px;
+    margin-top:20px;
+}
+
+.actions a{
+    flex:1;
+    padding:12px;
+    font-weight:600;
+    border-radius:12px;
+}
+
+/* FEATURES */
+.features{
+    margin-top:25px;
+}
+
+.features li{
+    list-style:none;
+    background:#f1f3f6;
+    padding:8px 12px;
+    border-radius:10px;
+    margin-bottom:8px;
+    font-size:14px;
+}
+
+/* VARIANTS */
+.variant-title{
+    margin-top:40px;
+    font-weight:600;
+}
+
+.variant-container{
+    display:flex;
+    gap:10px;
+    overflow-x:auto;
+    padding:10px 0;
+}
+
+.variant-card{
+    min-width:140px;
+    padding:12px;
+    border-radius:12px;
+    background:#fff;
+    border:1px solid #ddd;
+    cursor:pointer;
+    text-align:center;
+    transition:.2s;
+}
+
+.variant-card:hover{
+    border-color:#dc3545;
+    transform:translateY(-2px);
+}
+
+.variant-active{
+    border:2px solid #dc3545;
+    background:#fff5f5;
+}
+
+/* MOBILE */
+@media(max-width:992px){
+    .product-wrapper{
+        flex-direction:column;
+    }
+
+    .image-box{
+        position:relative;
+        top:auto;
+    }
 }
 </style>
 </head>
+
 <body>
+
+<?php include $_SERVER['DOCUMENT_ROOT'].'/citimotorsweb/web/includes/navbar.php'; ?>
 
 <div class="container my-5">
 
-    <!-- BACK BUTTON -->
-    <a href="javascript:history.back()" class="btn btn-secondary mb-4">
-        ← Change Vehicle
+    <a href="javascript:history.back()" class="btn btn-outline-secondary mb-4">
+        ← Back
     </a>
 
-    <div class="vehicle-details">
+    <div class="product-wrapper">
 
         <!-- IMAGE -->
-        <div class="vehicle-image">
-            <img id="vehicle-image" src="../img/<?php echo htmlspecialchars($vehicle['image'] ?: 'no-image.png'); ?>">
+        <div class="image-box">
+            <img id="vehicle-image" src="../img/<?= htmlspecialchars($vehicle['image'] ?: 'no-image.png'); ?>">
         </div>
 
         <!-- INFO -->
-        <div class="vehicle-info">
-            <h1><?php echo htmlspecialchars($vehicle['model_name']); ?></h1>
-            <h3 id="vehicle-variant"><?php echo htmlspecialchars($vehicle['model_variant']); ?></h3>
+        <div class="info-box">
 
-            <div class="vehicle-price" id="vehicle-price">
-                ₱<?php echo number_format($vehicle['price'], 2); ?>
+            <h1><?= htmlspecialchars($vehicle['model_name']); ?></h1>
+            <div class="variant-text" id="vehicle-variant">
+                <?= htmlspecialchars($vehicle['model_variant']); ?>
             </div>
 
-            <!-- ✅ ACTION BUTTONS -->
-            <div class="d-flex gap-3 mt-4">
+            <div class="price" id="vehicle-price">
+                ₱<?= number_format($vehicle['price'], 2); ?>
+            </div>
+
+            <div class="actions">
                 <a id="testDriveBtn"
-                   href="book_test_drive.php?id=<?php echo $vehicle['id']; ?>"
-                   class="btn btn-danger btn-lg">
+                   href="../tools/testdrive.php?id=<?= $vehicle['id']; ?>"
+                   class="btn btn-danger">
                    Book Test Drive
                 </a>
 
                 <a id="configureBtn"
-                   href="configure.php?id=<?php echo $vehicle['id']; ?>"
-                   class="btn btn-outline-dark btn-lg">
+                   href="configure.php?id=<?= $vehicle['id']; ?>"
+                   class="btn btn-outline-dark">
                    Configure
                 </a>
             </div>
 
-            
-
-            <div class="features-title">Key Features</div>
-            <ul id="vehicle-features">
-                <?php 
-                if (!empty($vehicle['features'])) {
-                    foreach (explode("\n", $vehicle['features']) as $f) {
-                        if (trim($f)) echo "<li>".htmlspecialchars($f)."</li>";
+            <div class="features">
+                <h5 class="mt-4">Key Features</h5>
+                <ul id="vehicle-features">
+                    <?php
+                    if (!empty($vehicle['features'])) {
+                        foreach (explode("\n", $vehicle['features']) as $f) {
+                            if (trim($f)) echo "<li>".htmlspecialchars($f)."</li>";
+                        }
+                    } else {
+                        echo "<li>No features listed</li>";
                     }
-                } else {
-                    echo "<li>No features listed</li>";
-                }
-                ?>
-            </ul>
+                    ?>
+                </ul>
+            </div>
+
+            <div class="variant-title">Available Variants</div>
+            <div class="variant-container">
+
+                <?php while ($v = $variants_result->fetch_assoc()): ?>
+                    <div class="variant-card <?= ($v['id']==$vehicle_id?'variant-active':''); ?>"
+                         data-id="<?= $v['id']; ?>"
+                         data-variant="<?= htmlspecialchars($v['model_variant']); ?>"
+                         data-price="<?= $v['price']; ?>"
+                         data-features="<?= htmlspecialchars($v['features'], ENT_QUOTES); ?>"
+                         data-image="../img/<?= htmlspecialchars($v['image'] ?: 'no-image.png'); ?>">
+
+                        <?= htmlspecialchars($v['model_variant']); ?>
+                    </div>
+                <?php endwhile; ?>
+
+            </div>
+
         </div>
-    </div>
-
-    <!-- VARIANTS -->
-    <h4 class="mt-5">Available Variants:</h4>
-    <div class="variant-scroll-container">
-
-    <?php while ($v = $variants_result->fetch_assoc()): ?>
-        <div class="variant-card <?php echo ($v['id']==$vehicle_id?'variant-selected':''); ?>"
-             data-id="<?php echo $v['id']; ?>"
-             data-variant="<?php echo htmlspecialchars($v['model_variant']); ?>"
-             data-price="<?php echo $v['price']; ?>"
-             data-features="<?php echo htmlspecialchars($v['features'], ENT_QUOTES); ?>"
-             data-image="../img/<?php echo htmlspecialchars($v['image'] ?: 'no-image.png'); ?>">
-
-            <?php echo htmlspecialchars($v['model_variant']); ?>
-        </div>
-    <?php endwhile; ?>
 
     </div>
-
 </div>
 
 <script>
-// Variant switching
 document.querySelectorAll('.variant-card').forEach(card => {
-    card.addEventListener('click', function() {
+    card.addEventListener('click', function(){
 
-        document.querySelectorAll('.variant-card').forEach(c => c.classList.remove('variant-selected'));
-        this.classList.add('variant-selected');
+        document.querySelectorAll('.variant-card')
+            .forEach(c => c.classList.remove('variant-active'));
+
+        this.classList.add('variant-active');
 
         document.getElementById('vehicle-image').src = this.dataset.image;
         document.getElementById('vehicle-variant').textContent = this.dataset.variant;
 
         document.getElementById('vehicle-price').textContent =
-            "₱" + parseFloat(this.dataset.price).toLocaleString('en-PH', {minimumFractionDigits: 2});
+            "₱" + parseFloat(this.dataset.price)
+            .toLocaleString('en-PH', {minimumFractionDigits:2});
 
         let features = this.dataset.features
             ? this.dataset.features.split("\n").map(f => "<li>"+f+"</li>").join("")
@@ -183,15 +269,16 @@ document.querySelectorAll('.variant-card').forEach(card => {
         document.getElementById('vehicle-features').innerHTML = features;
 
         const id = this.dataset.id;
-        document.getElementById('testDriveBtn').href = "book_test_drive.php?id=" + id;
+        document.getElementById('testDriveBtn').href = "../tools/testdrive.php?id=" + id;
         document.getElementById('configureBtn').href = "configure.php?id=" + id;
 
-        const imgBox = document.querySelector('.vehicle-image');
-        imgBox.classList.add('spotlight');
-        setTimeout(() => imgBox.classList.remove('spotlight'), 1000);
+        const box = document.querySelector('.image-box');
+        box.classList.add('active');
+        setTimeout(() => box.classList.remove('active'), 500);
     });
 });
 </script>
 
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
