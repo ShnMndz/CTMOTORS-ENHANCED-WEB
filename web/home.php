@@ -16,32 +16,133 @@ include 'db.php';
 <link rel="stylesheet" href="global.css">
 
 <style>
-/* Hero Section */
+/* ===== GLOBAL ===== */
+body {
+    font-family: 'Poppins', sans-serif;
+    background: #000;
+    color: #fff;
+    overflow-x: hidden;
+}
+
+* {
+    transition: all 0.3s ease;
+}
+
+/* ===== HERO SECTION ===== */
 .hero-brochure {
-    min-height: 80vh;
+    min-height: 90vh;
     background: url('/citimotorsweb/web/img/background.png') center/cover no-repeat;
     position: relative;
     display: flex;
     align-items: center;
+    justify-content: center;
+    text-align: center;
 }
 
+/* Dark overlay */
 .hero-brochure::after {
     content: "";
     position: absolute;
     inset: 0;
-    background: rgba(0,0,0,0.5);
+    background: linear-gradient(to bottom, rgba(0,0,0,0.6), rgba(0,0,0,0.85));
 }
 
+/* Content layering */
 .hero-brochure .container {
     position: relative;
     z-index: 2;
+    animation: fadeUp 1.2s ease forwards;
 }
 
-/* Footer */
+/* ===== HERO TEXT ===== */
+.hero-brochure h1 {
+    font-size: 3rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+}
+
+/* Animated underline */
+.hero-brochure h1::after {
+    content: "";
+    display: block;
+    width: 0%;
+    height: 3px;
+    margin: 10px auto 0;
+    background: #dc3545;
+    transition: width 0.5s ease;
+}
+
+.hero-brochure h1:hover::after {
+    width: 60%;
+}
+
+/* Subtitle */
+.hero-brochure p {
+    color: #ccc;
+    font-size: 1.2rem;
+}
+
+/* ===== BUTTONS ===== */
+.btn {
+    border-radius: 50px;
+    padding: 12px 28px;
+    font-weight: 500;
+    letter-spacing: 1px;
+}
+
+/* Primary button (View Vehicles) */
+.btn-danger {
+    background: #dc3545;
+    border: none;
+    box-shadow: 0 0 0 transparent;
+}
+
+.btn-danger:hover {
+    background: #ff4d5a;
+    transform: translateY(-3px);
+    box-shadow: 0 0 20px rgba(220, 53, 69, 0.7);
+}
+
+/* Outline button */
+.btn-outline-light {
+    border: 2px solid #fff;
+}
+
+.btn-outline-light:hover {
+    background: #fff;
+    color: #000;
+    transform: translateY(-3px);
+    box-shadow: 0 0 20px rgba(255,255,255,0.6);
+}
+
+/* ===== HERO BACKGROUND ZOOM EFFECT ===== */
+.hero-brochure:hover {
+    background-size: 110%;
+}
+
+/* ===== FADE-IN ANIMATION ===== */
+@keyframes fadeUp {
+    from {
+        opacity: 0;
+        transform: translateY(40px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ===== FOOTER ===== */
 .footer {
-    background: #222;
-    color: #fff;
+    background: #111;
+    color: #aaa;
     padding: 20px 0;
+    font-size: 0.9rem;
+}
+
+/* ===== EXTRA: GLOW TEXT EFFECT ===== */
+.hero-brochure h1:hover {
+    text-shadow: 0 0 15px rgba(255, 255, 255, 0.6);
 }
 </style>
 
