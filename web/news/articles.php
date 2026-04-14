@@ -51,10 +51,30 @@ if ($selected) {
     margin-bottom: 10px;
 }
 
+/* ✅ TITLE WITH ANIMATED RED UNDERLINE */
 .article-title {
     font-weight: 700;
     font-size: 22px;
     margin-bottom: 10px;
+    position: relative;
+    display: inline-block;
+}
+
+.article-title::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: -6px;
+    width: 0; /* start hidden */
+    height: 3px;
+    background: #e60012;
+    transition: width 0.3s ease;
+}
+
+/* animate on hover (row or title) */
+.article-row:hover .article-title::after,
+.article-title:hover::after {
+    width: 50px;
 }
 
 .article-desc {
