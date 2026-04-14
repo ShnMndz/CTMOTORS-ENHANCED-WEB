@@ -115,9 +115,9 @@ input { background-color: #f8f9fa !important; }
       <div class="col-md-3 footer-column">
         <h3>About Us</h3>
         <ul>
-          <li><a href="../aboutus/aboutus.html#vision">Corporate Vision</a></li>
-          <li><a href="../aboutus/aboutus.html#mission">Mission Statement</a></li>
-          <li><a href="../aboutus/aboutus.html#history">Company History</a></li>
+          <li><a href="../aboutus/aboutus.php#vision">Corporate Vision</a></li>
+          <li><a href="../aboutus/aboutus.php#mission">Mission Statement</a></li>
+          <li><a href="../aboutus/aboutus.php#history">Company History</a></li>
         </ul>
       </div>
       <div class="col-md-3 footer-column">
