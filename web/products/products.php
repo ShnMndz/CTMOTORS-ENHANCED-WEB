@@ -121,14 +121,6 @@ input { background-color: #f8f9fa !important; }
         </ul>
       </div>
       <div class="col-md-3 footer-column">
-        <h3>Branches</h3>
-        <ul>
-          <li><a href="../branches/branch.html#makati">Makati Office</a></li>
-          <li><a href="../branches/branch.html#laspinas">Las Piñas Office</a></li>
-          <li><a href="../branches/branch.html#alabang">Alabang Office</a></li>
-        </ul>
-      </div>
-      <div class="col-md-3 footer-column">
         <h3>Product Vehicles</h3>
         <ul>
           <?php
@@ -147,8 +139,8 @@ input { background-color: #f8f9fa !important; }
       <div class="col-md-3 footer-column">
         <h3>Parts & Services</h3>
         <ul>
-          <li><a href="../partsandservices/partsandservices.html#genuine">Genuine Parts</a></li>
-          <li><a href="../partsandservices/partsandservices.html#service">Service and Body Shop</a></li>
+          <li><a href="../partsandservices/genuine_parts.php">Genuine Parts</a></li>
+          <li><a href="../partsandservices/services.php">Service and Body Shop</a></li>
         </ul>
       </div>
     </div>

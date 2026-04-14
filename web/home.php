@@ -16,133 +16,48 @@ include 'db.php';
 <link rel="stylesheet" href="global.css">
 
 <style>
-/* ===== GLOBAL ===== */
-body {
-    font-family: 'Poppins', sans-serif;
-    background: #000;
-    color: #fff;
-    overflow-x: hidden;
-}
-
-* {
-    transition: all 0.3s ease;
-}
-
-/* ===== HERO SECTION ===== */
+/* Hero Section */
 .hero-brochure {
-    min-height: 90vh;
+    min-height: 80vh;
     background: url('/citimotorsweb/web/img/background.png') center/cover no-repeat;
     position: relative;
     display: flex;
     align-items: center;
-    justify-content: center;
-    text-align: center;
 }
 
-/* Dark overlay */
 .hero-brochure::after {
     content: "";
     position: absolute;
     inset: 0;
-    background: linear-gradient(to bottom, rgba(0,0,0,0.6), rgba(0,0,0,0.85));
+    background: rgba(0,0,0,0.5);
 }
 
-/* Content layering */
 .hero-brochure .container {
     position: relative;
     z-index: 2;
-    animation: fadeUp 1.2s ease forwards;
 }
 
-/* ===== HERO TEXT ===== */
-.hero-brochure h1 {
-    font-size: 3rem;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-}
-
-/* Animated underline */
-.hero-brochure h1::after {
-    content: "";
-    display: block;
-    width: 0%;
-    height: 3px;
-    margin: 10px auto 0;
-    background: #dc3545;
-    transition: width 0.5s ease;
-}
-
-.hero-brochure h1:hover::after {
-    width: 60%;
-}
-
-/* Subtitle */
-.hero-brochure p {
-    color: #ccc;
-    font-size: 1.2rem;
-}
-
-/* ===== BUTTONS ===== */
-.btn {
-    border-radius: 50px;
-    padding: 12px 28px;
-    font-weight: 500;
-    letter-spacing: 1px;
-}
-
-/* Primary button (View Vehicles) */
-.btn-danger {
-    background: #dc3545;
-    border: none;
-    box-shadow: 0 0 0 transparent;
-}
-
-.btn-danger:hover {
-    background: #ff4d5a;
-    transform: translateY(-3px);
-    box-shadow: 0 0 20px rgba(220, 53, 69, 0.7);
-}
-
-/* Outline button */
-.btn-outline-light {
-    border: 2px solid #fff;
-}
-
-.btn-outline-light:hover {
-    background: #fff;
-    color: #000;
-    transform: translateY(-3px);
-    box-shadow: 0 0 20px rgba(255,255,255,0.6);
-}
-
-/* ===== HERO BACKGROUND ZOOM EFFECT ===== */
-.hero-brochure:hover {
-    background-size: 110%;
-}
-
-/* ===== FADE-IN ANIMATION ===== */
-@keyframes fadeUp {
-    from {
-        opacity: 0;
-        transform: translateY(40px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-/* ===== FOOTER ===== */
+/* Footer */
 .footer {
-    background: #111;
-    color: #aaa;
+    background: #222;
+    color: #fff;
     padding: 20px 0;
-    font-size: 0.9rem;
 }
 
-/* ===== EXTRA: GLOW TEXT EFFECT ===== */
-.hero-brochure h1:hover {
-    text-shadow: 0 0 15px rgba(255, 255, 255, 0.6);
+section {
+    scroll-margin-top: 80px;
+}
+
+h2 {
+    font-weight: 700;
+}
+
+.bi {
+    transition: transform 0.3s ease;
+}
+
+.bi:hover {
+    transform: scale(1.2);
 }
 </style>
 
@@ -163,6 +78,39 @@ body {
         </div>
     </div>
 </section>
+
+</section> <!-- END HERO -->
+
+<!-- WHY CHOOSE US -->
+<section class="bg-light py-5">
+    <div class="container text-center">
+        <h2 class="fw-bold">Why Choose CITI MOTORS?</h2>
+        <p class="mt-3">
+            We offer top-quality vehicles, flexible financing, and excellent customer service.
+        </p>
+
+        <div class="row mt-4">
+            <div class="col-md-4">
+                <i class="bi bi-car-front display-4 text-danger"></i>
+                <h5 class="mt-3">Wide Selection</h5>
+                <p>Choose from the latest and most reliable vehicles.</p>
+            </div>
+
+            <div class="col-md-4">
+                <i class="bi bi-cash-stack display-4 text-danger"></i>
+                <h5 class="mt-3">Affordable Prices</h5>
+                <p>Competitive pricing and flexible financing options.</p>
+            </div>
+
+            <div class="col-md-4">
+                <i class="bi bi-award display-4 text-danger"></i>
+                <h5 class="mt-3">Trusted Service</h5>
+                <p>We prioritize customer satisfaction and reliability.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
 
 <!-- Footer -->
 <footer class="footer">
