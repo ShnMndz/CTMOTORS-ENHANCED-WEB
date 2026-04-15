@@ -78,18 +78,31 @@ $current = basename($_SERVER['PHP_SELF']);
             </ul>
 
             <!-- RIGHT SIDE -->
-            <div class="d-flex align-items-center gap-2">
+<div class="d-flex align-items-center gap-2">
 
-                <?php if(isset($_SESSION['user'])): ?>
-                    <span class="welcome-text">Welcome, <?= htmlspecialchars($_SESSION['user']) ?></span>
-                    <a href="<?= $base ?>/logout.php" class="btn btn-outline-dark btn-sm">Logout</a>
-                <?php else: ?>
-                    <a href="<?= $base ?>/login.php" class="btn btn-outline-danger btn-sm">Login</a>
-                    <a href="<?= $base ?>/signup.php" class="btn btn-danger btn-sm">Sign Up</a>
-                <?php endif; ?>
+    <?php if(isset($_SESSION['user_id'])): ?>
 
-            </div>
+        <a href="<?= $base ?>/profile.php" class="btn btn-outline-dark btn-sm">
+            👤 <?= htmlspecialchars($_SESSION['fullname']) ?>
+        </a>
 
+        <a href="<?= $base ?>/logout.php" class="btn btn-danger btn-sm">
+            Logout
+        </a>
+
+    <?php else: ?>
+
+        <a href="<?= $base ?>/login.php" class="btn btn-outline-danger btn-sm">
+            Login
+        </a>
+
+        <a href="<?= $base ?>/signup.php" class="btn btn-danger btn-sm">
+            Sign Up
+        </a>
+
+    <?php endif; ?>
+
+</div>
         </div>
     </div>
 </nav>

@@ -5,18 +5,28 @@ include '../db.php';
 $success = "";
 $error = "";
 
-// Fetch vehicles WITH image
+// FETCH VEHICLES
 $vehicles = $conn->query("SELECT id, model_name, model_variant, image FROM vehicles ORDER BY model_name ASC");
 
-// IF NOT LOGGED IN
-if (!isset($_SESSION['user'])) {
+// GET USER DATA (FIXED)
+$user = null;
+
+if (isset($_SESSION['user_id'])) {
+    $stmt = $conn->prepare("SELECT fullname, email FROM users WHERE id = ?");
+    $stmt->bind_param("i", $_SESSION['user_id']);
+    $stmt->execute();
+    $user = $stmt->get_result()->fetch_assoc();
+}
+
+// LOGIN CHECK
+if (!isset($_SESSION['user_id'])) {
     $error = "You must be logged in to book a test drive.";
 }
 
 // FORM SUBMIT
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
-    if (!isset($_SESSION['user'])) {
+    if (!isset($_SESSION['user_id'])) {
         $error = "Please login first.";
     } else {
 
@@ -53,8 +63,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css" rel="stylesheet">
-<link rel="stylesheet" href="/citimotorsweb/web/global.css">
 
 <style>
 body {
@@ -81,11 +89,6 @@ body {
     background: linear-gradient(135deg, #e60012, #8b0000);
     text-align: center;
     padding: 25px;
-}
-
-.header h2 {
-    margin: 0;
-    font-weight: 700;
 }
 
 .body {
@@ -122,45 +125,21 @@ label {
     background: #b3000f;
 }
 
-.vehicle-preview {
-    text-align: center;
-    margin-top: 15px;
-}
-
 .vehicle-preview img {
     max-width: 100%;
     height: 200px;
     object-fit: contain;
-    border-radius: 8px;
     display: none;
+    margin-top: 10px;
     border: 1px solid #222;
-    padding: 10px;
     background: #000;
-}
-
-.alert-success {
-    background: #0f5132;
-    color: #fff;
-    border: none;
-}
-
-.alert-danger {
-    background: #842029;
-    color: #fff;
-    border: none;
-}
-
-.alert-warning {
-    background: #664d03;
-    color: #fff;
-    border: none;
+    padding: 10px;
 }
 </style>
 </head>
 
 <body>
 
-<!-- Navbar -->
 <?php include $_SERVER['DOCUMENT_ROOT'].'/citimotorsweb/web/includes/navbar.php'; ?>
 
 <div class="top-bar"></div>
@@ -169,13 +148,13 @@ label {
 
     <div class="header">
         <h2>TEST DRIVE REQUEST</h2>
-        <p>Simply select a model, then share your contact details and request a time before submission.</p>
+        <p>Book your preferred vehicle easily</p>
     </div>
 
     <div class="body">
 
         <!-- LOGIN WARNING -->
-        <?php if (!isset($_SESSION['user'])): ?>
+        <?php if (!isset($_SESSION['user_id'])): ?>
             <div class="alert alert-warning text-center">
                 Please <a href="../login.php" style="color:#fff;text-decoration:underline;">login</a> first to book a test drive.
             </div>
@@ -192,18 +171,18 @@ label {
         <?php endif; ?>
 
         <!-- FORM -->
-        <form method="POST" <?= !isset($_SESSION['user']) ? 'style="pointer-events:none;opacity:.6;"' : '' ?>>
+        <form method="POST" <?= !isset($_SESSION['user_id']) ? 'style="pointer-events:none;opacity:.6;"' : '' ?>>
 
             <div class="mb-3">
                 <label>Full Name</label>
                 <input type="text" name="fullname" class="form-control"
-                value="<?= $_SESSION['user']['name'] ?? '' ?>" required>
+                value="<?= htmlspecialchars($user['fullname'] ?? '') ?>" required>
             </div>
 
             <div class="mb-3">
                 <label>Email</label>
                 <input type="email" name="email" class="form-control"
-                value="<?= $_SESSION['user']['email'] ?? '' ?>" required>
+                value="<?= htmlspecialchars($user['email'] ?? '') ?>" required>
             </div>
 
             <div class="mb-3">
@@ -211,26 +190,22 @@ label {
                 <input type="text" name="contact" class="form-control" required>
             </div>
 
-            <!-- VEHICLE DROPDOWN -->
+            <!-- VEHICLE -->
             <div class="mb-3">
                 <label>Select Vehicle</label>
                 <select name="vehicle_id" id="vehicleSelect" class="form-control" required>
                     <option value="">-- Choose Vehicle --</option>
 
                     <?php while($v = $vehicles->fetch_assoc()): ?>
-                        <option 
-                            value="<?= $v['id']; ?>"
-                            data-image="<?= $v['image']; ?>"
-                        >
+                        <option value="<?= $v['id']; ?>" data-image="<?= $v['image']; ?>">
                             <?= $v['model_name'] . ' (' . $v['model_variant'] . ')'; ?>
                         </option>
                     <?php endwhile; ?>
 
                 </select>
 
-                <!-- IMAGE PREVIEW -->
                 <div class="vehicle-preview">
-                    <img id="vehicleImage" src="">
+                    <img id="vehicleImage">
                 </div>
             </div>
 
@@ -252,7 +227,7 @@ label {
             </div>
 
             <button type="submit" class="btn btn-submit"
-            <?= !isset($_SESSION['user']) ? 'disabled' : '' ?>>
+            <?= !isset($_SESSION['user_id']) ? 'disabled' : '' ?>>
                 SUBMIT REQUEST
             </button>
 
@@ -266,22 +241,18 @@ document.getElementById("vehicleSelect").addEventListener("change", function() {
     let image = selected.getAttribute("data-image");
     let img = document.getElementById("vehicleImage");
 
-    if (image && image !== "") {
-
+    if (image) {
         if (!image.startsWith("img/")) {
             image = "img/" + image;
         }
 
         img.src = "/citimotorsweb/web/" + image;
         img.style.display = "block";
-
     } else {
         img.style.display = "none";
     }
 });
 </script>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
 </body>
 </html>
