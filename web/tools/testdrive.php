@@ -1,4 +1,5 @@
 <?php
+session_start();
 include '../db.php';
 
 $success = "";
@@ -7,28 +8,39 @@ $error = "";
 // Fetch vehicles WITH image
 $vehicles = $conn->query("SELECT id, model_name, model_variant, image FROM vehicles ORDER BY model_name ASC");
 
+// IF NOT LOGGED IN
+if (!isset($_SESSION['user'])) {
+    $error = "You must be logged in to book a test drive.";
+}
+
+// FORM SUBMIT
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
-    $fullname   = $_POST['fullname'];
-    $email      = $_POST['email'];
-    $contact    = $_POST['contact'];
-    $vehicle_id = $_POST['vehicle_id'];
-    $date       = $_POST['date'];
-    $time       = $_POST['time'];
-    $message    = $_POST['message'];
-
-    $stmt = $conn->prepare("
-        INSERT INTO test_drives 
-        (fullname, email, contact, vehicle_id, date, time, message)
-        VALUES (?, ?, ?, ?, ?, ?, ?)
-    ");
-
-    $stmt->bind_param("sssisss", $fullname, $email, $contact, $vehicle_id, $date, $time, $message);
-
-    if ($stmt->execute()) {
-        $success = "Test drive request submitted successfully!";
+    if (!isset($_SESSION['user'])) {
+        $error = "Please login first.";
     } else {
-        $error = "Something went wrong. Please try again.";
+
+        $fullname   = $_POST['fullname'];
+        $email      = $_POST['email'];
+        $contact    = $_POST['contact'];
+        $vehicle_id = $_POST['vehicle_id'];
+        $date       = $_POST['date'];
+        $time       = $_POST['time'];
+        $message    = $_POST['message'];
+
+        $stmt = $conn->prepare("
+            INSERT INTO test_drives 
+            (fullname, email, contact, vehicle_id, date, time, message)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
+        ");
+
+        $stmt->bind_param("sssisss", $fullname, $email, $contact, $vehicle_id, $date, $time, $message);
+
+        if ($stmt->execute()) {
+            $success = "Test drive request submitted successfully!";
+        } else {
+            $error = "Something went wrong. Please try again.";
+        }
     }
 }
 ?>
@@ -137,6 +149,12 @@ label {
     color: #fff;
     border: none;
 }
+
+.alert-warning {
+    background: #664d03;
+    color: #fff;
+    border: none;
+}
 </style>
 </head>
 
@@ -156,24 +174,36 @@ label {
 
     <div class="body">
 
+        <!-- LOGIN WARNING -->
+        <?php if (!isset($_SESSION['user'])): ?>
+            <div class="alert alert-warning text-center">
+                Please <a href="../login.php" style="color:#fff;text-decoration:underline;">login</a> first to book a test drive.
+            </div>
+        <?php endif; ?>
+
+        <!-- SUCCESS -->
         <?php if ($success): ?>
             <div class="alert alert-success"><?= $success; ?></div>
         <?php endif; ?>
 
+        <!-- ERROR -->
         <?php if ($error): ?>
             <div class="alert alert-danger"><?= $error; ?></div>
         <?php endif; ?>
 
-        <form method="POST">
+        <!-- FORM -->
+        <form method="POST" <?= !isset($_SESSION['user']) ? 'style="pointer-events:none;opacity:.6;"' : '' ?>>
 
             <div class="mb-3">
                 <label>Full Name</label>
-                <input type="text" name="fullname" class="form-control" required>
+                <input type="text" name="fullname" class="form-control"
+                value="<?= $_SESSION['user']['name'] ?? '' ?>" required>
             </div>
 
             <div class="mb-3">
                 <label>Email</label>
-                <input type="email" name="email" class="form-control" required>
+                <input type="email" name="email" class="form-control"
+                value="<?= $_SESSION['user']['email'] ?? '' ?>" required>
             </div>
 
             <div class="mb-3">
@@ -221,7 +251,10 @@ label {
                 <textarea name="message" class="form-control" rows="3"></textarea>
             </div>
 
-            <button type="submit" class="btn btn-submit">SUBMIT REQUEST</button>
+            <button type="submit" class="btn btn-submit"
+            <?= !isset($_SESSION['user']) ? 'disabled' : '' ?>>
+                SUBMIT REQUEST
+            </button>
 
         </form>
     </div>
@@ -235,7 +268,6 @@ document.getElementById("vehicleSelect").addEventListener("change", function() {
 
     if (image && image !== "") {
 
-        // Fix path automatically
         if (!image.startsWith("img/")) {
             image = "img/" + image;
         }
@@ -243,7 +275,6 @@ document.getElementById("vehicleSelect").addEventListener("change", function() {
         img.src = "/citimotorsweb/web/" + image;
         img.style.display = "block";
 
-        console.log(img.src); // DEBUG
     } else {
         img.style.display = "none";
     }
