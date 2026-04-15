@@ -2,32 +2,47 @@
 session_start();
 include '../db.php';
 
-if (!isset($_SESSION['user'])) {
-    header("Location: login.php");
+if (!isset($_SESSION['user_id'])) {
+    header("Location: ../login.php");
     exit();
 }
 
-$user_id = $_SESSION['user']['id'];
+$id = $_SESSION['user_id'];
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
+/* GET USER */
+$stmt = $conn->prepare("SELECT * FROM users WHERE id = ?");
+$stmt->bind_param("i", $id);
+$stmt->execute();
+$user = $stmt->get_result()->fetch_assoc();
 
-    $username = $_POST['username'];
+if (!$user) {
+    session_destroy();
+    header("Location: ../login.php");
+    exit();
+}
 
-    $stmt = $conn->prepare("UPDATE users SET username=? WHERE id=?");
-    $stmt->bind_param("si", $username, $user_id);
+/* UPDATE */
+if (isset($_POST['update'])) {
+
+    $fullname = $_POST['fullname'];
+    $image = $user['profile_pic'];
+
+    if (!empty($_FILES['profile_pic']['name'])) {
+
+        $path = "../uploads/";
+        if (!is_dir($path)) mkdir($path, 0777, true);
+
+        $image = time() . "_" . $_FILES['profile_pic']['name'];
+        move_uploaded_file($_FILES['profile_pic']['tmp_name'], $path . $image);
+    }
+
+    $stmt = $conn->prepare("UPDATE users SET fullname=?, profile_pic=? WHERE id=?");
+    $stmt->bind_param("ssi", $fullname, $image, $id);
     $stmt->execute();
-
-    // update session too (IMPORTANT)
-    $_SESSION['user']['username'] = $username;
 
     header("Location: profile.php");
     exit();
 }
-
-$stmt = $conn->prepare("SELECT username FROM users WHERE id=?");
-$stmt->bind_param("i", $user_id);
-$stmt->execute();
-$user = $stmt->get_result()->fetch_assoc();
 ?>
 
 <!DOCTYPE html>
@@ -35,28 +50,53 @@ $user = $stmt->get_result()->fetch_assoc();
 <head>
 <title>Edit Profile</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<style>
+body { background:#0f0f0f; color:#fff; }
+.box {
+    max-width:500px;
+    margin:50px auto;
+    background:#1a1a1a;
+    padding:25px;
+    border-radius:12px;
+}
+img {
+    width:100px;height:100px;border-radius:50%;
+    display:block;margin:auto;
+}
+input {
+    background:#111 !important;
+    color:#fff !important;
+    border:1px solid #333 !important;
+}
+</style>
 </head>
 
 <body>
 
-<div class="container mt-5" style="max-width:500px;">
-    <div class="card p-4 shadow-sm">
+<div class="box">
 
-        <h3>Edit Profile</h3>
-        <hr>
+<h3 class="text-center">Edit Profile</h3>
 
-        <form method="POST">
+<img src="../uploads/<?= $user['profile_pic'] ?? 'default.png' ?>">
 
-            <div class="mb-3">
-                <label>Username</label>
-                <input type="text" name="username" value="<?= $user['username']; ?>" class="form-control" required>
-            </div>
+<form method="POST" enctype="multipart/form-data" class="mt-3">
 
-            <button class="btn btn-success">Save Changes</button>
+    <label>Full Name</label>
+    <input type="text" name="fullname" class="form-control"
+           value="<?= htmlspecialchars($user['fullname']) ?>" required>
 
-        </form>
+    <label class="mt-2">Profile Picture</label>
+    <input type="file" name="profile_pic" class="form-control">
 
-    </div>
+    <button class="btn btn-danger w-100 mt-3" name="update">
+        Save Changes
+    </button>
+
+</form>
+
+<a href="profile.php" class="btn btn-secondary w-100 mt-2">Back</a>
+
 </div>
 
 </body>
