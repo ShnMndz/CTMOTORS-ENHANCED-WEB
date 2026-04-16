@@ -116,8 +116,27 @@ input { background-color: #f8f9fa !important; }
             <?php while($row = $vehicles_result->fetch_assoc()): ?>
 
             <?php
-            // ✅ EXPIRY CHECK (ONE TIME ONLY)
+            // ✅ EXISTING EXPIRY CHECK
             $isActiveBadge = empty($row['badge_expiry']) || strtotime($row['badge_expiry']) > time();
+
+            // ✅ NEW PROMO DATE LOGIC (ADDED ONLY)
+            $today = date("Y-m-d");
+            $isPromoActive = false;
+
+            if (!empty($row['is_special'])) {
+
+                // No dates → always active
+                if (empty($row['promo_start']) && empty($row['promo_end'])) {
+                    $isPromoActive = true;
+                }
+
+                // With dates → check range
+                elseif (!empty($row['promo_start']) && !empty($row['promo_end'])) {
+                    if ($today >= $row['promo_start'] && $today <= $row['promo_end']) {
+                        $isPromoActive = true;
+                    }
+                }
+            }
             ?>
 
             <div class="col-lg-4 col-md-6 col-sm-12 product-item"
@@ -133,8 +152,8 @@ input { background-color: #f8f9fa !important; }
                             <span class="new-badge">NEW ARRIVAL</span>
                         <?php endif; ?>
 
-                        <!-- PROMO BADGE -->
-                        <?php if(!empty($row['is_special']) && $isActiveBadge): ?>
+                        <!-- PROMO BADGE (UPDATED ONLY) -->
+                        <?php if($isPromoActive && $isActiveBadge): ?>
                             <span class="special-badge">SPECIAL OFFER</span>
                         <?php endif; ?>
 

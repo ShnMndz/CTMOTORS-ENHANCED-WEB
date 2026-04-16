@@ -24,6 +24,10 @@ if(isset($_POST['save_vehicle'])){
     $is_new = isset($_POST['is_new']) ? 1 : 0;
     $is_special = isset($_POST['is_special']) ? 1 : 0;
 
+    // ✅ NEW: promo dates
+    $promo_start = $_POST['promo_start'] ?? null;
+    $promo_end = $_POST['promo_end'] ?? null;
+
     $image_file = null;
 
     if(!empty($_FILES['image_file']['name'])){
@@ -37,28 +41,43 @@ if(isset($_POST['save_vehicle'])){
 
         if($image_file){
             $sql = "UPDATE vehicles 
-                    SET model_name=?, model_variant=?, vehicle_type=?, price=?, features=?, image=?, is_new=?, is_special=? 
+                    SET model_name=?, model_variant=?, vehicle_type=?, price=?, features=?, image=?, is_new=?, is_special=?, promo_start=?, promo_end=? 
                     WHERE id=?";
 
             $stmt = $conn->prepare($sql);
             $stmt->bind_param(
-                "sssdssiii",
-                $model_name, $model_variant, $vehicle_type,
-                $price, $features, $image_file,
-                $is_new, $is_special, $id
+                "sssdssisssi",
+                $model_name,
+                $model_variant,
+                $vehicle_type,
+                $price,
+                $features,
+                $image_file,
+                $is_new,
+                $is_special,
+                $promo_start,
+                $promo_end,
+                $id
             );
 
         } else {
             $sql = "UPDATE vehicles 
-                    SET model_name=?, model_variant=?, vehicle_type=?, price=?, features=?, is_new=?, is_special=? 
+                    SET model_name=?, model_variant=?, vehicle_type=?, price=?, features=?, is_new=?, is_special=?, promo_start=?, promo_end=? 
                     WHERE id=?";
 
             $stmt = $conn->prepare($sql);
             $stmt->bind_param(
-                "sssdssii",
-                $model_name, $model_variant, $vehicle_type,
-                $price, $features,
-                $is_new, $is_special, $id
+                "sssdssissi",
+                $model_name,
+                $model_variant,
+                $vehicle_type,
+                $price,
+                $features,
+                $is_new,
+                $is_special,
+                $promo_start,
+                $promo_end,
+                $id
             );
         }
 
@@ -68,13 +87,13 @@ if(isset($_POST['save_vehicle'])){
     else {
 
         $sql = "INSERT INTO vehicles 
-        (model_name, model_variant, vehicle_type, price, features, image, is_new, is_special, created_at)
-        VALUES (?,?,?,?,?,?,?,?,NOW())";
+        (model_name, model_variant, vehicle_type, price, features, image, is_new, is_special, promo_start, promo_end, created_at)
+        VALUES (?,?,?,?,?,?,?,?,?,?,NOW())";
 
         $stmt = $conn->prepare($sql);
 
         $stmt->bind_param(
-            "sssdssii",
+            "sssdssisss",
             $model_name,
             $model_variant,
             $vehicle_type,
@@ -82,15 +101,16 @@ if(isset($_POST['save_vehicle'])){
             $features,
             $image_file,
             $is_new,
-            $is_special
+            $is_special,
+            $promo_start,
+            $promo_end
         );
     }
 
     if($stmt->execute()){
-    $_SESSION['success'] = $id > 0 ? "Vehicle updated successfully!" : "Vehicle added successfully!";
-    header("Location: admin_vehicles.php");
-    exit();
-
+        $_SESSION['success'] = $id > 0 ? "Vehicle updated successfully!" : "Vehicle added successfully!";
+        header("Location: admin_vehicles.php");
+        exit();
     } else {
         echo "<script>alert('Error: ".$stmt->error."');</script>";
     }
@@ -214,6 +234,7 @@ $result = $stmt->get_result();
         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
     </div>
 <?php unset($_SESSION['success']); endif; ?>
+
 <table class="table table-bordered">
 
 <thead class="table-success">
@@ -232,6 +253,18 @@ $result = $stmt->get_result();
 <tbody>
 
 <?php while($v=$result->fetch_assoc()): ?>
+
+<?php
+$today = date('Y-m-d');
+
+$isActivePromo =
+    ($v['is_special'] == 1 &&
+     !empty($v['promo_start']) &&
+     !empty($v['promo_end']) &&
+     $v['promo_start'] <= $today &&
+     $v['promo_end'] >= $today);
+?>
+
 <tr
 data-id="<?= $v['id'] ?>"
 data-name="<?= htmlspecialchars($v['model_name'],ENT_QUOTES) ?>"
@@ -242,6 +275,8 @@ data-features="<?= htmlspecialchars($v['features'],ENT_QUOTES) ?>"
 data-image="<?= $v['image'] ?>"
 data-isnew="<?= $v['is_new'] ?>"
 data-isspecial="<?= $v['is_special'] ?>"
+data-promostart="<?= $v['promo_start'] ?>"
+data-promoend="<?= $v['promo_end'] ?>"
 >
 
 <td><?= $v['id'] ?></td>
@@ -249,7 +284,24 @@ data-isspecial="<?= $v['is_special'] ?>"
 <td>
 <?= $v['model_name'] ?>
 <?php if($v['is_new']): ?><span class="badge-new">NEW</span><?php endif; ?>
-<?php if($v['is_special']): ?><span class="badge-special">PROMO</span><?php endif; ?>
+
+<?php
+if($v['is_special']){
+
+    if(!empty($v['promo_start']) && !empty($v['promo_end'])){
+
+        if($isActivePromo){
+            echo "<span class='badge-special'>PROMO</span>";
+        } else {
+            echo "<span style='background:gray;color:#fff;padding:3px 8px;border-radius:10px;font-size:11px;margin-left:5px;'>EXPIRED</span>";
+        }
+
+    } else {
+        echo "<span class='badge-special'>PROMO</span>";
+    }
+}
+?>
+
 </td>
 
 <td><?= $v['model_variant'] ?></td>
@@ -273,6 +325,7 @@ data-isspecial="<?= $v['is_special'] ?>"
 </td>
 
 </tr>
+
 <?php endwhile; ?>
 
 </tbody>
@@ -280,7 +333,7 @@ data-isspecial="<?= $v['is_special'] ?>"
 
 </div>
 
-<!-- MODAL -->
+<!-- MODAL (UNCHANGED) -->
 <div class="modal fade" id="modal">
 <div class="modal-dialog">
 <div class="modal-content">
