@@ -79,7 +79,7 @@ if (isset($_SESSION['user_id'])) {
             </ul>
 
             <!-- RIGHT SIDE -->
-            <div class="d-flex align-items-center gap-2">
+             <div class="d-flex align-items-center gap-2 mt-3 mt-lg-0 justify-content-center justify-content-lg-end">
 
                 <?php if(isset($_SESSION['user_id'])): ?>
 
@@ -87,17 +87,20 @@ if (isset($_SESSION['user_id'])) {
                        class="d-flex align-items-center gap-2 text-decoration-none">
 
                         <img src="<?= $pic ?>"
-                             style="width:35px;height:35px;border-radius:50%;object-fit:cover;border:2px solid #e60012;">
+                             class="rounded-circle border"
+                             style="width:36px;height:36px;object-fit:cover;border-color:#e60012;">
 
                         <span class="fw-semibold text-dark">
-                            Welcome, <?= htmlspecialchars($navUser['fullname']) ?>
+                            <?= htmlspecialchars($navUser['fullname']) ?>
                         </span>
 
                     </a>
 
+
                     <a href="<?= $base ?>/logout.php" class="btn btn-danger btn-sm">
                         Logout
                     </a>
+
 
                 <?php else: ?>
 
