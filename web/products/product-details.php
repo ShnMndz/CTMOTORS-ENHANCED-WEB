@@ -23,6 +23,33 @@ $stmt2 = $conn->prepare("SELECT * FROM vehicles WHERE model_name = ? ORDER BY id
 $stmt2->bind_param("s", $vehicle['model_name']);
 $stmt2->execute();
 $variants_result = $stmt2->get_result();
+
+/* ---------------------------
+   NEW + PROMO LOGIC
+---------------------------- */
+$today = date("Y-m-d");
+
+/* Badge expiry */
+$isActiveBadge = empty($vehicle['badge_expiry']) || strtotime($vehicle['badge_expiry']) > time();
+
+/* NEW */
+$isNew = !empty($vehicle['is_new']);
+
+/* PROMO */
+$isPromoActive = false;
+
+if (!empty($vehicle['is_special']) && $isActiveBadge) {
+
+    if (empty($vehicle['promo_start']) && empty($vehicle['promo_end'])) {
+        $isPromoActive = true;
+    }
+
+    elseif (!empty($vehicle['promo_start']) && !empty($vehicle['promo_end'])) {
+        if ($today >= $vehicle['promo_start'] && $today <= $vehicle['promo_end']) {
+            $isPromoActive = true;
+        }
+    }
+}
 ?>
 
 <!DOCTYPE html>
@@ -35,7 +62,6 @@ $variants_result = $stmt2->get_result();
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css" rel="stylesheet">
 
-<!-- Global CSS -->
 <link rel="stylesheet" href="/citimotorsweb/web/global.css">
 
 <style>
@@ -53,7 +79,7 @@ body {
     gap: 40px;
 }
 
-/* LEFT */
+/* TEXT */
 .hero-text {
     flex: 1;
     max-width: 520px;
@@ -68,7 +94,6 @@ body {
 .hero-sub {
     font-size: 16px;
     color: #555;
-    margin-bottom: 10px;
 }
 
 .hero-specs {
@@ -77,7 +102,6 @@ body {
     line-height: 1.6;
 }
 
-/* PRICE */
 .hero-price {
     font-size: 28px;
     font-weight: 700;
@@ -108,7 +132,7 @@ body {
     border-radius: 8px;
 }
 
-/* RIGHT IMAGE */
+/* IMAGE */
 .hero-image {
     flex: 1;
     text-align: right;
@@ -118,10 +142,38 @@ body {
     width: 100%;
     max-width: 650px;
     transition: 0.4s ease;
+    border-radius: 10px;
 }
 
 .hero-image img:hover {
     transform: scale(1.05);
+}
+
+/* BADGES */
+.new-badge {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background: red;
+    color: white;
+    padding: 6px 12px;
+    font-size: 12px;
+    font-weight: 600;
+    border-radius: 20px;
+    z-index: 5;
+}
+
+.special-badge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: orange;
+    color: white;
+    padding: 6px 12px;
+    font-size: 12px;
+    font-weight: 600;
+    border-radius: 20px;
+    z-index: 5;
 }
 
 /* VARIANTS */
@@ -161,12 +213,12 @@ body {
         text-align: center;
     }
 
-    .hero-image {
-        text-align: center;
-    }
-
     .hero-text h1 {
         font-size: 40px;
+    }
+
+    .hero-image {
+        text-align: center;
     }
 }
 </style>
@@ -174,73 +226,82 @@ body {
 
 <body>
 
-<!-- NAVBAR -->
 <?php include $_SERVER['DOCUMENT_ROOT'].'/citimotorsweb/web/includes/navbar.php'; ?>
 
 <div class="container">
 
-    <!-- BACK BUTTON -->
-   <a href="javascript:history.back()" style="color:#d60000;">
+<!-- BACK -->
+<a href="javascript:history.back()" style="color:#d60000;">
     ← Change Vehicle
 </a>
-    <!-- HERO -->
-    <div class="hero-section">
 
-        <!-- TEXT -->
-        <div class="hero-text">
-            <h1><?php echo htmlspecialchars($vehicle['model_name']); ?></h1>
+<!-- HERO -->
+<div class="hero-section">
 
-            <p class="hero-sub" id="vehicle-variant">
-                <?php echo htmlspecialchars($vehicle['model_variant']); ?>
-            </p>
+    <!-- TEXT -->
+    <div class="hero-text">
+        <h1><?php echo htmlspecialchars($vehicle['model_name']); ?></h1>
 
-            <p class="hero-specs" id="vehicle-features">
-                <?php echo nl2br(htmlspecialchars($vehicle['features'])); ?>
-            </p>
+        <p class="hero-sub" id="vehicle-variant">
+            <?php echo htmlspecialchars($vehicle['model_variant']); ?>
+        </p>
 
-            <div class="hero-price" id="vehicle-price">
-                From ₱<?php echo number_format($vehicle['price'], 0); ?>
-            </div>
+        <p class="hero-specs" id="vehicle-features">
+            <?php echo nl2br(htmlspecialchars($vehicle['features'])); ?>
+        </p>
 
-            <div class="hero-buttons">
-                <a id="testDriveBtn"
-                   href="../tools/testdrive.php?id=<?php echo $vehicle['id']; ?>"
-                   class="btn btn-danger">
-                   Book Test Drive
-                </a>
-
-                <a id="configureBtn"
-                   href="configure.php?id=<?php echo $vehicle['id']; ?>"
-                   class="btn btn-outline-dark">
-                   View Model
-                </a>
-            </div>
+        <div class="hero-price" id="vehicle-price">
+            From ₱<?php echo number_format($vehicle['price'], 0); ?>
         </div>
 
-        <!-- IMAGE -->
-        <div class="hero-image">
-            <img id="vehicle-image"
-                 src="../img/<?php echo htmlspecialchars($vehicle['image'] ?: 'no-image.png'); ?>">
+        <div class="hero-buttons">
+            <a id="testDriveBtn"
+               href="../tools/testdrive.php?id=<?php echo $vehicle['id']; ?>"
+               class="btn btn-danger">
+               Book Test Drive
+            </a>
+
+            <a id="configureBtn"
+               href="configure.php?id=<?php echo $vehicle['id']; ?>"
+               class="btn btn-outline-dark">
+               View Model
+            </a>
         </div>
-
     </div>
 
-    <!-- VARIANTS -->
-    <h5 class="mt-4">Available Variants</h5>
+    <!-- IMAGE + BADGES -->
+    <div class="hero-image" style="position:relative;">
 
-    <div class="variant-scroll-container">
-        <?php while ($v = $variants_result->fetch_assoc()): ?>
-            <div class="variant-card <?php echo ($v['id']==$vehicle_id?'variant-selected':''); ?>"
-                 data-id="<?php echo $v['id']; ?>"
-                 data-variant="<?php echo htmlspecialchars($v['model_variant']); ?>"
-                 data-price="<?php echo $v['price']; ?>"
-                 data-features="<?php echo htmlspecialchars($v['features'], ENT_QUOTES); ?>"
-                 data-image="../img/<?php echo htmlspecialchars($v['image'] ?: 'no-image.png'); ?>">
+        <?php if($isNew && $isActiveBadge): ?>
+            <span class="new-badge">NEW ARRIVAL</span>
+        <?php endif; ?>
 
-                <?php echo htmlspecialchars($v['model_variant']); ?>
-            </div>
-        <?php endwhile; ?>
+        <?php if($isPromoActive): ?>
+            <span class="special-badge">PROMO</span>
+        <?php endif; ?>
+
+        <img id="vehicle-image"
+             src="../img/<?php echo htmlspecialchars($vehicle['image'] ?: 'no-image.png'); ?>">
     </div>
+
+</div>
+
+<!-- VARIANTS -->
+<h5 class="mt-4">Available Variants</h5>
+
+<div class="variant-scroll-container">
+    <?php while ($v = $variants_result->fetch_assoc()): ?>
+        <div class="variant-card <?php echo ($v['id']==$vehicle_id?'variant-selected':''); ?>"
+             data-id="<?php echo $v['id']; ?>"
+             data-variant="<?php echo htmlspecialchars($v['model_variant']); ?>"
+             data-price="<?php echo $v['price']; ?>"
+             data-features="<?php echo htmlspecialchars($v['features'], ENT_QUOTES); ?>"
+             data-image="../img/<?php echo htmlspecialchars($v['image'] ?: 'no-image.png'); ?>">
+
+            <?php echo htmlspecialchars($v['model_variant']); ?>
+        </div>
+    <?php endwhile; ?>
+</div>
 
 </div>
 
