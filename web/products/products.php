@@ -2,16 +2,13 @@
 session_start();
 include '../db.php';
 
-
-
 // Check if admin (optional read-only mode)
 $isAdmin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
 
 // Optional filter by type
 $filter_type = isset($_GET['type']) ? $_GET['type'] : 'all';
 
-// Only fetch vehicles with image AND price
-// Use DISTINCT model_name to show only one card per model
+// Fetch vehicles
 $sql = "SELECT * FROM vehicles v1 
         WHERE image IS NOT NULL AND image != '' AND price IS NOT NULL
         AND v1.id = (SELECT MIN(v2.id) FROM vehicles v2 WHERE v2.model_name = v1.model_name)";
@@ -31,20 +28,45 @@ $vehicles_result = $conn->query($sql);
 <head>
 <meta charset="UTF-8">
 <title>CITI MOTORS - Products</title>
+
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../css/products.css">
+
 <style>
+body { font-family: 'Poppins', sans-serif; background:#f8fafc; }
 
-    
-body { font-family: 'Poppins', sans-serif; background:#f8fafc; margin:0; padding:0; }
-
-/* Product grid */
 .product-item img { max-height: 180px; object-fit: cover; border-radius:8px; }
 .product-item h5 { font-size:1rem; font-weight:600; margin-top:0.5rem; }
 
-/* HIDE PRICE */
 .product-item p { display: none; }
+
+/* BADGES */
+.new-badge {
+    position:absolute;
+    top:10px;
+    left:10px;
+    background:red;
+    color:white;
+    padding:5px 10px;
+    font-size:12px;
+    font-weight:600;
+    border-radius:20px;
+    z-index:2;
+}
+
+.special-badge {
+    position:absolute;
+    top:10px;
+    right:10px;
+    background:orange;
+    color:white;
+    padding:5px 10px;
+    font-size:12px;
+    font-weight:600;
+    border-radius:20px;
+    z-index:2;
+}
 
 /* Footer */
 .footer { background-color: #f8f9fa; padding: 30px 0; margin-top: 50px; }
@@ -55,7 +77,7 @@ body { font-family: 'Poppins', sans-serif; background:#f8fafc; margin:0; padding
 .footer-column ul li a { text-decoration: none; color: #333; }
 .footer-bottom { font-size: 13px; color: #666; }
 
-/* Admin read-only (optional) */
+/* Admin read-only */
 <?php if($isAdmin): ?>
 a, button, input {
     pointer-events: none !important;
@@ -65,9 +87,8 @@ input { background-color: #f8f9fa !important; }
 <?php endif; ?>
 </style>
 </head>
+
 <body>
-
-
 
 <!-- Search + Filter -->
 <div class="container my-4">
@@ -86,25 +107,56 @@ input { background-color: #f8f9fa !important; }
     </div>
 </div>
 
-<!-- Vehicles Grid (image + name, price hidden) -->
+<!-- Products -->
 <section class="container my-5">
     <div class="row g-4" id="productsGrid">
+
         <?php if($vehicles_result->num_rows > 0): ?>
+
             <?php while($row = $vehicles_result->fetch_assoc()): ?>
-            <div class="col-lg-4 col-md-6 col-sm-12 product-item" data-type="<?php echo $row['vehicle_type']; ?>">
-                <a href="product-details.php?id=<?php echo $row['id']; ?>" style="text-decoration:none; color:inherit;">
-                    <img src="../img/<?php echo htmlspecialchars($row['image']); ?>" 
-                         alt="<?php echo htmlspecialchars($row['model_name']); ?>" 
-                         style="width:100%; height:180px; object-fit:cover; border-radius:8px;">
+
+            <?php
+            // ✅ EXPIRY CHECK (ONE TIME ONLY)
+            $isActiveBadge = empty($row['badge_expiry']) || strtotime($row['badge_expiry']) > time();
+            ?>
+
+            <div class="col-lg-4 col-md-6 col-sm-12 product-item"
+                 data-type="<?php echo $row['vehicle_type']; ?>">
+
+                <a href="product-details.php?id=<?php echo $row['id']; ?>"
+                   style="text-decoration:none; color:inherit;">
+
+                    <div style="position:relative;">
+
+                        <!-- NEW BADGE -->
+                        <?php if(!empty($row['is_new']) && $isActiveBadge): ?>
+                            <span class="new-badge">NEW ARRIVAL</span>
+                        <?php endif; ?>
+
+                        <!-- PROMO BADGE -->
+                        <?php if(!empty($row['is_special']) && $isActiveBadge): ?>
+                            <span class="special-badge">SPECIAL OFFER</span>
+                        <?php endif; ?>
+
+                        <img src="../img/<?php echo htmlspecialchars($row['image']); ?>"
+                             alt="<?php echo htmlspecialchars($row['model_name']); ?>"
+                             style="width:100%; height:180px; object-fit:cover; border-radius:8px;">
+                    </div>
+
                     <div class="text-center mt-2">
                         <h5 class="mb-0"><?php echo htmlspecialchars($row['model_name']); ?></h5>
                     </div>
+
                 </a>
+
             </div>
+
             <?php endwhile; ?>
+
         <?php else: ?>
             <p class="text-center">No vehicles found.</p>
         <?php endif; ?>
+
     </div>
 </section>
 
@@ -112,6 +164,7 @@ input { background-color: #f8f9fa !important; }
 <footer class="footer">
   <div class="container">
     <div class="row">
+
       <div class="col-md-3 footer-column">
         <h3>About Us</h3>
         <ul>
@@ -120,6 +173,7 @@ input { background-color: #f8f9fa !important; }
           <li><a href="../aboutus/aboutus.php#history">Company History</a></li>
         </ul>
       </div>
+
       <div class="col-md-3 footer-column">
         <h3>Product Vehicles</h3>
         <ul>
@@ -136,6 +190,7 @@ input { background-color: #f8f9fa !important; }
           ?>
         </ul>
       </div>
+
       <div class="col-md-3 footer-column">
         <h3>Parts & Services</h3>
         <ul>
@@ -143,33 +198,39 @@ input { background-color: #f8f9fa !important; }
           <li><a href="../partsandservices/services.php">Service and Body Shop</a></li>
         </ul>
       </div>
+
     </div>
+
     <div class="footer-bottom text-center py-3">
-      © Disclaimer: This website is made for test only by a student. No copyright infringement intended
+      © Disclaimer: This website is made for test only by a student.
     </div>
   </div>
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
 <script>
-// Search filter
 function searchProducts() {
     let input = document.getElementById("productSearch").value.toLowerCase();
     let products = document.getElementsByClassName("product-item");
+
     for (let i = 0; i < products.length; i++) {
         let name = products[i].innerText.toLowerCase();
         products[i].style.display = name.includes(input) ? "" : "none";
     }
 }
 
-// Type filter
 function filterType() {
     let type = document.getElementById("filterType").value;
     let products = document.getElementsByClassName("product-item");
+
     for (let i = 0; i < products.length; i++) {
-        products[i].style.display = (type === 'all' || products[i].getAttribute('data-type') === type) ? "" : "none";
+        products[i].style.display =
+            (type === 'all' || products[i].getAttribute('data-type') === type)
+            ? "" : "none";
     }
 }
 </script>
+
 </body>
 </html>
