@@ -8,7 +8,7 @@ $error = "";
 // FETCH VEHICLES
 $vehicles = $conn->query("SELECT id, model_name, model_variant, image FROM vehicles ORDER BY model_name ASC");
 
-// GET USER DATA (FIXED)
+// GET USER DATA
 $user = null;
 
 if (isset($_SESSION['user_id'])) {
@@ -38,18 +38,24 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $time       = $_POST['time'];
         $message    = $_POST['message'];
 
-        $stmt = $conn->prepare("
-            INSERT INTO test_drives 
-            (fullname, email, contact, vehicle_id, date, time, message)
-            VALUES (?, ?, ?, ?, ?, ?, ?)
-        ");
-
-        $stmt->bind_param("sssisss", $fullname, $email, $contact, $vehicle_id, $date, $time, $message);
-
-        if ($stmt->execute()) {
-            $success = "Test drive request submitted successfully!";
+        // ✅ PHONE VALIDATION (PH FORMAT)
+        if (!preg_match('/^09[0-9]{9}$/', $contact)) {
+            $error = "Invalid contact number. Use 09XXXXXXXXX format.";
         } else {
-            $error = "Something went wrong. Please try again.";
+
+            $stmt = $conn->prepare("
+                INSERT INTO test_drives 
+                (fullname, email, contact, vehicle_id, date, time, message)
+                VALUES (?, ?, ?, ?, ?, ?, ?)
+            ");
+
+            $stmt->bind_param("sssisss", $fullname, $email, $contact, $vehicle_id, $date, $time, $message);
+
+            if ($stmt->execute()) {
+                $success = "Test drive request submitted successfully!";
+            } else {
+                $error = "Something went wrong. Please try again.";
+            }
         }
     }
 }
@@ -65,8 +71,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css" rel="stylesheet">
 
-<!-- Global CSS -->
 <link rel="stylesheet" href="/citimotorsweb/web/global.css">
+
 <style>
 body {
     background: #0b0b0b;
@@ -156,24 +162,20 @@ label {
 
     <div class="body">
 
-        <!-- LOGIN WARNING -->
         <?php if (!isset($_SESSION['user_id'])): ?>
             <div class="alert alert-warning text-center">
                 Please <a href="../login.php" style="color:#fff;text-decoration:underline;">login</a> first to book a test drive.
             </div>
         <?php endif; ?>
 
-        <!-- SUCCESS -->
         <?php if ($success): ?>
             <div class="alert alert-success"><?= $success; ?></div>
         <?php endif; ?>
 
-        <!-- ERROR -->
         <?php if ($error): ?>
             <div class="alert alert-danger"><?= $error; ?></div>
         <?php endif; ?>
 
-        <!-- FORM -->
         <form method="POST" <?= !isset($_SESSION['user_id']) ? 'style="pointer-events:none;opacity:.6;"' : '' ?>>
 
             <div class="mb-3">
@@ -188,12 +190,18 @@ label {
                 value="<?= htmlspecialchars($user['email'] ?? '') ?>" required>
             </div>
 
+            <!-- ✅ PHONE NUMBER FIXED -->
             <div class="mb-3">
                 <label>Contact Number</label>
-                <input type="text" name="contact" class="form-control" required>
+                <input type="tel"
+                       name="contact"
+                       class="form-control"
+                       placeholder="09XXXXXXXXX"
+                       pattern="09[0-9]{9}"
+                       maxlength="11"
+                       required>
             </div>
 
-            <!-- VEHICLE -->
             <div class="mb-3">
                 <label>Select Vehicle</label>
                 <select name="vehicle_id" id="vehicleSelect" class="form-control" required>
@@ -256,6 +264,7 @@ document.getElementById("vehicleSelect").addEventListener("change", function() {
     }
 });
 </script>
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
