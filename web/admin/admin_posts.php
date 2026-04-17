@@ -201,7 +201,22 @@ value="<?= htmlspecialchars($editData['link'] ?? '') ?>" placeholder="Link">
 </td>
 
 <td><?= htmlspecialchars($row['title']); ?></td>
-<td><?= htmlspecialchars($row['category']); ?></td>
+<td>
+<?php
+$cat = $row['category'];
+
+$badgeClass = match($cat) {
+    'Car News' => 'bg-primary',
+    'Tips and Guides' => 'bg-success',
+    'Announcement' => 'bg-warning text-dark',
+    default => 'bg-secondary'
+};
+?>
+
+<span class="badge <?= $badgeClass ?>">
+    <?= htmlspecialchars($cat); ?>
+</span>
+</td>
 
 <td>
 <?= $row['link'] ? "<a href='{$row['link']}' target='_blank'>Open</a>" : "N/A"; ?>
