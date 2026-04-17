@@ -1,10 +1,12 @@
 <?php
 include '../db.php';
 
-// image path
 $imgPath = "../img/";
 
 $selected = isset($_GET['id']) ? intval($_GET['id']) : 0;
+
+// category filter (TEXT)
+$category = isset($_GET['category']) ? trim($_GET['category']) : '';
 
 /* =========================
    SINGLE ARTICLE VIEW
@@ -17,6 +19,12 @@ if ($selected) {
     $result = $stmt->get_result();
     $post = $result->fetch_assoc();
 }
+
+/* =========================
+   GET DISTINCT CATEGORIES
+========================= */
+$catResult = $conn->query("SELECT DISTINCT category FROM posts WHERE category IS NOT NULL AND category != '' ORDER BY category ASC");
+
 ?>
 
 <!DOCTYPE html>
@@ -51,11 +59,9 @@ if ($selected) {
     margin-bottom: 10px;
 }
 
-/* ✅ TITLE WITH ANIMATED RED UNDERLINE */
 .article-title {
     font-weight: 700;
     font-size: 22px;
-    margin-bottom: 10px;
     position: relative;
     display: inline-block;
 }
@@ -65,15 +71,13 @@ if ($selected) {
     position: absolute;
     left: 0;
     bottom: -6px;
-    width: 0; /* start hidden */
+    width: 0;
     height: 3px;
     background: #e60012;
-    transition: width 0.3s ease;
+    transition: 0.3s;
 }
 
-/* animate on hover (row or title) */
-.article-row:hover .article-title::after,
-.article-title:hover::after {
+.article-row:hover .article-title::after {
     width: 50px;
 }
 
@@ -89,48 +93,6 @@ if ($selected) {
     text-decoration: none;
     border-bottom: 2px solid black;
     color: black;
-    letter-spacing: 1px;
-}
-
-.article-link:hover {
-    opacity: 0.7;
-}
-
-/* PAGINATION TOP RIGHT */
-.pagination {
-    justify-content: flex-end;
-}
-
-.pagination-sm .page-link {
-    padding: 5px 12px;
-    font-size: 13px;
-    color: #fff;
-    background-color: #111;
-    border: 1px solid #333;
-    transition: 0.2s ease-in-out;
-}
-
-.pagination-sm .page-link:hover {
-    background-color: #e60012;
-    border-color: #e60012;
-    color: #fff;
-}
-
-.pagination-sm .page-item.active .page-link {
-    background-color: #e60012;
-    border-color: #e60012;
-    color: #fff;
-    font-weight: 600;
-}
-
-.pagination-sm .page-item.disabled .page-link {
-    background-color: #222;
-    color: #666;
-    border-color: #333;
-}
-
-.pagination-sm .page-link:focus {
-    box-shadow: none;
 }
 </style>
 
@@ -143,15 +105,13 @@ if ($selected) {
 
 <?php if ($selected && !empty($post)): ?>
 
-    <!-- FULL ARTICLE -->
-    <a href="articles.php" class="btn btn-outline-dark btn-sm mb-3">
-        ← Back to Articles
-    </a>
+    <!-- SINGLE ARTICLE -->
+    <a href="articles.php" class="btn btn-outline-dark btn-sm mb-3">← Back</a>
 
-    <h2 class="fw-bold"><?= htmlspecialchars($post['title']); ?></h2>
+    <h2><?= htmlspecialchars($post['title']); ?></h2>
 
     <p class="text-muted small">
-        ARTICLE • <?= date("F d, Y", strtotime($post['created_at'])); ?>
+        <?= date("F d, Y", strtotime($post['created_at'])); ?> • <?= htmlspecialchars($post['category']); ?>
     </p>
 
     <?php if (!empty($post['image'])): ?>
@@ -162,126 +122,118 @@ if ($selected) {
         <?= $post['content']; ?>
     </div>
 
-    <?php if (!empty($post['link'])): ?>
-        <a href="<?= htmlspecialchars($post['link']); ?>" target="_blank" class="btn btn-dark mt-3">
-            External Link
-        </a>
-    <?php endif; ?>
-
 <?php else: ?>
 
-    <!-- LIST VIEW -->
-    <?php
-    $limit = 5;
-    $page = isset($_GET['page']) ? intval($_GET['page']) : 1;
-    if ($page < 1) $page = 1;
+<?php
+$limit = 5;
+$page = isset($_GET['page']) ? intval($_GET['page']) : 1;
+if ($page < 1) $page = 1;
 
-    $offset = ($page - 1) * $limit;
+$offset = ($page - 1) * $limit;
 
+/* =========================
+   QUERY (FILTER CATEGORY)
+========================= */
+if (!empty($category)) {
+    $stmt = $conn->prepare("
+        SELECT * FROM posts 
+        WHERE category = ?
+        ORDER BY created_at DESC 
+        LIMIT ? OFFSET ?
+    ");
+    $stmt->bind_param("sii", $category, $limit, $offset);
+} else {
     $stmt = $conn->prepare("
         SELECT * FROM posts 
         ORDER BY created_at DESC 
         LIMIT ? OFFSET ?
     ");
     $stmt->bind_param("ii", $limit, $offset);
-    $stmt->execute();
-    $result = $stmt->get_result();
+}
 
+$stmt->execute();
+$result = $stmt->get_result();
+
+/* COUNT */
+if (!empty($category)) {
+    $totalResult = $conn->query("SELECT COUNT(*) as total FROM posts WHERE category = '$category'");
+} else {
     $totalResult = $conn->query("SELECT COUNT(*) as total FROM posts");
-    $totalRow = $totalResult->fetch_assoc();
-    $totalPages = ceil($totalRow['total'] / $limit);
+}
+
+$totalRow = $totalResult->fetch_assoc();
+$totalPages = ceil($totalRow['total'] / $limit);
+?>
+
+<!-- FILTER DROPDOWN -->
+<form method="GET" class="mb-3">
+    <select name="category" class="form-select w-25" onchange="this.form.submit()">
+        <option value="">All Categories</option>
+
+        <?php while($cat = $catResult->fetch_assoc()): ?>
+            <option value="<?= $cat['category']; ?>"
+                <?= ($category == $cat['category']) ? 'selected' : '' ?>>
+                <?= htmlspecialchars($cat['category']); ?>
+            </option>
+        <?php endwhile; ?>
+
+    </select>
+</form>
+
+<!-- HEADER -->
+<h2 class="fw-bold mb-4">Latest Articles</h2>
+
+<!-- LIST -->
+<?php if ($result->num_rows > 0): ?>
+    <?php while($row = $result->fetch_assoc()): ?>
+
+    <?php
+        $readLink = !empty($row['link'])
+            ? $row['link']
+            : "articles.php?id=" . $row['id'];
     ?>
 
-    <!-- HEADER + PAGINATION -->
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="fw-bold mb-0">Latest Articles</h2>
+    <div class="article-row row">
+        <div class="col-md-4">
+            <?php if (!empty($row['image'])): ?>
+                <img src="<?= $imgPath . $row['image']; ?>" class="article-img">
+            <?php endif; ?>
+        </div>
 
-        <?php if ($totalPages > 1): ?>
-        <nav>
-            <ul class="pagination pagination-sm mb-0">
+        <div class="col-md-8">
 
-                <?php if ($page > 1): ?>
-                    <li class="page-item">
-                        <a class="page-link" href="?page=<?= $page - 1 ?>">‹</a>
-                    </li>
-                <?php endif; ?>
+            <p class="article-date">
+                <?= date("F d, Y", strtotime($row['created_at'])); ?>
+                • <?= htmlspecialchars($row['category']); ?>
+            </p>
 
-                <?php for ($i = 1; $i <= $totalPages; $i++): ?>
-                    <li class="page-item <?= ($i == $page) ? 'active' : '' ?>">
-                        <a class="page-link" href="?page=<?= $i ?>"><?= $i ?></a>
-                    </li>
-                <?php endfor; ?>
+            <h3 class="article-title">
+                <?= htmlspecialchars($row['title']); ?>
+            </h3>
 
-                <?php if ($page < $totalPages): ?>
-                    <li class="page-item">
-                        <a class="page-link" href="?page=<?= $page + 1 ?>">›</a>
-                    </li>
-                <?php endif; ?>
+            <p class="article-desc">
+                <?= substr(strip_tags($row['content']), 0, 180); ?>...
+            </p>
 
-            </ul>
-        </nav>
-        <?php endif; ?>
+            <a href="<?= htmlspecialchars($readLink); ?>" class="article-link">
+                READ ARTICLE
+            </a>
+
+        </div>
     </div>
 
-    <!-- ARTICLES -->
-    <?php if($result->num_rows > 0): ?>
-        <?php while($row = $result->fetch_assoc()): ?>
+    <?php endwhile; ?>
+<?php else: ?>
 
-        <?php
-            // ✅ NEW LOGIC FOR READ ARTICLE LINK
-            $readLink = !empty($row['link']) 
-                ? $row['link'] 
-                : "articles.php?id=" . $row['id'];
-        ?>
+    <div class="alert alert-secondary text-center">
+        No articles found.
+    </div>
 
-        <div class="article-row">
-            <div class="row align-items-center">
-
-                <div class="col-md-4">
-                    <?php if (!empty($row['image'])): ?>
-                        <img src="<?= $imgPath . $row['image']; ?>" class="article-img">
-                    <?php endif; ?>
-                </div>
-
-                <div class="col-md-8">
-
-                    <p class="article-date">
-                        <?= date("F d, Y", strtotime($row['created_at'])); ?>
-                    </p>
-
-                    <h3 class="article-title">
-                        <?= htmlspecialchars($row['title']); ?>
-                    </h3>
-
-                    <p class="article-desc">
-                        <?= substr(strip_tags($row['content']), 0, 180); ?>...
-                    </p>
-
-                    <!-- ✅ UPDATED -->
-                    <a href="<?= htmlspecialchars($readLink); ?>" 
-                       class="article-link"
-                       <?= !empty($row['link']) ? 'target="_blank"' : '' ?>>
-                        READ ARTICLE
-                    </a>
-
-                </div>
-
-            </div>
-        </div>
-
-        <?php endwhile; ?>
-    <?php else: ?>
-
-        <div class="alert alert-secondary text-center">
-            No articles available.
-        </div>
-
-    <?php endif; ?>
+<?php endif; ?>
 
 <?php endif; ?>
 
 </div>
 
 </body>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </html>
