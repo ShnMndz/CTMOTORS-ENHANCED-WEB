@@ -10,7 +10,8 @@ $filter_type = isset($_GET['type']) ? $_GET['type'] : 'all';
 
 // Fetch vehicles
 $sql = "SELECT * FROM vehicles v1 
-        WHERE image IS NOT NULL AND image != '' AND price IS NOT NULL
+        WHERE image IS NOT NULL AND image != '' 
+        AND price IS NOT NULL
         AND v1.id = (SELECT MIN(v2.id) FROM vehicles v2 WHERE v2.model_name = v1.model_name)";
 
 if($filter_type === 'passenger' || $filter_type === 'commercial'){
@@ -18,6 +19,7 @@ if($filter_type === 'passenger' || $filter_type === 'commercial'){
 }
 
 $sql .= " ORDER BY id ASC";
+
 $vehicles_result = $conn->query($sql);
 ?>
 
@@ -36,37 +38,19 @@ $vehicles_result = $conn->query($sql);
 <style>
 body { font-family: 'Poppins', sans-serif; background:#f8fafc; }
 
-.product-item img { max-height: 180px; object-fit: cover; border-radius:8px; }
-.product-item h5 { font-size:1rem; font-weight:600; margin-top:0.5rem; }
+.product-item img {
+    max-height: 180px;
+    object-fit: cover;
+    border-radius:8px;
+}
+
+.product-item h5 {
+    font-size:1rem;
+    font-weight:600;
+    margin-top:0.5rem;
+}
 
 .product-item p { display: none; }
-
-/* BADGES */
-.new-badge {
-    position:absolute;
-    top:10px;
-    left:10px;
-    background:red;
-    color:white;
-    padding:5px 10px;
-    font-size:12px;
-    font-weight:600;
-    border-radius:20px;
-    z-index:2;
-}
-
-.special-badge {
-    position:absolute;
-    top:10px;
-    right:10px;
-    background:orange;
-    color:white;
-    padding:5px 10px;
-    font-size:12px;
-    font-weight:600;
-    border-radius:20px;
-    z-index:2;
-}
 
 /* Footer */
 .footer { background-color: #f8f9fa; padding: 30px 0; margin-top: 50px; }
@@ -115,55 +99,20 @@ input { background-color: #f8f9fa !important; }
 
             <?php while($row = $vehicles_result->fetch_assoc()): ?>
 
-            <?php
-            // ✅ EXISTING EXPIRY CHECK
-            $isActiveBadge = empty($row['badge_expiry']) || strtotime($row['badge_expiry']) > time();
-
-            // ✅ NEW PROMO DATE LOGIC (ADDED ONLY)
-            $today = date("Y-m-d");
-            $isPromoActive = false;
-
-            if (!empty($row['is_special'])) {
-
-                // No dates → always active
-                if (empty($row['promo_start']) && empty($row['promo_end'])) {
-                    $isPromoActive = true;
-                }
-
-                // With dates → check range
-                elseif (!empty($row['promo_start']) && !empty($row['promo_end'])) {
-                    if ($today >= $row['promo_start'] && $today <= $row['promo_end']) {
-                        $isPromoActive = true;
-                    }
-                }
-            }
-            ?>
-
             <div class="col-lg-4 col-md-6 col-sm-12 product-item"
                  data-type="<?php echo $row['vehicle_type']; ?>">
 
                 <a href="product-details.php?id=<?php echo $row['id']; ?>"
                    style="text-decoration:none; color:inherit;">
 
-                    <div style="position:relative;">
-
-                        <!-- NEW BADGE -->
-                        <?php if(!empty($row['is_new']) && $isActiveBadge): ?>
-                            <span class="new-badge">NEW ARRIVAL</span>
-                        <?php endif; ?>
-
-                        <!-- PROMO BADGE (UPDATED ONLY) -->
-                        <?php if($isPromoActive && $isActiveBadge): ?>
-                            <span class="special-badge">SPECIAL OFFER</span>
-                        <?php endif; ?>
-
-                        <img src="../img/<?php echo htmlspecialchars($row['image']); ?>"
-                             alt="<?php echo htmlspecialchars($row['model_name']); ?>"
-                             style="width:100%; height:180px; object-fit:cover; border-radius:8px;">
-                    </div>
+                    <img src="../img/<?php echo htmlspecialchars($row['image']); ?>"
+                         alt="<?php echo htmlspecialchars($row['model_name']); ?>"
+                         style="width:100%; height:180px; object-fit:cover; border-radius:8px;">
 
                     <div class="text-center mt-2">
-                        <h5 class="mb-0"><?php echo htmlspecialchars($row['model_name']); ?></h5>
+                        <h5 class="mb-0">
+                            <?php echo htmlspecialchars($row['model_name']); ?>
+                        </h5>
                     </div>
 
                 </a>
@@ -199,7 +148,8 @@ input { background-color: #f8f9fa !important; }
           <?php
           $vehicle_links = $conn->query("
             SELECT * FROM vehicles v1 
-            WHERE image IS NOT NULL AND image != '' AND price IS NOT NULL
+            WHERE image IS NOT NULL AND image != '' 
+            AND price IS NOT NULL
             AND v1.id = (SELECT MIN(v2.id) FROM vehicles v2 WHERE v2.model_name = v1.model_name)
             ORDER BY id ASC
           ");

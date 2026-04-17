@@ -21,13 +21,6 @@ if(isset($_POST['save_vehicle'])){
     $price = floatval($_POST['price']);
     $features = $_POST['features'];
 
-    $is_new = isset($_POST['is_new']) ? 1 : 0;
-    $is_special = isset($_POST['is_special']) ? 1 : 0;
-
-    // ✅ NEW: promo dates
-    $promo_start = $_POST['promo_start'] ?? null;
-    $promo_end = $_POST['promo_end'] ?? null;
-
     $image_file = null;
 
     if(!empty($_FILES['image_file']['name'])){
@@ -41,42 +34,34 @@ if(isset($_POST['save_vehicle'])){
 
         if($image_file){
             $sql = "UPDATE vehicles 
-                    SET model_name=?, model_variant=?, vehicle_type=?, price=?, features=?, image=?, is_new=?, is_special=?, promo_start=?, promo_end=? 
+                    SET model_name=?, model_variant=?, vehicle_type=?, price=?, features=?, image=? 
                     WHERE id=?";
 
             $stmt = $conn->prepare($sql);
             $stmt->bind_param(
-                "sssdssisssi",
+                "sssdssi",
                 $model_name,
                 $model_variant,
                 $vehicle_type,
                 $price,
                 $features,
                 $image_file,
-                $is_new,
-                $is_special,
-                $promo_start,
-                $promo_end,
                 $id
             );
 
         } else {
             $sql = "UPDATE vehicles 
-                    SET model_name=?, model_variant=?, vehicle_type=?, price=?, features=?, is_new=?, is_special=?, promo_start=?, promo_end=? 
+                    SET model_name=?, model_variant=?, vehicle_type=?, price=?, features=? 
                     WHERE id=?";
 
             $stmt = $conn->prepare($sql);
             $stmt->bind_param(
-                "sssdssissi",
+                "sssdsi",
                 $model_name,
                 $model_variant,
                 $vehicle_type,
                 $price,
                 $features,
-                $is_new,
-                $is_special,
-                $promo_start,
-                $promo_end,
                 $id
             );
         }
@@ -87,23 +72,19 @@ if(isset($_POST['save_vehicle'])){
     else {
 
         $sql = "INSERT INTO vehicles 
-        (model_name, model_variant, vehicle_type, price, features, image, is_new, is_special, promo_start, promo_end, created_at)
-        VALUES (?,?,?,?,?,?,?,?,?,?,NOW())";
+        (model_name, model_variant, vehicle_type, price, features, image, created_at)
+        VALUES (?,?,?,?,?,?,NOW())";
 
         $stmt = $conn->prepare($sql);
 
         $stmt->bind_param(
-            "sssdssisss",
+            "sssdss",
             $model_name,
             $model_variant,
             $vehicle_type,
             $price,
             $features,
-            $image_file,
-            $is_new,
-            $is_special,
-            $promo_start,
-            $promo_end
+            $image_file
         );
     }
 
@@ -175,26 +156,6 @@ $result = $stmt->get_result();
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
 <link href="admin_vehicles.css" rel="stylesheet">
-
-<style>
-.badge-new{
-    background:red;
-    color:white;
-    padding:3px 8px;
-    font-size:11px;
-    border-radius:10px;
-    margin-left:5px;
-}
-.badge-special{
-    background:orange;
-    color:white;
-    padding:3px 8px;
-    font-size:11px;
-    border-radius:10px;
-    margin-left:5px;
-}
-</style>
-
 </head>
 
 <body>
@@ -204,7 +165,7 @@ $result = $stmt->get_result();
     <a href="admin_dashboard.php"><i class="fas fa-chart-line"></i> Dashboard</a>
     <a href="admin_users.php"><i class="fas fa-users"></i> Manage Users</a>
     <a href="admin_vehicles.php" class="active"><i class="fas fa-car"></i> Manage Vehicles</a>
-    <a href="admin_posts.php"><i class="fas fa-newspaper"></i> Posts</a>
+    <a href="admin_posts.php"><i class="fas fa-newspaper"></i> Posts (News/Articles)</a>
     <a href="../logout.php"><i class="fas fa-sign-out-alt"></i> Logout</a>
 </div>
 
@@ -229,7 +190,7 @@ $result = $stmt->get_result();
 </div>
 
 <?php if(isset($_SESSION['success'])): ?>
-    <div class="alert alert-success alert-dismissible fade show" role="alert">
+    <div class="alert alert-success alert-dismissible fade show">
         <?= $_SESSION['success']; ?>
         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
     </div>
@@ -254,17 +215,6 @@ $result = $stmt->get_result();
 
 <?php while($v=$result->fetch_assoc()): ?>
 
-<?php
-$today = date('Y-m-d');
-
-$isActivePromo =
-    ($v['is_special'] == 1 &&
-     !empty($v['promo_start']) &&
-     !empty($v['promo_end']) &&
-     $v['promo_start'] <= $today &&
-     $v['promo_end'] >= $today);
-?>
-
 <tr
 data-id="<?= $v['id'] ?>"
 data-name="<?= htmlspecialchars($v['model_name'],ENT_QUOTES) ?>"
@@ -273,37 +223,11 @@ data-type="<?= $v['vehicle_type'] ?>"
 data-price="<?= $v['price'] ?>"
 data-features="<?= htmlspecialchars($v['features'],ENT_QUOTES) ?>"
 data-image="<?= $v['image'] ?>"
-data-isnew="<?= $v['is_new'] ?>"
-data-isspecial="<?= $v['is_special'] ?>"
-data-promostart="<?= $v['promo_start'] ?>"
-data-promoend="<?= $v['promo_end'] ?>"
 >
 
 <td><?= $v['id'] ?></td>
 
-<td>
-<?= $v['model_name'] ?>
-<?php if($v['is_new']): ?><span class="badge-new">NEW</span><?php endif; ?>
-
-<?php
-if($v['is_special']){
-
-    if(!empty($v['promo_start']) && !empty($v['promo_end'])){
-
-        if($isActivePromo){
-            echo "<span class='badge-special'>PROMO</span>";
-        } else {
-            echo "<span style='background:gray;color:#fff;padding:3px 8px;border-radius:10px;font-size:11px;margin-left:5px;'>EXPIRED</span>";
-        }
-
-    } else {
-        echo "<span class='badge-special'>PROMO</span>";
-    }
-}
-?>
-
-</td>
-
+<td><?= $v['model_name'] ?></td>
 <td><?= $v['model_variant'] ?></td>
 <td><?= $v['vehicle_type'] ?></td>
 <td>₱<?= number_format($v['price'],2) ?></td>
@@ -316,11 +240,9 @@ if($v['is_special']){
 </td>
 
 <td>
-<a href="?delete_vehicle=<?= $v['id'] ?>" 
-   class="btn btn-danger btn-sm"
-   onclick="return confirm('Are you sure you want to delete this vehicle?');">
-   Delete
-</a>
+<a href="?delete_vehicle=<?= $v['id'] ?>" class="btn btn-danger btn-sm"
+onclick="return confirm('Delete this vehicle?');">Delete</a>
+
 <button class="btn btn-warning btn-sm edit-btn">Edit</button>
 </td>
 
@@ -333,7 +255,7 @@ if($v['is_special']){
 
 </div>
 
-<!-- MODAL (UNCHANGED) -->
+<!-- MODAL -->
 <div class="modal fade" id="modal">
 <div class="modal-dialog">
 <div class="modal-content">
@@ -343,24 +265,28 @@ if($v['is_special']){
 
 <input type="hidden" name="vehicle_id" id="id">
 
+<label class="form-label">Model Name</label>
 <input type="text" name="model_name" id="name" class="form-control mb-2">
+
+<label class="form-label">Model Variant</label>
 <input type="text" name="model_variant" id="variant" class="form-control mb-2">
 
+<label class="form-label">Vehicle Type</label>
 <select name="vehicle_type" id="type" class="form-select mb-2">
 <option value="passenger">Passenger</option>
 <option value="commercial">Commercial</option>
 </select>
 
+<label class="form-label">Price</label>
 <input type="number" name="price" id="price" class="form-control mb-2">
 
+<label class="form-label">Features</label>
 <textarea name="features" id="features" class="form-control mb-2"></textarea>
 
-<label><input type="checkbox" name="is_new" id="is_new"> New Arrival</label><br>
-<label><input type="checkbox" name="is_special" id="is_special"> Special Offer</label>
+<label class="form-label">Vehicle Image</label>
+<input type="file" name="image_file" class="form-control" onchange="previewImage(event)">
 
-<input type="file" name="image_file" class="form-control mt-2" onchange="previewImage(event)">
-
-<img id="image-preview" style="display:none; width:100%; margin-top:10px;">
+<img id="image-preview" style="display:none;width:100%;margin-top:10px;">
 
 </div>
 
@@ -377,7 +303,7 @@ if($v['is_special']){
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
-function openModal(id='',name='',variant='',type='',price='',features='',image='',isnew=0,isspecial=0){
+function openModal(id='',name='',variant='',type='',price='',features='',image=''){
 
     document.getElementById('id').value=id;
     document.getElementById('name').value=name;
@@ -385,9 +311,6 @@ function openModal(id='',name='',variant='',type='',price='',features='',image='
     document.getElementById('type').value=type;
     document.getElementById('price').value=price;
     document.getElementById('features').value=features;
-
-    document.getElementById('is_new').checked = (isnew == 1);
-    document.getElementById('is_special').checked = (isspecial == 1);
 
     const img=document.getElementById('image-preview');
     if(image){
@@ -410,9 +333,7 @@ document.querySelectorAll('.edit-btn').forEach(btn=>{
             tr.dataset.type,
             tr.dataset.price,
             tr.dataset.features,
-            tr.dataset.image,
-            tr.dataset.isnew,
-            tr.dataset.isspecial
+            tr.dataset.image
         );
     }
 });

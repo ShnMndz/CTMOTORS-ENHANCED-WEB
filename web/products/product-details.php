@@ -23,33 +23,6 @@ $stmt2 = $conn->prepare("SELECT * FROM vehicles WHERE model_name = ? ORDER BY id
 $stmt2->bind_param("s", $vehicle['model_name']);
 $stmt2->execute();
 $variants_result = $stmt2->get_result();
-
-/* ---------------------------
-   NEW + PROMO LOGIC
----------------------------- */
-$today = date("Y-m-d");
-
-/* Badge expiry */
-$isActiveBadge = empty($vehicle['badge_expiry']) || strtotime($vehicle['badge_expiry']) > time();
-
-/* NEW */
-$isNew = !empty($vehicle['is_new']);
-
-/* PROMO */
-$isPromoActive = false;
-
-if (!empty($vehicle['is_special']) && $isActiveBadge) {
-
-    if (empty($vehicle['promo_start']) && empty($vehicle['promo_end'])) {
-        $isPromoActive = true;
-    }
-
-    elseif (!empty($vehicle['promo_start']) && !empty($vehicle['promo_end'])) {
-        if ($today >= $vehicle['promo_start'] && $today <= $vehicle['promo_end']) {
-            $isPromoActive = true;
-        }
-    }
-}
 ?>
 
 <!DOCTYPE html>
@@ -61,7 +34,6 @@ if (!empty($vehicle['is_special']) && $isActiveBadge) {
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css" rel="stylesheet">
-
 <link rel="stylesheet" href="/citimotorsweb/web/global.css">
 
 <style>
@@ -70,7 +42,7 @@ body {
     background: #f5f6f8;
 }
 
-/* HERO SECTION */
+/* HERO */
 .hero-section {
     display: flex;
     align-items: center;
@@ -79,7 +51,6 @@ body {
     gap: 40px;
 }
 
-/* TEXT */
 .hero-text {
     flex: 1;
     max-width: 520px;
@@ -149,33 +120,6 @@ body {
     transform: scale(1.05);
 }
 
-/* BADGES */
-.new-badge {
-    position: absolute;
-    top: 10px;
-    left: 10px;
-    background: red;
-    color: white;
-    padding: 6px 12px;
-    font-size: 12px;
-    font-weight: 600;
-    border-radius: 20px;
-    z-index: 5;
-}
-
-.special-badge {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    background: orange;
-    color: white;
-    padding: 6px 12px;
-    font-size: 12px;
-    font-weight: 600;
-    border-radius: 20px;
-    z-index: 5;
-}
-
 /* VARIANTS */
 .variant-scroll-container {
     display: flex;
@@ -230,7 +174,6 @@ body {
 
 <div class="container">
 
-<!-- BACK -->
 <a href="javascript:history.back()" style="color:#d60000;">
     ← Change Vehicle
 </a>
@@ -269,17 +212,8 @@ body {
         </div>
     </div>
 
-    <!-- IMAGE + BADGES -->
-    <div class="hero-image" style="position:relative;">
-
-        <?php if($isNew && $isActiveBadge): ?>
-            <span class="new-badge">NEW ARRIVAL</span>
-        <?php endif; ?>
-
-        <?php if($isPromoActive): ?>
-            <span class="special-badge">PROMO</span>
-        <?php endif; ?>
-
+    <!-- IMAGE -->
+    <div class="hero-image">
         <img id="vehicle-image"
              src="../img/<?php echo htmlspecialchars($vehicle['image'] ?: 'no-image.png'); ?>">
     </div>
