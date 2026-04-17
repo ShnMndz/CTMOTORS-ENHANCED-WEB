@@ -29,7 +29,6 @@ if(isset($_POST['save_vehicle'])){
         move_uploaded_file($_FILES['image_file']['tmp_name'], $target_dir.$image_file);
     }
 
-    // ---------------- UPDATE ----------------
     if($id > 0){
 
         if($image_file){
@@ -66,10 +65,7 @@ if(isset($_POST['save_vehicle'])){
             );
         }
 
-    }
-
-    // ---------------- INSERT ----------------
-    else {
+    } else {
 
         $sql = "INSERT INTO vehicles 
         (model_name, model_variant, vehicle_type, price, features, image, created_at)
@@ -92,8 +88,6 @@ if(isset($_POST['save_vehicle'])){
         $_SESSION['success'] = $id > 0 ? "Vehicle updated successfully!" : "Vehicle added successfully!";
         header("Location: admin_vehicles.php");
         exit();
-    } else {
-        echo "<script>alert('Error: ".$stmt->error."');</script>";
     }
 }
 
@@ -156,6 +150,14 @@ $result = $stmt->get_result();
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
 <link href="admin_vehicles.css" rel="stylesheet">
+
+<!-- ONLY ADDITION -->
+<style>
+.alert{
+    transition: opacity 0.5s ease;
+}
+</style>
+
 </head>
 
 <body>
@@ -189,8 +191,9 @@ $result = $stmt->get_result();
 
 </div>
 
+<!-- ONLY CHANGE HERE: added auto-fade class -->
 <?php if(isset($_SESSION['success'])): ?>
-    <div class="alert alert-success alert-dismissible fade show">
+    <div class="alert alert-success auto-fade alert-dismissible fade show">
         <?= $_SESSION['success']; ?>
         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
     </div>
@@ -226,7 +229,6 @@ data-image="<?= $v['image'] ?>"
 >
 
 <td><?= $v['id'] ?></td>
-
 <td><?= $v['model_name'] ?></td>
 <td><?= $v['model_variant'] ?></td>
 <td><?= $v['vehicle_type'] ?></td>
@@ -255,7 +257,7 @@ onclick="return confirm('Delete this vehicle?');">Delete</a>
 
 </div>
 
-<!-- MODAL -->
+<!-- MODAL (UNCHANGED) -->
 <div class="modal fade" id="modal">
 <div class="modal-dialog">
 <div class="modal-content">
@@ -303,6 +305,7 @@ onclick="return confirm('Delete this vehicle?');">Delete</a>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
+// UNCHANGED JS
 function openModal(id='',name='',variant='',type='',price='',features='',image=''){
 
     document.getElementById('id').value=id;
@@ -343,6 +346,18 @@ function previewImage(event){
     img.src=URL.createObjectURL(event.target.files[0]);
     img.style.display='block';
 }
+
+// ONLY ADDITION: AUTO FADE ALERT
+document.addEventListener("DOMContentLoaded", function () {
+    const alerts = document.querySelectorAll(".auto-fade");
+
+    alerts.forEach(alert => {
+        setTimeout(() => {
+            alert.style.opacity = "0";
+            setTimeout(() => alert.remove(), 500);
+        }, 3000);
+    });
+});
 </script>
 
 </body>

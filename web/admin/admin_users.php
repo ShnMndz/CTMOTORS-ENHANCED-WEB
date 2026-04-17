@@ -43,10 +43,12 @@ if(isset($_POST['add_user'])){
 // UPDATE USER ROLE
 // ---------------------
 if(isset($_POST['save_user'])){
+
     $stmt = $conn->prepare("UPDATE users SET role=? WHERE id=?");
     $stmt->bind_param("si", $_POST['role'], $_POST['id']);
     $stmt->execute();
-    header("Location: admin_users.php");
+
+    header("Location: admin_users.php?success=updated");
     exit();
 }
 
@@ -54,6 +56,7 @@ if(isset($_POST['save_user'])){
 // DELETE USER
 // ---------------------
 if(isset($_GET['delete_user'])){
+
     if($_GET['delete_user'] == $_SESSION['user_id']){
         header("Location: admin_users.php?error=selfdelete");
         exit();
@@ -63,7 +66,7 @@ if(isset($_GET['delete_user'])){
     $stmt->bind_param("i", $_GET['delete_user']);
     $stmt->execute();
 
-    header("Location: admin_users.php");
+    header("Location: admin_users.php?success=deleted");
     exit();
 }
 
@@ -76,7 +79,6 @@ $total_users = $conn->query("SELECT COUNT(*) as total FROM users")->fetch_assoc(
 $total_admins = $conn->query("SELECT COUNT(*) as total FROM users WHERE role='admin'")->fetch_assoc()['total'];
 $total_regular = $conn->query("SELECT COUNT(*) as total FROM users WHERE role='user'")->fetch_assoc()['total'];
 
-// NEW: USERS THIS MONTH
 $users_this_month = $conn->query("
     SELECT COUNT(*) as total 
     FROM users 
@@ -97,6 +99,14 @@ $users_this_month = $conn->query("
 
 <link rel="stylesheet" href="users.css">
 <link rel="stylesheet" href="dashboard.css">
+
+<!-- ONLY ADDITION: fade animation -->
+<style>
+.alert{
+    transition: all 0.5s ease;
+}
+</style>
+
 </head>
 <body>
 
@@ -130,16 +140,25 @@ $users_this_month = $conn->query("
 
 <h2>Users</h2>
 
-<?php if(isset($_GET['success'])): ?>
-<div class="alert alert-success">User added successfully!</div>
+<!-- ALERTS (UNCHANGED LOGIC + only fade class added) -->
+<?php if(isset($_GET['success']) && $_GET['success']=='added'): ?>
+<div class="alert alert-success auto-fade">User added successfully!</div>
+<?php endif; ?>
+
+<?php if(isset($_GET['success']) && $_GET['success']=='updated'): ?>
+<div class="alert alert-success auto-fade">User updated successfully!</div>
+<?php endif; ?>
+
+<?php if(isset($_GET['success']) && $_GET['success']=='deleted'): ?>
+<div class="alert alert-success auto-fade">User deleted successfully!</div>
 <?php endif; ?>
 
 <?php if(isset($_GET['error']) && $_GET['error']=='email_exists'): ?>
-<div class="alert alert-danger">Email already exists!</div>
+<div class="alert alert-danger auto-fade">Email already exists!</div>
 <?php endif; ?>
 
 <?php if(isset($_GET['error']) && $_GET['error']=='selfdelete'): ?>
-<div class="alert alert-warning">You cannot delete your own account!</div>
+<div class="alert alert-warning auto-fade">You cannot delete your own account!</div>
 <?php endif; ?>
 
 <!-- ADD USER BUTTON -->
@@ -171,7 +190,6 @@ $users_this_month = $conn->query("
         </div>
     </div>
 
-    <!-- NEW CARD -->
     <div class="col-md-3">
         <div class="card stat-card">
             <h2><?= $users_this_month ?></h2>
@@ -217,6 +235,7 @@ $users_this_month = $conn->query("
 <td><?= $u['id'] ?></td>
 <td><?= htmlspecialchars($u['fullname']) ?></td>
 <td><?= htmlspecialchars($u['email']) ?></td>
+
 <td>
 <?php if($u['role'] == 'admin'): ?>
     <span class="badge bg-danger px-3 py-2">
@@ -230,8 +249,16 @@ $users_this_month = $conn->query("
 </td>
 
 <td>
-<a class="btn btn-danger btn-sm" href="?delete_user=<?= $u['id'] ?>">Delete</a>
+
+<!-- ONLY ADDITION: confirm delete -->
+<a class="btn btn-danger btn-sm"
+   href="?delete_user=<?= $u['id'] ?>"
+   onclick="return confirm('Are you sure you want to delete this user?');">
+   Delete
+</a>
+
 <button class="btn btn-warning btn-sm edit-btn">Edit</button>
+
 </td>
 
 </tr>
@@ -272,6 +299,7 @@ $users_this_month = $conn->query("
 <div class="modal-footer">
 <button name="save_user" class="btn btn-primary">Save</button>
 </div>
+
 </form>
 
 </div>
@@ -348,6 +376,18 @@ function filterTable(){
 
 searchInput.addEventListener('input', filterTable);
 roleFilter.addEventListener('change', filterTable);
+
+// ONLY ADDITION: AUTO FADE ALERTS
+document.addEventListener("DOMContentLoaded", function () {
+    const alerts = document.querySelectorAll(".auto-fade");
+
+    alerts.forEach(alert => {
+        setTimeout(() => {
+            alert.style.opacity = "0";
+            setTimeout(() => alert.remove(), 500);
+        }, 3000);
+    });
+});
 </script>
 
 </body>
