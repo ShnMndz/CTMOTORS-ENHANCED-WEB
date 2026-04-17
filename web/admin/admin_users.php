@@ -21,7 +21,6 @@ if(isset($_POST['add_user'])){
 
     $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
 
-    // check duplicate email
     $check = $conn->prepare("SELECT id FROM users WHERE email=?");
     $check->bind_param("s", $email);
     $check->execute();
@@ -59,9 +58,11 @@ if(isset($_GET['delete_user'])){
         header("Location: admin_users.php?error=selfdelete");
         exit();
     }
+
     $stmt = $conn->prepare("DELETE FROM users WHERE id=?");
     $stmt->bind_param("i", $_GET['delete_user']);
     $stmt->execute();
+
     header("Location: admin_users.php");
     exit();
 }
@@ -74,6 +75,15 @@ $result_users = $conn->query("SELECT * FROM users ORDER BY id DESC");
 $total_users = $conn->query("SELECT COUNT(*) as total FROM users")->fetch_assoc()['total'];
 $total_admins = $conn->query("SELECT COUNT(*) as total FROM users WHERE role='admin'")->fetch_assoc()['total'];
 $total_regular = $conn->query("SELECT COUNT(*) as total FROM users WHERE role='user'")->fetch_assoc()['total'];
+
+// NEW: USERS THIS MONTH
+$users_this_month = $conn->query("
+    SELECT COUNT(*) as total 
+    FROM users 
+    WHERE MONTH(created_at) = MONTH(CURRENT_DATE())
+    AND YEAR(created_at) = YEAR(CURRENT_DATE())
+")->fetch_assoc()['total'];
+
 ?>
 
 <!DOCTYPE html>
@@ -139,9 +149,36 @@ $total_regular = $conn->query("SELECT COUNT(*) as total FROM users WHERE role='u
 
 <!-- STATS -->
 <div class="row mb-4">
-    <div class="col-md-4"><div class="card stat-card"><h2><?= $total_users ?></h2><small>Total Users</small></div></div>
-    <div class="col-md-4"><div class="card stat-card"><h2><?= $total_admins ?></h2><small>Admins</small></div></div>
-    <div class="col-md-4"><div class="card stat-card"><h2><?= $total_regular ?></h2><small>Users</small></div></div>
+
+    <div class="col-md-3">
+        <div class="card stat-card">
+            <h2><?= $total_users ?></h2>
+            <small>Total Users</small>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card stat-card">
+            <h2><?= $total_admins ?></h2>
+            <small>Admins</small>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card stat-card">
+            <h2><?= $total_regular ?></h2>
+            <small>Users</small>
+        </div>
+    </div>
+
+    <!-- NEW CARD -->
+    <div class="col-md-3">
+        <div class="card stat-card">
+            <h2><?= $users_this_month ?></h2>
+            <small>Users This Month</small>
+        </div>
+    </div>
+
 </div>
 
 <!-- SEARCH -->
@@ -180,7 +217,17 @@ $total_regular = $conn->query("SELECT COUNT(*) as total FROM users WHERE role='u
 <td><?= $u['id'] ?></td>
 <td><?= htmlspecialchars($u['fullname']) ?></td>
 <td><?= htmlspecialchars($u['email']) ?></td>
-<td><?= ucfirst($u['role']) ?></td>
+<td>
+<?php if($u['role'] == 'admin'): ?>
+    <span class="badge bg-danger px-3 py-2">
+        <i class="fas fa-shield-alt"></i> Admin
+    </span>
+<?php else: ?>
+    <span class="badge bg-primary px-3 py-2">
+        <i class="fas fa-user"></i> User
+    </span>
+<?php endif; ?>
+</td>
 
 <td>
 <a class="btn btn-danger btn-sm" href="?delete_user=<?= $u['id'] ?>">Delete</a>
@@ -268,7 +315,6 @@ $total_regular = $conn->query("SELECT COUNT(*) as total FROM users WHERE role='u
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
-// EDIT
 function openModal(id,name,email,role){
     document.getElementById('user-id').value = id;
     document.getElementById('user-name').value = name;
@@ -284,7 +330,6 @@ document.querySelectorAll('.edit-btn').forEach(btn=>{
     }
 });
 
-// FILTER
 const searchInput = document.getElementById('searchName');
 const roleFilter = document.getElementById('filterRole');
 const table = document.getElementById('usersTable').getElementsByTagName('tbody')[0];
@@ -297,8 +342,7 @@ function filterTable(){
         const name = row.cells[1].textContent.toLowerCase();
         const rowRole = row.dataset.role;
 
-        const match = name.includes(search) && (!role || rowRole === role);
-        row.style.display = match ? '' : 'none';
+        row.style.display = (name.includes(search) && (!role || rowRole === role)) ? '' : 'none';
     });
 }
 
