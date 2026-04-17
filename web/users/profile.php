@@ -185,8 +185,8 @@ body{
 
     </form>
 
-    <a href="../logout.php" class="btn btn-outline-light mt-4 w-100">
-        Logout
+    <a href="../home.php" class="btn btn-outline-light mt-4 w-100">
+        Return
     </a>
 
 </div>
