@@ -61,7 +61,7 @@ $user = $stmt->get_result()->fetch_assoc();
                 Test Drive Request
             </a>
 
-            <a href="saved.php" class="menu-btn">
+            <a href="saved_vehicles.php" class="menu-btn">
                 <i class="fa-solid fa-heart"></i>
                 Saved Vehicles
             </a>

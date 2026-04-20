@@ -18,7 +18,7 @@ if ($vehicle_result->num_rows === 0) {
 
 $vehicle = $vehicle_result->fetch_assoc();
 
-// Fetch all variants
+// Fetch all variants (same model)
 $stmt2 = $conn->prepare("SELECT * FROM vehicles WHERE model_name = ? ORDER BY id ASC");
 $stmt2->bind_param("s", $vehicle['model_name']);
 $stmt2->execute();
@@ -42,7 +42,6 @@ body {
     background: #f5f6f8;
 }
 
-/* HERO */
 .hero-section {
     display: flex;
     align-items: center;
@@ -51,76 +50,35 @@ body {
     gap: 40px;
 }
 
-.hero-text {
-    flex: 1;
-    max-width: 520px;
-}
+.hero-text { flex: 1; max-width: 520px; }
 
-.hero-text h1 {
-    font-size: 60px;
-    font-weight: 800;
-    margin-bottom: 10px;
-}
+.hero-text h1 { font-size: 60px; font-weight: 800; }
 
-.hero-sub {
-    font-size: 16px;
-    color: #555;
-}
+.hero-price { font-size: 28px; font-weight: 700; margin: 20px 0; }
 
-.hero-specs {
-    font-size: 14px;
-    color: #777;
-    line-height: 1.6;
-}
+.hero-buttons { display: flex; gap: 15px; }
 
-.hero-price {
-    font-size: 28px;
-    font-weight: 700;
-    margin: 20px 0;
-}
+.btn-danger { background: #d60000; border: none; }
 
-/* BUTTONS */
-.hero-buttons {
-    display: flex;
-    gap: 15px;
-}
-
-.btn-danger {
-    background: #d60000;
-    border: none;
-    padding: 12px 28px;
-    font-weight: 600;
-    border-radius: 8px;
-}
-
-.btn-danger:hover {
-    background: #b80000;
-}
-
-.btn-outline-dark {
-    padding: 12px 28px;
-    font-weight: 600;
-    border-radius: 8px;
-}
-
-/* IMAGE */
 .hero-image {
     flex: 1;
-    text-align: right;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
+/* FIXED IMAGE FRAME */
 .hero-image img {
     width: 100%;
     max-width: 650px;
+    height: 380px;              /* 🔥 fixed height */
+    object-fit: contain;       /* or "cover" if gusto mo crop style */
     transition: 0.4s ease;
     border-radius: 10px;
+    background: #fff;          /* optional clean background */
+    padding: 10px;             /* optional spacing */
 }
 
-.hero-image img:hover {
-    transform: scale(1.05);
-}
-
-/* VARIANTS */
 .variant-scroll-container {
     display: flex;
     gap: 15px;
@@ -140,30 +98,9 @@ body {
     transition: 0.3s ease;
 }
 
-.variant-card:hover {
-    border-color: #d60000;
-    transform: translateY(-5px);
-}
-
 .variant-selected {
     border-color: #d60000;
     background: #fff5f5;
-}
-
-/* RESPONSIVE */
-@media(max-width: 992px) {
-    .hero-section {
-        flex-direction: column;
-        text-align: center;
-    }
-
-    .hero-text h1 {
-        font-size: 40px;
-    }
-
-    .hero-image {
-        text-align: center;
-    }
 }
 </style>
 </head>
@@ -174,22 +111,18 @@ body {
 
 <div class="container">
 
-<a href="javascript:history.back()" style="color:#d60000;">
-    ← Change Vehicle
-</a>
+<a href="products.php" style="color:#d60000;">← Change Vehicle</a>
 
-<!-- HERO -->
 <div class="hero-section">
 
-    <!-- TEXT -->
     <div class="hero-text">
-        <h1><?php echo htmlspecialchars($vehicle['model_name']); ?></h1>
+        <h1 id="vehicle-name"><?php echo htmlspecialchars($vehicle['model_name']); ?></h1>
 
-        <p class="hero-sub" id="vehicle-variant">
+        <p id="vehicle-variant">
             <?php echo htmlspecialchars($vehicle['model_variant']); ?>
         </p>
 
-        <p class="hero-specs" id="vehicle-features">
+        <p id="vehicle-features">
             <?php echo nl2br(htmlspecialchars($vehicle['features'])); ?>
         </p>
 
@@ -212,7 +145,6 @@ body {
         </div>
     </div>
 
-    <!-- IMAGE -->
     <div class="hero-image">
         <img id="vehicle-image"
              src="../img/<?php echo htmlspecialchars($vehicle['image'] ?: 'no-image.png'); ?>">
@@ -220,12 +152,12 @@ body {
 
 </div>
 
-<!-- VARIANTS -->
 <h5 class="mt-4">Available Variants</h5>
 
 <div class="variant-scroll-container">
     <?php while ($v = $variants_result->fetch_assoc()): ?>
         <div class="variant-card <?php echo ($v['id']==$vehicle_id?'variant-selected':''); ?>"
+
              data-id="<?php echo $v['id']; ?>"
              data-variant="<?php echo htmlspecialchars($v['model_variant']); ?>"
              data-price="<?php echo $v['price']; ?>"
@@ -240,28 +172,36 @@ body {
 </div>
 
 <script>
-// Variant switching
 document.querySelectorAll('.variant-card').forEach(card => {
-    card.addEventListener('click', function() {
+    card.addEventListener('click', function () {
 
-        document.querySelectorAll('.variant-card').forEach(c => c.classList.remove('variant-selected'));
+        document.querySelectorAll('.variant-card')
+            .forEach(c => c.classList.remove('variant-selected'));
+
         this.classList.add('variant-selected');
 
+        const id = this.dataset.id;
+
+        // ✅ UPDATE URL WITHOUT RELOAD
+        const newUrl = window.location.pathname + "?id=" + id;
+        window.history.pushState({id: id}, "", newUrl);
+
+        // UI updates
         document.getElementById('vehicle-image').src = this.dataset.image;
         document.getElementById('vehicle-variant').textContent = this.dataset.variant;
 
         document.getElementById('vehicle-price').textContent =
             "From ₱" + parseFloat(this.dataset.price).toLocaleString('en-PH');
 
-        let features = this.dataset.features
-            ? this.dataset.features.replace(/\n/g, "<br>")
-            : "No features listed";
+        document.getElementById('vehicle-features').innerHTML =
+            this.dataset.features ? this.dataset.features.replace(/\n/g, "<br>") : "No features listed";
 
-        document.getElementById('vehicle-features').innerHTML = features;
+        // update buttons
+        document.getElementById('testDriveBtn').href =
+            "../tools/testdrive.php?id=" + id;
 
-        const id = this.dataset.id;
-        document.getElementById('testDriveBtn').href = "../tools/testdrive.php?id=" + id;
-        document.getElementById('configureBtn').href = "configure.php?id=" + id;
+        document.getElementById('configureBtn').href =
+            "configure.php?id=" + id;
     });
 });
 </script>
