@@ -15,7 +15,9 @@ $stmt->bind_param("i", $id);
 $stmt->execute();
 $user = $stmt->get_result()->fetch_assoc();
 
-/* SAVE ALL */
+/* =========================
+   UPDATE PROFILE
+========================= */
 if (isset($_POST['save_all'])) {
 
     $fullname = trim($_POST['fullname']);
@@ -23,9 +25,7 @@ if (isset($_POST['save_all'])) {
 
     $updated = false;
 
-    // CHECK NAME + EMAIL CHANGES
     if ($fullname !== $user['fullname'] || $email !== $user['email']) {
-
         if (!empty($fullname) && !empty($email)) {
             $update = $conn->prepare("UPDATE users SET fullname=?, email=? WHERE id=?");
             $update->bind_param("ssi", $fullname, $email, $id);
@@ -34,7 +34,6 @@ if (isset($_POST['save_all'])) {
         }
     }
 
-    // CHECK IMAGE CHANGE
     if (!empty($_FILES['profile_pic']['name'])) {
 
         $fileName = time() . "_" . basename($_FILES['profile_pic']['name']);
@@ -47,7 +46,6 @@ if (isset($_POST['save_all'])) {
 
             if (move_uploaded_file($_FILES['profile_pic']['tmp_name'], $target)) {
 
-                // DELETE OLD IMAGE
                 if (!empty($user['profile_pic']) && file_exists("../uploads/" . $user['profile_pic'])) {
                     unlink("../uploads/" . $user['profile_pic']);
                 }
@@ -60,21 +58,59 @@ if (isset($_POST['save_all'])) {
             }
 
         } else {
-            $_SESSION['message'] = "Invalid image format (JPG, JPEG, PNG only).";
+            $_SESSION['message'] = "Invalid image format.";
             $_SESSION['type'] = "danger";
             header("Location: profile.php");
             exit();
         }
     }
 
-    // FINAL MESSAGE
-    if ($updated) {
-        $_SESSION['message'] = "Profile updated successfully!";
-        $_SESSION['type'] = "success";
-    } else {
-        $_SESSION['message'] = "No changes made.";
-        $_SESSION['type'] = "warning";
+    $_SESSION['message'] = $updated ? "Profile updated successfully!" : "No changes made.";
+    $_SESSION['type'] = $updated ? "success" : "warning";
+
+    // ✅ REDIRECT TO DASHBOARD AFTER SAVE
+    header("Location: user_dashboard.php");
+    exit();
+}
+
+/* =========================
+   CHANGE PASSWORD
+========================= */
+if (isset($_POST['change_password'])) {
+
+    $current = $_POST['current_password'];
+    $new = $_POST['new_password'];
+    $confirm = $_POST['confirm_password'];
+
+    if (!password_verify($current, $user['password'])) {
+        $_SESSION['message'] = "Current password is incorrect.";
+        $_SESSION['type'] = "danger";
+        header("Location: profile.php");
+        exit();
     }
+
+    if ($new !== $confirm) {
+        $_SESSION['message'] = "New passwords do not match.";
+        $_SESSION['type'] = "danger";
+        header("Location: profile.php");
+        exit();
+    }
+
+    if (strlen($new) < 6) {
+        $_SESSION['message'] = "Password must be at least 6 characters.";
+        $_SESSION['type'] = "warning";
+        header("Location: profile.php");
+        exit();
+    }
+
+    $hashed = password_hash($new, PASSWORD_DEFAULT);
+
+    $update = $conn->prepare("UPDATE users SET password=? WHERE id=?");
+    $update->bind_param("si", $hashed, $id);
+    $update->execute();
+
+    $_SESSION['message'] = "Password changed successfully!";
+    $_SESSION['type'] = "success";
 
     header("Location: profile.php");
     exit();
@@ -85,7 +121,7 @@ if (isset($_POST['save_all'])) {
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Profile Dashboard</title>
+<title>My Profile</title>
 
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 
@@ -93,28 +129,24 @@ if (isset($_POST['save_all'])) {
 body{
     background:#121212;
     color:#fff;
-    font-family:'Segoe UI', sans-serif;
 }
 
-.sidebar{
+.card{
+    max-width:500px;
+    margin:auto;
+    margin-top:50px;
     background:#1a1a1a;
-    min-height:100vh;
     padding:30px;
-    border-right:1px solid #2a2a2a;
+    border-radius:15px;
 }
 
 .profile-pic{
-    width:130px;
-    height:130px;
+    width:120px;
+    height:120px;
     border-radius:50%;
     object-fit:cover;
     border:3px solid #ff4d4d;
     cursor:pointer;
-    transition:0.3s;
-}
-
-.profile-pic:hover{
-    transform:scale(1.05);
 }
 
 .form-control{
@@ -123,128 +155,93 @@ body{
     color:#fff;
 }
 
-.form-control:focus{
-    background:#222;
-    color:#fff;
-}
-
-.btn-save{
+.btn-main{
     background:#ff4d4d;
     border:none;
-}
-
-.btn-save:hover{
-    background:#e60023;
-}
-
-.content{
-    background:#f4f4f4;
-    color:#000;
-    min-height:100vh;
-    padding:40px;
-}
-
-.small-text{
-    font-size:12px;
-    color:#aaa;
 }
 </style>
 </head>
 
 <body>
 
-<div class="container-fluid">
-<div class="row">
+<div class="container">
 
-<!-- SIDEBAR -->
-<div class="col-md-3 sidebar">
+<?php if (isset($_SESSION['message'])): ?>
+<div class="alert alert-<?= $_SESSION['type'] ?> mt-3">
+    <?= $_SESSION['message']; ?>
+</div>
+<?php unset($_SESSION['message']); unset($_SESSION['type']); endif; ?>
 
-    <h5 class="mb-4 text-center">My Profile</h5>
+<!-- PROFILE -->
+<div class="card">
 
-    <!-- ALERT MESSAGE -->
-    <?php if (isset($_SESSION['message'])): ?>
-        <div class="alert alert-<?= $_SESSION['type'] ?> alert-dismissible fade show" role="alert">
-            <?= $_SESSION['message']; ?>
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
-        <?php 
-        unset($_SESSION['message']);
-        unset($_SESSION['type']);
-        ?>
-    <?php endif; ?>
+<h4 class="text-center mb-3">Edit Profile</h4>
 
-    <!-- FORM -->
-    <form method="POST" enctype="multipart/form-data">
+<form method="POST" enctype="multipart/form-data">
 
-        <!-- PROFILE PIC -->
-        <div class="text-center mb-4">
-            <label for="fileInput">
-                <img id="preview"
-                     src="../uploads/<?= $user['profile_pic'] ?: 'default.png' ?>"
-                     class="profile-pic mb-2">
-            </label>
+<div class="text-center mb-3">
+<label for="fileInput">
+<img id="preview"
+     src="../uploads/<?= $user['profile_pic'] ?: 'default.png' ?>"
+     class="profile-pic">
+</label>
+<input type="file" name="profile_pic" id="fileInput" hidden>
+</div>
 
-            <input type="file" name="profile_pic" id="fileInput" hidden>
-            <div class="small-text">Click image to change</div>
-        </div>
+<label>Full Name</label>
+<input type="text" name="fullname" class="form-control mb-3"
+       value="<?= htmlspecialchars($user['fullname']) ?>" required>
 
-        <!-- INFO -->
-        <label>Full Name</label>
-        <input type="text" name="fullname" class="form-control mb-3"
-               value="<?= htmlspecialchars($user['fullname']) ?>" required>
+<label>Email</label>
+<input type="email" name="email" class="form-control mb-3"
+       value="<?= htmlspecialchars($user['email']) ?>" required>
 
-        <label>Email</label>
-        <input type="email" name="email" class="form-control mb-3"
-               value="<?= htmlspecialchars($user['email']) ?>" required>
+<button type="submit" name="save_all" class="btn btn-main w-100">
+Save Changes
+</button>
 
-        <button type="submit" name="save_all" class="btn btn-save w-100">
-            Save All Changes
-        </button>
-
-    </form>
-
-    <a href="../home.php" class="btn btn-outline-light mt-4 w-100">
-        Return
-    </a>
+</form>
 
 </div>
 
-<!-- CONTENT -->
-<div class="col-md-9 content">
-    <h3>Dashboard</h3>
-    <p>This is your main content area (Test Drive Booking, etc).</p>
-</div>
+<!-- CHANGE PASSWORD -->
+<div class="card mt-4">
+
+<h5 class="text-center mb-3">Change Password</h5>
+
+<form method="POST">
+
+<label>Current Password</label>
+<input type="password" name="current_password" class="form-control mb-2" required>
+
+<label>New Password</label>
+<input type="password" name="new_password" class="form-control mb-2" required>
+
+<label>Confirm Password</label>
+<input type="password" name="confirm_password" class="form-control mb-3" required>
+
+<button type="submit" name="change_password" class="btn btn-main w-100">
+Update Password
+</button>
+
+</form>
 
 </div>
-</div>
 
-<!-- JS -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<a href="../home.php" class="btn btn-outline-light w-100 mt-3">Back to Home</a>
+
+</div>
 
 <script>
-// IMAGE PREVIEW
 document.getElementById("fileInput").addEventListener("change", function(event){
     const file = event.target.files[0];
 
     if(file){
         const reader = new FileReader();
-
-        reader.onload = function(e){
-            document.getElementById("preview").src = e.target.result;
-        }
-
+        reader.onload = e => document.getElementById("preview").src = e.target.result;
         reader.readAsDataURL(file);
     }
 });
-
-// AUTO HIDE ALERT
-setTimeout(() => {
-    let alert = document.querySelector('.alert');
-    if(alert){
-        alert.classList.remove('show');
-        alert.classList.add('fade');
-    }
-}, 3000);
 </script>
 
 </body>
