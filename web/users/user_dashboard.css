@@ -1,0 +1,207 @@
+body{
+    margin:0;
+    font-family:Segoe UI, sans-serif;
+    background:#000000;
+    color:#ffffff;
+}
+
+/* LAYOUT */
+.dashboard{
+    display:flex;
+    height:100vh;
+}
+
+/* SIDEBAR */
+.sidebar{
+    width:260px;
+    background:#050505;
+    padding:20px;
+    border-right:1px solid #1a1a1a;
+}
+
+/* PROFILE */
+.profile-box{
+    text-align:center;
+    padding-bottom:20px;
+    border-bottom:1px solid #1a1a1a;
+}
+
+.avatar{
+    width:85px;
+    height:85px;
+    border-radius:50%;
+    object-fit:cover;
+    border:3px solid #e60012;
+    box-shadow:0 0 15px rgba(230,0,18,0.6);
+    margin-bottom:10px;
+    transition:0.3s;
+}
+
+.avatar:hover{
+    transform:scale(1.05);
+}
+
+/* USERNAME */
+.username{
+    font-weight:600;
+    letter-spacing:0.5px;
+    color:#ffffff;
+}
+
+/* SMALL TEXT */
+.small{
+    font-size:12px;
+    color:#888;
+}
+
+/* EDIT BUTTON */
+.btn-edit{
+    width:100%;
+    margin-top:15px;
+    padding:10px;
+    background:#e60012;
+    border:none;
+    color:#fff;
+    border-radius:6px;
+    font-weight:600;
+    cursor:pointer;
+    transition:0.3s;
+}
+
+.btn-edit:hover{
+    background:#ff1a2d;
+    box-shadow:0 0 12px rgba(230,0,18,0.6);
+}
+
+/* MENU */
+.menu{
+    margin-top:20px;
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+}
+
+/* MENU BUTTONS (FIXED) */
+.menu-btn{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    padding:10px 5px;
+    text-decoration:none;
+    color:#ffffff;
+    cursor:pointer;
+    transition:0.25s;
+    position:relative;
+    font-size:14px;
+}
+
+/* ICON */
+.menu-btn i{
+    width:20px;
+    text-align:center;
+    color:#ffffff;
+    transition:0.3s;
+}
+
+/* HOVER EFFECT */
+.menu-btn:hover{
+    color:#e60012;
+    transform:translateX(6px);
+}
+
+.menu-btn:hover i{
+    color:#e60012;
+}
+
+/* UNDERLINE ANIMATION */
+.menu-btn::after{
+    content:"";
+    display:block;
+    width:0%;
+    height:2px;
+    background:#e60012;
+    transition:0.3s;
+    position:absolute;
+    bottom:-4px;
+    left:0;
+}
+
+.menu-btn:hover::after{
+    width:45%;
+}
+
+/* MAIN PANEL */
+.panel{
+    flex:1;
+    padding:25px;
+    overflow:auto;
+}
+
+/* TOP BAR */
+.top-bar{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:20px;
+}
+
+.top-bar h3{
+    margin:0;
+    font-weight:700;
+}
+
+/* HOME BUTTON */
+.btn-home{
+    background:#e60012;
+    padding:8px 15px;
+    border-radius:6px;
+    color:#fff;
+    text-decoration:none;
+    font-weight:600;
+    transition:0.3s;
+}
+
+.btn-home:hover{
+    background:#ff1a2d;
+    box-shadow:0 0 10px rgba(230,0,18,0.6);
+}
+
+/* GRID */
+.grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:20px;
+}
+
+/* CARDS */
+.card{
+    background:#0b0b0b;
+    padding:20px;
+    border-radius:12px;
+    border:1px solid #1a1a1a;
+    min-height:150px;
+    transition:0.3s;
+}
+
+.card:hover{
+    transform:translateY(-5px);
+    border:1px solid rgba(230,0,18,0.4);
+    box-shadow:0 0 15px rgba(230,0,18,0.15);
+}
+
+.full{
+    grid-column:span 2;
+}
+
+/* TEXT */
+.text-muted{
+    color:#777 !important;
+}
+
+/* ALERT */
+.alert{
+    background:#0d0d0d;
+    border:1px solid #e60012;
+    color:#fff;
+    border-radius:10px;
+}

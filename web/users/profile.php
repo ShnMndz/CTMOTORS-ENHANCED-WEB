@@ -228,8 +228,6 @@ Update Password
 
 </div>
 
-<a href="../home.php" class="btn btn-outline-light w-100 mt-3">Back to Home</a>
-
 </div>
 
 <script>

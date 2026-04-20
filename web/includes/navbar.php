@@ -83,7 +83,7 @@ if (isset($_SESSION['user_id'])) {
 
                 <?php if(isset($_SESSION['user_id'])): ?>
 
-                    <a href="<?= $base ?>/users/profile.php"
+                    <a href="<?= $base ?>/users/user_dashboard.php"
                        class="d-flex align-items-center gap-2 text-decoration-none">
 
                         <img src="<?= $pic ?>"
