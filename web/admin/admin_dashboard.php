@@ -84,12 +84,12 @@ $pending_test_drives = $conn->query("
     </a>
 
     <a href="admin_posts.php">
-        <i class="fas fa-newspaper"></i> Posts (News/Articles)
+        <i class="fas fa-newspaper"></i> Posts(News/Articles)
     </a>
 
     <!-- 🔔 TEST DRIVE NOTIFICATION BADGE -->
     <a href="admin_test_drives.php">
-        <i class="fas fa-car"></i> Manage Test Drives
+        <i class="fas fa-car"></i>Test Drive Requests
         <?php if($pending_test_drives > 0): ?>
             <span class="badge bg-danger badge-notif">
                 <?= $pending_test_drives ?>

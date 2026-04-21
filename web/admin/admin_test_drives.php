@@ -57,12 +57,12 @@ $pendingCount = $conn->query("
     <h4>Admin Panel</h4>
 
     <a href="admin_dashboard.php"><i class="fas fa-chart-line"></i> Dashboard</a>
-    <a href="admin_users.php"><i class="fas fa-users"></i> Users</a>
-    <a href="admin_vehicles.php"><i class="fas fa-car"></i> Vehicles</a>
-    <a href="admin_posts.php"><i class="fas fa-newspaper"></i> Posts</a>
+    <a href="admin_users.php"><i class="fas fa-users"></i>Manage Users</a>
+    <a href="admin_vehicles.php"><i class="fas fa-car"></i>Manage Vehicles</a>
+    <a href="admin_posts.php"><i class="fas fa-newspaper"></i>Posts(News/Articles)</a>
 
     <a href="admin_test_drives.php" class="active">
-        <i class="fas fa-car"></i> Test Drives
+        <i class="fas fa-car"></i>Test Drive Requests
         <?php if ($pendingCount > 0): ?>
             <span class="badge bg-warning text-dark"><?= $pendingCount ?></span>
         <?php endif; ?>

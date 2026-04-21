@@ -164,13 +164,30 @@ $result = $stmt->get_result();
 
 <div class="sidebar">
     <h4>Admin Panel</h4>
-    <a href="admin_dashboard.php"><i class="fas fa-chart-line"></i> Dashboard</a>
-    <a href="admin_users.php"><i class="fas fa-users"></i> Manage Users</a>
-    <a href="admin_vehicles.php" class="active"><i class="fas fa-car"></i> Manage Vehicles</a>
-    <a href="admin_posts.php"><i class="fas fa-newspaper"></i> Posts (News/Articles)</a>
-    <a href="../logout.php"><i class="fas fa-sign-out-alt"></i> Logout</a>
-</div>
 
+    <a href="admin_dashboard.php">
+        <i class="fas fa-chart-line"></i> Dashboard
+    </a>
+
+    <a href="admin_users.php">
+        <i class="fas fa-users"></i> Manage Users
+    </a>
+
+    <a href="admin_vehicles.php" class="active">
+        <i class="fas fa-car"></i> Manage Vehicles
+    </a>
+
+    <a href="admin_posts.php">
+        <i class="fas fa-newspaper"></i>Posts(News/Articles)
+    </a>
+
+        <a href="admin_test_drives.php">
+        <i class="fas fa-car"></i>Test Drive Requests
+
+    <a href="../logout.php">
+        <i class="fas fa-sign-out-alt"></i> Logout
+    </a>
+</div>
 <div class="content">
 
 <h2>Vehicles</h2>

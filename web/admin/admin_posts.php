@@ -115,13 +115,17 @@ $result = $conn->query("SELECT * FROM posts ORDER BY id DESC");
     </a>
 
     <a href="admin_posts.php" class="active">
-        <i class="fas fa-newspaper"></i> Posts
+        <i class="fas fa-newspaper"></i>Posts(News/Articles)
     </a>
+
+        <a href="admin_test_drives.php">
+        <i class="fas fa-car"></i>Test Drive Requests
 
     <a href="../logout.php">
         <i class="fas fa-sign-out-alt"></i> Logout
     </a>
 </div>
+
 
 <div class="content">
 

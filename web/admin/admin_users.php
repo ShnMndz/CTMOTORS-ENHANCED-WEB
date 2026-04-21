@@ -127,8 +127,11 @@ $users_this_month = $conn->query("
     </a>
 
     <a href="admin_posts.php">
-        <i class="fas fa-newspaper"></i> Posts
+        <i class="fas fa-newspaper"></i>Posts(News/Articles)
     </a>
+
+    <a href="admin_test_drives.php">
+        <i class="fas fa-car"></i>Test Drive Requests
 
     <a href="../logout.php">
         <i class="fas fa-sign-out-alt"></i> Logout
