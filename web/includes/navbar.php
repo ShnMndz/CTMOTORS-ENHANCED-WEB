@@ -48,25 +48,59 @@ if (isset($_SESSION['user_id'])) {
                 </li>
 
                 <li class="nav-item dropdown">
-                    <a class="nav-link-custom dropdown-toggle" data-bs-toggle="dropdown">Tools & Service</a>
-                    <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="<?= $base ?>/tools/vehicle_price_list.php">Price List</a></li>
-                        <li><a class="dropdown-item" href="<?= $base ?>/tools/compare.php">Compare Vehicles</a></li>
-                        <li><a class="dropdown-item" href="<?= $base ?>/tools/testdrive.php">Book a Test Drive</a></li>
-                    </ul>
-                </li>
+    <a class="nav-link-custom dropdown-toggle" data-bs-toggle="dropdown">Tools & Service</a>
+
+    <ul class="dropdown-menu">
+
+        <li>
+            <a class="dropdown-item <?= ($current=='vehicle_price_list.php') ? 'active-link' : '' ?>"
+               href="<?= $base ?>/tools/vehicle_price_list.php">
+                Price List
+            </a>
+        </li>
+
+        <li>
+            <a class="dropdown-item <?= ($current=='compare.php') ? 'active-link' : '' ?>"
+               href="<?= $base ?>/tools/compare.php">
+                Compare Vehicles
+            </a>
+        </li>
+
+        <li>
+            <a class="dropdown-item <?= ($current=='testdrive.php') ? 'active-link' : '' ?>"
+               href="<?= $base ?>/tools/testdrive.php">
+                Book a Test Drive
+            </a>
+        </li>
+
+    </ul>
+</li>
 
                 <li class="nav-item">
                     <a class="nav-link-custom <?= ($current=='products.php')?'active-link':'' ?>" href="<?= $base ?>/products/products.php">Products</a>
                 </li>
 
                 <li class="nav-item dropdown">
-                    <a class="nav-link-custom dropdown-toggle" data-bs-toggle="dropdown">Parts & Services</a>
-                    <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="<?= $base ?>/partsandservices/genuine_parts.php">Genuine Parts</a></li>
-                        <li><a class="dropdown-item" href="<?= $base ?>/partsandservices/services.php">Services</a></li>
-                    </ul>
-                </li>
+    <a class="nav-link-custom dropdown-toggle" data-bs-toggle="dropdown">Parts & Services</a>
+
+    <ul class="dropdown-menu">
+
+        <li>
+            <a class="dropdown-item <?= ($current=='genuine_parts.php') ? 'active-link' : '' ?>"
+               href="<?= $base ?>/partsandservices/genuine_parts.php">
+                Genuine Parts
+            </a>
+        </li>
+
+        <li>
+            <a class="dropdown-item <?= ($current=='services.php') ? 'active-link' : '' ?>"
+               href="<?= $base ?>/partsandservices/services.php">
+                Services
+            </a>
+        </li>
+
+    </ul>
+</li>
 
                 <li class="nav-item">
                     <a class="nav-link-custom <?= ($current=='articles.php')?'active-link':'' ?>" href="<?= $base ?>/news/articles.php">News</a>

@@ -1,5 +1,5 @@
 body {
-    background: #f4f6f9;
+    background: #242424;
     font-family: 'Segoe UI', sans-serif;
 }
 
@@ -14,7 +14,7 @@ body {
 }
 
 .sidebar a {
-    color: #fff;
+    color: #000000;
     display: flex;
     align-items: center;
     gap: 10px;
