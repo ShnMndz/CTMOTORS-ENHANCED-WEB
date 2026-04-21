@@ -8,6 +8,12 @@ if (!isset($_SESSION['user_id'])) {
 }
 
 $id = $_SESSION['user_id'];
+
+/* USER DATA (MISSING BEFORE) */
+$stmt = $conn->prepare("SELECT * FROM users WHERE id = ?");
+$stmt->bind_param("i", $id);
+$stmt->execute();
+$user = $stmt->get_result()->fetch_assoc();
 ?>
 
 <!DOCTYPE html>
@@ -18,20 +24,14 @@ $id = $_SESSION['user_id'];
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
 
-<link rel="stylesheet" href="/citimotorsweb/web/global.css">
+<link rel="stylesheet" href="user_dashboard.css">
 
 <style>
 body { background:#0f0f0f; color:#fff; }
 
-.box {
-    max-width:900px;
-    margin:40px auto;
-    background:#1a1a1a;
-    padding:20px;
-    border-radius:12px;
-}
-
+/* STATUS COLORS */
 .status-pending { color: orange; font-weight: bold; }
 .status-approved { color: green; font-weight: bold; }
 .status-rejected { color: red; font-weight: bold; }
@@ -43,69 +43,118 @@ table { color:#fff; }
 
 <body>
 
-<div class="box">
+<div class="dashboard">
 
-<h3>🚗 My Test Drives</h3>
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
 
-<?php
-$stmt = $conn->prepare("
-    SELECT td.*, v.model_name, v.model_variant
-    FROM test_drives td
-    JOIN vehicles v ON td.vehicle_id = v.id
-    WHERE td.user_id = ?
-    ORDER BY td.id DESC
-");
+        <div class="profile-box">
+            <img src="../uploads/<?= $user['profile_pic'] ?: 'default.png' ?>" class="avatar">
 
-$stmt->bind_param("i", $id);
-$stmt->execute();
-$result = $stmt->get_result();
-?>
+            <div class="username">
+                <?= htmlspecialchars($user['fullname']) ?>
+            </div>
 
-<?php if ($result->num_rows > 0): ?>
+            <div class="small">
+                <?= htmlspecialchars($user['email']) ?>
+            </div>
 
-<table class="table table-dark table-hover mt-3 text-center">
-    <thead>
-        <tr>
-            <th>Vehicle</th>
-            <th>Date</th>
-            <th>Time</th>
-            <th>Message</th>
-            <th>Status</th>
-        </tr>
-    </thead>
+            <div class="small">
+                Member since: <?= date("Y") ?>
+            </div>
 
-    <tbody>
-        <?php while($row = $result->fetch_assoc()): ?>
-        <tr>
+            <a href="profile.php">
+                <button class="btn-edit">Edit Profile</button>
+            </a>
+        </div>
 
-            <td>
-                <?= $row['model_name'] ?> 
-                <br>
-                <small>(<?= $row['model_variant'] ?>)</small>
-            </td>
+        <nav class="menu">
 
-            <td><?= $row['date'] ?></td>
-            <td><?= $row['time'] ?></td>
+            <a href="my_testdrives.php"
+               class="menu-btn active">
+                <i class="fa-solid fa-calendar-check"></i>
+                Test Drive Request
+            </a>
 
-            <td>
-                <?= htmlspecialchars(mb_strimwidth($row['message'], 0, 30, "...")) ?>
-            </td>
+            <a href="saved_vehicles.php"
+               class="menu-btn">
+                <i class="fa-solid fa-heart"></i>
+                Saved Vehicles
+            </a>
 
-            <!-- ✅ STATUS -->
-            <td class="status-<?= $row['status'] ?>">
-                <?= ucfirst($row['status']) ?>
-            </td>
+        </nav>
 
-        </tr>
-        <?php endwhile; ?>
-    </tbody>
-</table>
+    </aside>
 
-<?php else: ?>
-<p>No bookings yet.</p>
-<?php endif; ?>
+    <!-- MAIN PANEL (FIXED MISSING STRUCTURE) -->
+    <main class="panel">
 
-<a href="user_dashboard.php" class="btn btn-secondary w-100 mt-3">Back</a>
+        <div class="box">
+
+            <h3>🚗 My Test Drives</h3>
+
+            <?php
+            $stmt = $conn->prepare("
+                SELECT td.*, v.model_name, v.model_variant
+                FROM test_drives td
+                JOIN vehicles v ON td.vehicle_id = v.id
+                WHERE td.user_id = ?
+                ORDER BY td.id DESC
+            ");
+
+            $stmt->bind_param("i", $id);
+            $stmt->execute();
+            $result = $stmt->get_result();
+            ?>
+
+            <?php if ($result->num_rows > 0): ?>
+
+            <table class="table table-dark table-hover mt-3 text-center">
+                <thead>
+                    <tr>
+                        <th>Vehicle</th>
+                        <th>Date</th>
+                        <th>Time</th>
+                        <th>Message</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    <?php while($row = $result->fetch_assoc()): ?>
+                    <tr>
+
+                        <td>
+                            <?= htmlspecialchars($row['model_name']) ?>
+                            <br>
+                            <small>(<?= htmlspecialchars($row['model_variant']) ?>)</small>
+                        </td>
+
+                        <td><?= $row['date'] ?></td>
+                        <td><?= $row['time'] ?></td>
+
+                        <td>
+                            <?= htmlspecialchars(mb_strimwidth($row['message'], 0, 30, "...")) ?>
+                        </td>
+
+                        <td class="status-<?= $row['status'] ?>">
+                            <?= ucfirst($row['status']) ?>
+                        </td>
+
+                    </tr>
+                    <?php endwhile; ?>
+                </tbody>
+            </table>
+
+            <?php else: ?>
+                <p>No bookings yet.</p>
+            <?php endif; ?>
+
+            <a href="user_dashboard.php" class="btn btn-secondary w-100 mt-3">Back</a>
+
+        </div>
+
+    </main>
 
 </div>
 

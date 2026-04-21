@@ -9,20 +9,42 @@ if (!isset($_SESSION['user']) || $_SESSION['role'] !== 'admin') {
 
 $currentPage = 'dashboard';
 
-// FETCH STATS
-$total_users = $conn->query("SELECT COUNT(*) as total FROM users")->fetch_assoc()['total'];
+/* =========================
+   FETCH STATS
+========================= */
 
+// TOTAL USERS
+$total_users = $conn->query("SELECT COUNT(*) as total FROM users")
+->fetch_assoc()['total'];
+
+// ROLE COUNTS
 $user_counts = ['admin'=>0,'user'=>0];
 $res_roles = $conn->query("SELECT role, COUNT(*) as total FROM users GROUP BY role");
-while($row = $res_roles->fetch_assoc()) { $user_counts[$row['role']] = $row['total']; }
+while($row = $res_roles->fetch_assoc()) {
+    $user_counts[$row['role']] = $row['total'];
+}
 
 // VEHICLE MODEL COUNTS
 $model_counts = [];
 $res_models = $conn->query("SELECT model_name, COUNT(*) as total FROM vehicles GROUP BY model_name");
-while($row = $res_models->fetch_assoc()) { $model_counts[$row['model_name']] = $row['total']; }
+while($row = $res_models->fetch_assoc()) {
+    $model_counts[$row['model_name']] = $row['total'];
+}
 
 // TOTAL VEHICLES
 $total_vehicles = array_sum($model_counts);
+
+/* =========================
+   🔔 TEST DRIVE NOTIFICATION
+========================= */
+
+// Pending test drive requests (NOT SEEN)
+$pending_test_drives = $conn->query("
+    SELECT COUNT(*) as total 
+    FROM test_drives 
+    WHERE status = 'pending'
+")->fetch_assoc()['total'];
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -32,12 +54,18 @@ $total_vehicles = array_sum($model_counts);
 
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
-
-<!-- LINK EXTERNAL CSS -->
 <link rel="stylesheet" href="dashboard.css">
+
+<style>
+.badge-notif {
+    font-size: 12px;
+    margin-left: 8px;
+}
+</style>
 
 </head>
 <body>
+    
 
 <!-- SIDEBAR -->
 <div class="sidebar">
@@ -54,13 +82,19 @@ $total_vehicles = array_sum($model_counts);
     <a href="admin_vehicles.php">
         <i class="fas fa-car"></i> Manage Vehicles
     </a>
-    
-    <a href="admin_posts.php" class="<?= $currentPage=='posts'?'active':'' ?>">
-    <i class="fas fa-newspaper"></i> Posts (News/Articles)
-</a>
 
-<a href="admin_test_drives.php">
+    <a href="admin_posts.php">
+        <i class="fas fa-newspaper"></i> Posts (News/Articles)
+    </a>
+
+    <!-- 🔔 TEST DRIVE NOTIFICATION BADGE -->
+    <a href="admin_test_drives.php">
         <i class="fas fa-car"></i> Manage Test Drives
+        <?php if($pending_test_drives > 0): ?>
+            <span class="badge bg-danger badge-notif">
+                <?= $pending_test_drives ?>
+            </span>
+        <?php endif; ?>
     </a>
 
     <a href="../logout.php">
@@ -72,6 +106,16 @@ $total_vehicles = array_sum($model_counts);
 <div class="content">
 
 <h2>Welcome, <?= htmlspecialchars($_SESSION['user']) ?></h2>
+
+<!-- 🔔 ALERT NOTIFICATION -->
+<?php if($pending_test_drives > 0): ?>
+<div class="alert alert-warning">
+    🚨 You have <b><?= $pending_test_drives ?></b> pending test drive request(s)
+    <a href="admin_test_drives.php" class="btn btn-sm btn-dark ms-2">
+        View Now
+    </a>
+</div>
+<?php endif; ?>
 
 <!-- USER STATS -->
 <div class="row mb-4">
