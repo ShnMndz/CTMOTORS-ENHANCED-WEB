@@ -150,6 +150,7 @@ $result = $stmt->get_result();
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
 <link href="admin_vehicles.css" rel="stylesheet">
+<link href="admin_dashboard.css" rel="stylesheet">
 
 <!-- ONLY ADDITION -->
 <style>
@@ -178,11 +179,11 @@ $result = $stmt->get_result();
     </a>
 
     <a href="admin_posts.php">
-        <i class="fas fa-newspaper"></i>Posts(News/Articles)
+        <i class="fas fa-newspaper"></i>Posts
     </a>
 
         <a href="admin_test_drives.php">
-        <i class="fas fa-car"></i>Test Drive Requests
+        <i class="fas fa-key"></i>Test Drive
 
     <a href="../logout.php">
         <i class="fas fa-sign-out-alt"></i> Logout

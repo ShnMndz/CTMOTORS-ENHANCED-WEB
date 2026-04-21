@@ -98,7 +98,7 @@ $users_this_month = $conn->query("
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
 
 <link rel="stylesheet" href="users.css">
-<link rel="stylesheet" href="dashboard.css">
+<link rel="stylesheet" href="admin_dashboard.css">
 
 <!-- ONLY ADDITION: fade animation -->
 <style>
@@ -127,11 +127,11 @@ $users_this_month = $conn->query("
     </a>
 
     <a href="admin_posts.php">
-        <i class="fas fa-newspaper"></i>Posts(News/Articles)
+        <i class="fas fa-newspaper"></i>Posts
     </a>
 
     <a href="admin_test_drives.php">
-        <i class="fas fa-car"></i>Test Drive Requests
+        <i class="fas fa-key"></i>Test Drive
 
     <a href="../logout.php">
         <i class="fas fa-sign-out-alt"></i> Logout

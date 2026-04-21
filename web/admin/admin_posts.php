@@ -94,7 +94,7 @@ $result = $conn->query("SELECT * FROM posts ORDER BY id DESC");
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
 
-<link rel="stylesheet" href="dashboard.css">
+<link rel="stylesheet" href="admin_dashboard.css">
 </head>
 
 <body>
@@ -115,11 +115,11 @@ $result = $conn->query("SELECT * FROM posts ORDER BY id DESC");
     </a>
 
     <a href="admin_posts.php" class="active">
-        <i class="fas fa-newspaper"></i>Posts(News/Articles)
+        <i class="fas fa-newspaper"></i>Posts
     </a>
 
         <a href="admin_test_drives.php">
-        <i class="fas fa-car"></i>Test Drive Requests
+        <i class="fas fa-key"></i>Test Drive
 
     <a href="../logout.php">
         <i class="fas fa-sign-out-alt"></i> Logout

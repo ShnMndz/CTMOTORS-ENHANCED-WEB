@@ -41,7 +41,7 @@ $pendingCount = $conn->query("
 
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
-<link rel="stylesheet" href="dashboard.css">
+<link rel="stylesheet" href="admin_dashboard.css">
 
 <style>
 .status-pending { color: orange; font-weight: bold; }
@@ -59,10 +59,10 @@ $pendingCount = $conn->query("
     <a href="admin_dashboard.php"><i class="fas fa-chart-line"></i> Dashboard</a>
     <a href="admin_users.php"><i class="fas fa-users"></i>Manage Users</a>
     <a href="admin_vehicles.php"><i class="fas fa-car"></i>Manage Vehicles</a>
-    <a href="admin_posts.php"><i class="fas fa-newspaper"></i>Posts(News/Articles)</a>
+    <a href="admin_posts.php"><i class="fas fa-newspaper"></i>Posts</a>
 
     <a href="admin_test_drives.php" class="active">
-        <i class="fas fa-car"></i>Test Drive Requests
+        <i class="fas fa-key"></i>Test Drive
         <?php if ($pendingCount > 0): ?>
             <span class="badge bg-warning text-dark"><?= $pendingCount ?></span>
         <?php endif; ?>

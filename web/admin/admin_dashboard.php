@@ -9,42 +9,31 @@ if (!isset($_SESSION['user']) || $_SESSION['role'] !== 'admin') {
 
 $currentPage = 'dashboard';
 
-/* =========================
-   FETCH STATS
-========================= */
-
-// TOTAL USERS
+/* STATS */
 $total_users = $conn->query("SELECT COUNT(*) as total FROM users")
 ->fetch_assoc()['total'];
 
-// ROLE COUNTS
 $user_counts = ['admin'=>0,'user'=>0];
 $res_roles = $conn->query("SELECT role, COUNT(*) as total FROM users GROUP BY role");
 while($row = $res_roles->fetch_assoc()) {
     $user_counts[$row['role']] = $row['total'];
 }
 
-// VEHICLE MODEL COUNTS
 $model_counts = [];
 $res_models = $conn->query("SELECT model_name, COUNT(*) as total FROM vehicles GROUP BY model_name");
 while($row = $res_models->fetch_assoc()) {
     $model_counts[$row['model_name']] = $row['total'];
 }
 
-// TOTAL VEHICLES
 $total_vehicles = array_sum($model_counts);
-
-/* =========================
-   🔔 TEST DRIVE NOTIFICATION
-========================= */
 
 $pending_test_drives = $conn->query("
     SELECT COUNT(*) as total 
     FROM test_drives 
     WHERE status = 'pending'
 ")->fetch_assoc()['total'];
-
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -53,167 +42,117 @@ $pending_test_drives = $conn->query("
 
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
-<link rel="stylesheet" href="dashboard.css">
 
-<style>
-.badge-notif {
-    font-size: 12px;
-    margin-left: 8px;
-}
-
-#greetingBox {
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    flex-wrap:wrap;
-    gap:10px;
-}
-#liveDate {
-    font-size: 14px;
-    color: #bbb;
-}
-</style>
-
+<link rel="stylesheet" href="admin_dashboard.css">
 </head>
+
 <body>
 
 <!-- SIDEBAR -->
 <div class="sidebar">
+
     <h4>Admin Panel</h4>
 
     <a href="admin_dashboard.php" class="<?= $currentPage=='dashboard'?'active':'' ?>">
         <i class="fas fa-chart-line"></i> Dashboard
     </a>
 
-    <a href="admin_users.php">
-        <i class="fas fa-users"></i> Manage Users
-    </a>
-
-    <a href="admin_vehicles.php">
-        <i class="fas fa-car"></i> Manage Vehicles
-    </a>
-
-    <a href="admin_posts.php">
-        <i class="fas fa-newspaper"></i> Posts(News/Articles)
-    </a>
+    <a href="admin_users.php"><i class="fas fa-users"></i> Manage Users</a>
+    <a href="admin_vehicles.php"><i class="fas fa-car"></i> Manage Vehicles</a>
+    <a href="admin_posts.php"><i class="fas fa-newspaper"></i> Posts</a>
 
     <a href="admin_test_drives.php">
-        <i class="fas fa-car"></i> Test Drive Requests
+        <i class="fas fa-key"></i> Test Drives
         <?php if($pending_test_drives > 0): ?>
-            <span class="badge bg-danger badge-notif">
-                <?= $pending_test_drives ?>
-            </span>
+            <span class="badge bg-danger badge-notif"><?= $pending_test_drives ?></span>
         <?php endif; ?>
     </a>
 
-    <a href="../logout.php">
-        <i class="fas fa-sign-out-alt"></i> Logout
-    </a>
+    <a href="../logout.php"><i class="fas fa-sign-out-alt"></i> Logout</a>
+
 </div>
 
 <!-- CONTENT -->
 <div class="content">
 
-<!-- 👇 GREETING WITH LIVE DATE -->
-<div id="greetingBox">
-    <h2>
-        Welcome, <?= htmlspecialchars($_SESSION['user']) ?>
-    </h2>
+    <div id="greetingBox">
+        <h3>Welcome, <?= htmlspecialchars($_SESSION['user']) ?></h3>
+        <div id="liveDate"></div>
+    </div>
 
-    <div id="liveDate"></div>
-</div>
+    <!-- TEST DRIVES -->
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <a href="admin_test_drives.php" class="text-decoration-none">
+                <div class="stat-card">
+                    <h2><?= $pending_test_drives ?></h2>
+                    <small>Pending Test Drives</small>
 
-<!-- 🔔 ALERT NOTIFICATION -->
-<div class="col-md-4">
-    <a href="admin_test_drives.php" style="text-decoration:none;">
-        <div class="card stat-card position-relative">
-            
-            <h2>
-                <?= $pending_test_drives ?>
-            </h2>
-            
-            <small>Pending Test Drives</small>
-
-            <?php if($pending_test_drives > 0): ?>
-                <span class="position-absolute top-0 end-0 translate-middle badge rounded-pill bg-danger">
-                    !
-                </span>
-            <?php endif; ?>
-
-        </div>
-    </a>
-</div>
-
-<!-- USER STATS -->
-<div class="row mb-4">
-
-    <div class="col-md-4">
-        <div class="card stat-card">
-            <h2><?= $total_users ?></h2>
-            <small>Total Users</small>
+                    <?php if($pending_test_drives > 0): ?>
+                        <span class="notif-dot">!</span>
+                    <?php endif; ?>
+                </div>
+            </a>
         </div>
     </div>
 
-    <div class="col-md-4">
-        <div class="card stat-card">
-            <h2><?= $user_counts['admin'] ?></h2>
-            <small>Admins</small>
+    <!-- USERS -->
+    <div class="row g-3">
+
+        <div class="col-md-4">
+            <div class="stat-card">
+                <h2><?= $total_users ?></h2>
+                <small>Total Users</small>
+            </div>
         </div>
-    </div>
 
-    <div class="col-md-4">
-        <div class="card stat-card">
-            <h2><?= $user_counts['user'] ?></h2>
-            <small>Users</small>
+        <div class="col-md-4">
+            <div class="stat-card">
+                <h2><?= $user_counts['admin'] ?></h2>
+                <small>Admins</small>
+            </div>
         </div>
+
+        <div class="col-md-4">
+            <div class="stat-card">
+                <h2><?= $user_counts['user'] ?></h2>
+                <small>Users</small>
+            </div>
+        </div>
+
+    </div>
+
+    <h5>Vehicle Breakdown</h5>
+
+    <div class="row g-3">
+
+        <div class="col-md-3">
+            <div class="stat-card">
+                <h2><?= $total_vehicles ?></h2>
+                <small>Total Vehicles</small>
+            </div>
+        </div>
+
+        <?php foreach($model_counts as $model=>$count): ?>
+        <div class="col-md-3">
+            <div class="stat-card">
+                <h2><?= $count ?></h2>
+                <small><?= htmlspecialchars($model) ?></small>
+            </div>
+        </div>
+        <?php endforeach; ?>
+
     </div>
 
 </div>
 
-<hr>
-
-<h5>Vehicle Breakdown</h5>
-
-<div class="row">
-
-<div class="col-md-3">
-    <div class="card stat-card">
-        <h2><?= $total_vehicles ?></h2>
-        <small>Total Vehicles</small>
-    </div>
-</div>
-
-<?php foreach($model_counts as $model=>$count): ?>
-<div class="col-md-3">
-    <div class="card stat-card">
-        <h2><?= $count ?></h2>
-        <small><?= htmlspecialchars($model) ?></small>
-    </div>
-</div>
-<?php endforeach; ?>
-
-</div>
-
-</div>
-
-<!-- LIVE DATE SCRIPT -->
 <script>
-function updateDateTime() {
-    const now = new Date();
-
-    const options = { 
-        weekday: 'long', 
-        year: 'numeric', 
-        month: 'long', 
-        day: 'numeric'
-    };
-
+function updateDateTime(){
     document.getElementById("liveDate").innerHTML =
-        now.toLocaleDateString('en-US', options);
+        new Date().toDateString();
 }
-
 updateDateTime();
-setInterval(updateDateTime, 1000 * 60); // refresh every minute
+setInterval(updateDateTime, 60000);
 </script>
 
 </body>
