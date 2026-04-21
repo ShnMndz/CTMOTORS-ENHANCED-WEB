@@ -38,7 +38,6 @@ $total_vehicles = array_sum($model_counts);
    🔔 TEST DRIVE NOTIFICATION
 ========================= */
 
-// Pending test drive requests (NOT SEEN)
 $pending_test_drives = $conn->query("
     SELECT COUNT(*) as total 
     FROM test_drives 
@@ -61,11 +60,22 @@ $pending_test_drives = $conn->query("
     font-size: 12px;
     margin-left: 8px;
 }
+
+#greetingBox {
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    flex-wrap:wrap;
+    gap:10px;
+}
+#liveDate {
+    font-size: 14px;
+    color: #bbb;
+}
 </style>
 
 </head>
 <body>
-    
 
 <!-- SIDEBAR -->
 <div class="sidebar">
@@ -87,9 +97,8 @@ $pending_test_drives = $conn->query("
         <i class="fas fa-newspaper"></i> Posts(News/Articles)
     </a>
 
-    <!-- 🔔 TEST DRIVE NOTIFICATION BADGE -->
     <a href="admin_test_drives.php">
-        <i class="fas fa-car"></i>Test Drive Requests
+        <i class="fas fa-car"></i> Test Drive Requests
         <?php if($pending_test_drives > 0): ?>
             <span class="badge bg-danger badge-notif">
                 <?= $pending_test_drives ?>
@@ -105,11 +114,18 @@ $pending_test_drives = $conn->query("
 <!-- CONTENT -->
 <div class="content">
 
-<h2>Welcome, <?= htmlspecialchars($_SESSION['user']) ?></h2>
+<!-- 👇 GREETING WITH LIVE DATE -->
+<div id="greetingBox">
+    <h2>
+        Welcome, <?= htmlspecialchars($_SESSION['user']) ?>
+    </h2>
+
+    <div id="liveDate"></div>
+</div>
 
 <!-- 🔔 ALERT NOTIFICATION -->
 <?php if($pending_test_drives > 0): ?>
-<div class="alert alert-warning">
+<div class="alert alert-warning mt-2">
     🚨 You have <b><?= $pending_test_drives ?></b> pending test drive request(s)
     <a href="admin_test_drives.php" class="btn btn-sm btn-dark ms-2">
         View Now
@@ -168,6 +184,26 @@ $pending_test_drives = $conn->query("
 </div>
 
 </div>
+
+<!-- LIVE DATE SCRIPT -->
+<script>
+function updateDateTime() {
+    const now = new Date();
+
+    const options = { 
+        weekday: 'long', 
+        year: 'numeric', 
+        month: 'long', 
+        day: 'numeric'
+    };
+
+    document.getElementById("liveDate").innerHTML =
+        now.toLocaleDateString('en-US', options);
+}
+
+updateDateTime();
+setInterval(updateDateTime, 1000 * 60); // refresh every minute
+</script>
 
 </body>
 </html>
