@@ -124,14 +124,25 @@ $pending_test_drives = $conn->query("
 </div>
 
 <!-- 🔔 ALERT NOTIFICATION -->
-<?php if($pending_test_drives > 0): ?>
-<div class="alert alert-warning mt-2">
-    🚨 You have <b><?= $pending_test_drives ?></b> pending test drive request(s)
-    <a href="admin_test_drives.php" class="btn btn-sm btn-dark ms-2">
-        View Now
+<div class="col-md-4">
+    <a href="admin_test_drives.php" style="text-decoration:none;">
+        <div class="card stat-card position-relative">
+            
+            <h2>
+                <?= $pending_test_drives ?>
+            </h2>
+            
+            <small>Pending Test Drives</small>
+
+            <?php if($pending_test_drives > 0): ?>
+                <span class="position-absolute top-0 end-0 translate-middle badge rounded-pill bg-danger">
+                    !
+                </span>
+            <?php endif; ?>
+
+        </div>
     </a>
 </div>
-<?php endif; ?>
 
 <!-- USER STATS -->
 <div class="row mb-4">
