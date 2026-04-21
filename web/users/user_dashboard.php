@@ -56,7 +56,7 @@ $user = $stmt->get_result()->fetch_assoc();
 
         <nav class="menu">
 
-            <a href="testdrive.php" class="menu-btn">
+            <a href="my_testdrives.php" class="menu-btn">
                 <i class="fa-solid fa-calendar-check"></i>
                 Test Drive Request
             </a>

@@ -59,6 +59,10 @@ $total_vehicles = array_sum($model_counts);
     <i class="fas fa-newspaper"></i> Posts (News/Articles)
 </a>
 
+<a href="admin_test_drives.php">
+        <i class="fas fa-car"></i> Manage Test Drives
+    </a>
+
     <a href="../logout.php">
         <i class="fas fa-sign-out-alt"></i> Logout
     </a>
