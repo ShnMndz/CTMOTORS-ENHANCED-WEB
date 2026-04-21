@@ -38,12 +38,34 @@ body { background:#0f0f0f; color:#fff; }
 .status-completed { color: #00c3ff; font-weight: bold; }
 
 table { color:#fff; }
+
+/* TABLE STATUS COLORS ONLY */
+td.status-pending {
+    color: #ff9800 !important;
+    font-weight: 600;
+}
+
+td.status-approved {
+    color: #28a745 !important;
+    font-weight: 600;
+}
+
+td.status-rejected {
+    color: #dc3545 !important;
+    font-weight: 600;
+}
+
+td.status-completed {
+    color: #0dcaf0 !important;
+    font-weight: 600;
+}
 </style>
 </head>
 
 <body>
 
 <div class="dashboard">
+    
 
     <!-- SIDEBAR -->
     <aside class="sidebar">
@@ -68,20 +90,21 @@ table { color:#fff; }
             </a>
         </div>
 
-        <nav class="menu">
+         <nav class="menu">
+            <a href="user_dashboard.php" class="menu-btn">
+                <i class="fa-solid fa-user"></i>
+                Profile Status
+            </a>
 
-            <a href="my_testdrives.php"
-               class="menu-btn active">
+            <a href="my_testdrives.php" class="menu-btn active">
                 <i class="fa-solid fa-calendar-check"></i>
                 Test Drive Request
             </a>
 
-            <a href="saved_vehicles.php"
-               class="menu-btn">
+            <a href="saved_vehicles.php" class="menu-btn">
                 <i class="fa-solid fa-heart"></i>
                 Saved Vehicles
             </a>
-
         </nav>
 
     </aside>
@@ -91,7 +114,7 @@ table { color:#fff; }
 
         <div class="box">
 
-            <h3>🚗 My Test Drives</h3>
+            <h3>Test Drives History</h3>
 
             <?php
             $stmt = $conn->prepare("

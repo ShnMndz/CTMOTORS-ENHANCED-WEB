@@ -55,20 +55,29 @@ $result = $wishlist->get_result();
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
 
 <style>
+
+/* PAGE */
+body {
+    background: #f5f7fb;
+    color: #222;
+}
+
+/* CARD (LIGHT THEME) */
 .wishlist-card {
-    background: #121212;
-    border: 1px solid #222;
-    border-radius: 12px;
+    background: #ffffff;
+    border: 1px solid #e0e0e0;
+    border-radius: 14px;
     padding: 15px;
-    color: #fff;
     transition: 0.2s ease;
+    text-align: center;
 }
 
 .wishlist-card:hover {
     transform: translateY(-5px);
-    border-color: #444;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.08);
 }
 
+/* IMAGE */
 .wishlist-card img {
     width: 100%;
     height: 160px;
@@ -76,6 +85,7 @@ $result = $wishlist->get_result();
     border-radius: 10px;
 }
 
+/* REMOVE BUTTON */
 .remove-btn {
     margin-top: 8px;
     background: transparent;
@@ -84,12 +94,19 @@ $result = $wishlist->get_result();
     padding: 5px 10px;
     border-radius: 6px;
     font-size: 13px;
+    width: 100%;
 }
 
 .remove-btn:hover {
     background: #dc3545;
     color: #fff;
 }
+
+/* VIEW BUTTON */
+.btn-view {
+    width: 100%;
+}
+
 </style>
 
 </head>
@@ -122,6 +139,10 @@ $result = $wishlist->get_result();
         </div>
 
         <nav class="menu">
+            <a href="user_dashboard.php" class="menu-btn">
+                <i class="fa-solid fa-user"></i>
+                Profile Status
+            </a>
 
             <a href="my_testdrives.php" class="menu-btn">
                 <i class="fa-solid fa-calendar-check"></i>
@@ -132,7 +153,6 @@ $result = $wishlist->get_result();
                 <i class="fa-solid fa-heart"></i>
                 Saved Vehicles
             </a>
-
         </nav>
 
     </aside>
@@ -141,16 +161,14 @@ $result = $wishlist->get_result();
     <main class="panel">
 
         <div class="top-bar">
-
             <div>
                 <h3>Saved Vehicles</h3>
                 <p class="text-muted">Your wishlist collection ❤️</p>
             </div>
 
-            <a href="../home.php" class="btn-home">
+            <a href="../home.php" class="btn btn-outline-dark">
                 Return to Homepage
             </a>
-
         </div>
 
         <div class="grid">
@@ -167,9 +185,9 @@ $result = $wishlist->get_result();
 
                             <div class="col-md-4">
 
-                                <div class="wishlist-card text-center">
+                                <div class="wishlist-card">
 
-                                    <img src="../img/<?= htmlspecialchars($row['image']) ?>">
+                                    <img src="../img/<?= $row['image'] ?: 'default-car.png' ?>">
 
                                     <h6 class="mt-2">
                                         <?= htmlspecialchars($row['model_name']) ?>
@@ -179,19 +197,18 @@ $result = $wishlist->get_result();
                                         ₱<?= number_format($row['price']) ?>
                                     </small>
 
-                                    <!-- VIEW BUTTON (FIXED NAVIGATION) -->
+                                    <!-- VIEW -->
                                     <div class="mt-2">
                                         <a href="product-details.php?id=<?= $row['id'] ?>"
-                                           class="btn btn-sm btn-light">
+                                           class="btn btn-sm btn-outline-dark btn-view">
                                             View
                                         </a>
                                     </div>
 
                                     <!-- REMOVE -->
-                                    <form method="POST">
+                                    <form method="POST" onsubmit="return confirm('Remove this vehicle from wishlist?');">
                                         <input type="hidden" name="vehicle_id" value="<?= $row['id'] ?>">
-                                        <button type="submit" name="remove"
-                                                class="remove-btn">
+                                        <button type="submit" name="remove" class="remove-btn">
                                             Remove
                                         </button>
                                     </form>
