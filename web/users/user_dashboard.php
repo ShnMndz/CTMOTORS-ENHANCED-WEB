@@ -42,7 +42,6 @@ $testdrives = $stmt->get_result();
 <title>User Dashboard</title>
 
 <link rel="stylesheet" href="user_dashboard.css">
-
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
 
@@ -127,16 +126,10 @@ td.status-completed { color: #0dcaf0 !important; font-weight: 600; }
     <!-- MAIN PANEL -->
     <main class="panel">
 
-        <!-- TOP BAR (UPDATED) -->
         <div class="top-bar">
             <div>
-                <h3>
-                    Good day, <?= htmlspecialchars($user['fullname']) ?> 👋
-                </h3>
-
-                <p class="text-muted mb-0">
-                    <?= $currentDateTime ?>
-                </p>
+                <h3>Good day, <?= htmlspecialchars($user['fullname']) ?> 👋</h3>
+                <p class="text-muted mb-0"><?= $currentDateTime ?></p>
             </div>
 
             <a href="../home.php" class="btn btn-outline-dark">
@@ -163,44 +156,71 @@ td.status-completed { color: #0dcaf0 !important; font-weight: 600; }
 
                 <?php if ($testdrives->num_rows > 0): ?>
 
-                    <table class="table table-hover mt-3 text-center">
-                        <thead>
-                            <tr>
-                                <th>Vehicle</th>
-                                <th>Date</th>
-                                <th>Time</th>
-                                <th>Status</th>
-                            </tr>
-                        </thead>
+                <table class="table table-hover mt-3 text-center">
+                    <thead>
+                        <tr>
+                            <th>Vehicle</th>
+                            <th>Date</th>
+                            <th>Time</th>
+                            <th>Status</th>
+                            <th>Details</th>
+                        </tr>
+                    </thead>
 
-                        <tbody>
-                        <?php while($row = $testdrives->fetch_assoc()): 
-                            $status = strtolower($row['status']);
-                        ?>
-                            <tr>
+                    <tbody>
+                    <?php while($row = $testdrives->fetch_assoc()): 
+                        $status = strtolower($row['status']);
+                    ?>
+                        <tr>
 
-                                <td>
-                                    <?= htmlspecialchars($row['model_name']) ?>
-                                    <br>
-                                    <small>(<?= htmlspecialchars($row['model_variant']) ?>)</small>
-                                </td>
+                            <td>
+                                <?= htmlspecialchars($row['model_name']) ?>
+                                <br>
+                                <small>(<?= htmlspecialchars($row['model_variant']) ?>)</small>
+                            </td>
 
-                                <td><?= $row['date'] ?></td>
-                                <td><?= $row['time'] ?></td>
+                            <td><?= $row['date'] ?></td>
+                            <td><?= $row['time'] ?></td>
 
-                                <td class="status-<?= $status ?>">
-                                    <?= ucfirst($status) ?>
-                                </td>
+                            <td class="status-<?= $status ?>">
+                                <?= ucfirst($status) ?>
+                            </td>
 
-                            </tr>
-                        <?php endwhile; ?>
-                        </tbody>
+                            <!-- DETAILS BUTTON -->
+                           <td class="text-center">
 
-                    </table>
+    <div class="d-grid gap-2">
 
-                    <a href="my_testdrives.php" class="btn btn-outline-dark w-100 mt-2">
-                        View Full History
-                    </a>
+        <?php if ($status == 'approved' && !empty($row['admin_message'])): ?>
+
+            <button class="btn btn-success btn-sm"
+                    data-bs-toggle="modal"
+                    data-bs-target="#modal<?= $row['id'] ?>">
+                View Message
+            </button>
+
+        <?php elseif ($status == 'rejected' && !empty($row['admin_notes'])): ?>
+
+            <button class="btn btn-danger btn-sm"
+                    data-bs-toggle="modal"
+                    data-bs-target="#modal<?= $row['id'] ?>">
+                View Reason
+            </button>
+
+        <?php else: ?>
+
+            <span class="text-muted small">No details</span>
+
+        <?php endif; ?>
+
+    </div>
+
+</td>
+
+                        </tr>
+                    <?php endwhile; ?>
+                    </tbody>
+                </table>
 
                 <?php else: ?>
                     <p>No appointment scheduled yet.</p>
@@ -213,6 +233,48 @@ td.status-completed { color: #0dcaf0 !important; font-weight: 600; }
     </main>
 
 </div>
+
+<!-- ================= MODALS ================= -->
+<?php 
+$testdrives->data_seek(0);
+while($row = $testdrives->fetch_assoc()):
+$status = strtolower($row['status']);
+?>
+
+<div class="modal fade" id="modal<?= $row['id'] ?>" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content bg-dark text-white">
+
+      <div class="modal-header">
+        <h5 class="modal-title">
+            <?= ucfirst($status) ?> Details
+        </h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+
+      <div class="modal-body">
+
+        <?php if ($status == 'rejected'): ?>
+
+            <h6 class="text-danger">Rejection Reason:</h6>
+            <p><?= htmlspecialchars($row['admin_notes'] ?: 'No reason provided') ?></p>
+
+        <?php elseif ($status == 'approved'): ?>
+
+            <h6 class="text-success">Admin Message:</h6>
+            <p><?= htmlspecialchars($row['admin_message'] ?: 'Approved without message') ?></p>
+
+        <?php endif; ?>
+
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<?php endwhile; ?>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
 </body>
 </html>

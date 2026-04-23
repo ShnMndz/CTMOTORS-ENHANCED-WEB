@@ -9,13 +9,34 @@ if (!isset($_SESSION['user']) || $_SESSION['role'] !== 'admin') {
 
 $currentPage = 'test_drives';
 
-// UPDATE STATUS
+// UPDATE STATUS (UPDATED ONLY - SAFE ADDITION)
 if (isset($_POST['update_status'])) {
+
     $id = $_POST['id'];
     $status = $_POST['status'];
 
-    $stmt = $conn->prepare("UPDATE test_drives SET status=? WHERE id=?");
-    $stmt->bind_param("si", $status, $id);
+    $admin_notes = isset($_POST['admin_notes']) ? trim($_POST['admin_notes']) : null;
+    $admin_message = isset($_POST['admin_message']) ? trim($_POST['admin_message']) : null;
+
+    // reject requires reason
+    if ($status == 'rejected' && empty($admin_notes)) {
+        $_SESSION['error'] = "Reject reason is required.";
+        header("Location: admin_test_drives.php");
+        exit();
+    }
+
+    // approve optional message
+    if ($status == 'approved' && empty($admin_message)) {
+        $admin_message = null;
+    }
+
+    $stmt = $conn->prepare("
+        UPDATE test_drives 
+        SET status=?, admin_notes=?, admin_message=? 
+        WHERE id=?
+    ");
+
+    $stmt->bind_param("sssi", $status, $admin_notes, $admin_message, $id);
     $stmt->execute();
 }
 
@@ -52,7 +73,6 @@ $pendingCount = $conn->query("
 
 <body>
 
-<!-- SIDEBAR -->
 <div class="sidebar">
     <h4>Admin Panel</h4>
 
@@ -72,7 +92,6 @@ $pendingCount = $conn->query("
     <a href="../logout.php"><i class="fas fa-sign-out-alt"></i> Logout</a>
 </div>
 
-<!-- CONTENT -->
 <div class="content">
 
 <h2 class="mb-4">🚗 Test Drive Requests</h2>
@@ -112,7 +131,6 @@ $pendingCount = $conn->query("
     <td><?= $row['date'] ?></td>
     <td><?= $row['time'] ?></td>
 
-    <!-- MESSAGE PREVIEW -->
     <td>
         <?= htmlspecialchars(mb_strimwidth($row['message'], 0, 25, "...")) ?>
         <br>
@@ -123,35 +141,27 @@ $pendingCount = $conn->query("
         </button>
     </td>
 
-    <!-- STATUS -->
     <td class="status-<?= $row['status'] ?>">
         <?= ucfirst($row['status']) ?>
-
-        <?php if ($row['status'] == 'pending'): ?>
-            <span class="badge bg-warning text-dark">NEW</span>
-        <?php endif; ?>
     </td>
 
-    <!-- ACTION -->
     <td>
 
         <?php if ($row['status'] == 'pending'): ?>
 
-            <form method="POST" class="d-inline">
-                <input type="hidden" name="id" value="<?= $row['id'] ?>">
-                <input type="hidden" name="status" value="approved">
-                <button class="btn btn-success btn-sm" name="update_status">
-                    <i class="fas fa-check"></i>
-                </button>
-            </form>
+            <!-- APPROVE BUTTON (NOW OPENS MODAL) -->
+            <button class="btn btn-success btn-sm"
+                    data-bs-toggle="modal"
+                    data-bs-target="#approveModal<?= $row['id'] ?>">
+                <i class="fas fa-check"></i>
+            </button>
 
-            <form method="POST" class="d-inline">
-                <input type="hidden" name="id" value="<?= $row['id'] ?>">
-                <input type="hidden" name="status" value="rejected">
-                <button class="btn btn-danger btn-sm" name="update_status">
-                    <i class="fas fa-times"></i>
-                </button>
-            </form>
+            <!-- REJECT -->
+            <button class="btn btn-danger btn-sm"
+                    data-bs-toggle="modal"
+                    data-bs-target="#rejectModal<?= $row['id'] ?>">
+                <i class="fas fa-times"></i>
+            </button>
 
         <?php elseif ($row['status'] == 'approved'): ?>
 
@@ -177,10 +187,9 @@ $pendingCount = $conn->query("
 </table>
 
 </div>
-
 </div>
 
-<!-- ✅ MODALS OUTSIDE TABLE (FIXED BUG) -->
+<!-- MESSAGE MODAL -->
 <?php 
 $result->data_seek(0);
 while($row = $result->fetch_assoc()): 
@@ -189,15 +198,76 @@ while($row = $result->fetch_assoc()):
 <div class="modal fade" id="msgModal<?= $row['id'] ?>" tabindex="-1">
   <div class="modal-dialog">
     <div class="modal-content bg-dark text-white">
-
       <div class="modal-header">
         <h5 class="modal-title">Customer Message</h5>
         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
       </div>
-
       <div class="modal-body">
         <?= nl2br(htmlspecialchars($row['message'])) ?>
       </div>
+    </div>
+  </div>
+</div>
+
+<!-- APPROVE MODAL (NEW) -->
+<div class="modal fade" id="approveModal<?= $row['id'] ?>" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+
+      <form method="POST">
+
+        <div class="modal-header">
+            <h5 class="modal-title">Approve Request</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+
+        <div class="modal-body">
+
+            <input type="hidden" name="id" value="<?= $row['id'] ?>">
+            <input type="hidden" name="status" value="approved">
+
+            <label class="form-label">Admin Message (Optional)</label>
+            <textarea name="admin_message" class="form-control"></textarea>
+
+        </div>
+
+        <div class="modal-footer">
+            <button class="btn btn-success" name="update_status">Approve</button>
+        </div>
+
+      </form>
+
+    </div>
+  </div>
+</div>
+
+<!-- REJECT MODAL (UNCHANGED) -->
+<div class="modal fade" id="rejectModal<?= $row['id'] ?>" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+
+      <form method="POST">
+
+        <div class="modal-header">
+            <h5 class="modal-title">Reject Reason</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+
+        <div class="modal-body">
+
+            <input type="hidden" name="id" value="<?= $row['id'] ?>">
+            <input type="hidden" name="status" value="rejected">
+
+            <label class="form-label">Admin Notes (Required)</label>
+            <textarea name="admin_notes" class="form-control" required></textarea>
+
+        </div>
+
+        <div class="modal-footer">
+            <button class="btn btn-danger" name="update_status">Reject</button>
+        </div>
+
+      </form>
 
     </div>
   </div>

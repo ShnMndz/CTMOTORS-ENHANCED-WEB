@@ -9,7 +9,7 @@ if (!isset($_SESSION['user_id'])) {
 
 $id = $_SESSION['user_id'];
 
-/* USER DATA (MISSING BEFORE) */
+/* USER DATA */
 $stmt = $conn->prepare("SELECT * FROM users WHERE id = ?");
 $stmt->bind_param("i", $id);
 $stmt->execute();
@@ -31,7 +31,6 @@ $user = $stmt->get_result()->fetch_assoc();
 <style>
 body { background:#0f0f0f; color:#fff; }
 
-/* STATUS COLORS */
 .status-pending { color: orange; font-weight: bold; }
 .status-approved { color: green; font-weight: bold; }
 .status-rejected { color: red; font-weight: bold; }
@@ -39,33 +38,17 @@ body { background:#0f0f0f; color:#fff; }
 
 table { color:#fff; }
 
-/* TABLE STATUS COLORS ONLY */
-td.status-pending {
-    color: #ff9800 !important;
-    font-weight: 600;
-}
-
-td.status-approved {
-    color: #28a745 !important;
-    font-weight: 600;
-}
-
-td.status-rejected {
-    color: #dc3545 !important;
-    font-weight: 600;
-}
-
-td.status-completed {
-    color: #0dcaf0 !important;
-    font-weight: 600;
-}
+td.status-pending { color: #ff9800 !important; font-weight: 600; }
+td.status-approved { color: #28a745 !important; font-weight: 600; }
+td.status-rejected { color: #dc3545 !important; font-weight: 600; }
+td.status-completed { color: #0dcaf0 !important; font-weight: 600; }
 </style>
+
 </head>
 
 <body>
 
 <div class="dashboard">
-    
 
     <!-- SIDEBAR -->
     <aside class="sidebar">
@@ -90,7 +73,7 @@ td.status-completed {
             </a>
         </div>
 
-         <nav class="menu">
+        <nav class="menu">
             <a href="user_dashboard.php" class="menu-btn">
                 <i class="fa-solid fa-user"></i>
                 Profile Status
@@ -109,7 +92,7 @@ td.status-completed {
 
     </aside>
 
-    <!-- MAIN PANEL (FIXED MISSING STRUCTURE) -->
+    <!-- MAIN PANEL -->
     <main class="panel">
 
         <div class="box">
@@ -133,40 +116,75 @@ td.status-completed {
             <?php if ($result->num_rows > 0): ?>
 
             <table class="table table-dark table-hover mt-3 text-center">
-                <thead>
-                    <tr>
-                        <th>Vehicle</th>
-                        <th>Date</th>
-                        <th>Time</th>
-                        <th>Message</th>
-                        <th>Status</th>
-                    </tr>
-                </thead>
+                <table class="table table-dark table-hover mt-3 text-center align-middle">
 
-                <tbody>
-                    <?php while($row = $result->fetch_assoc()): ?>
-                    <tr>
+<thead>
+    <tr>
+        <th>Vehicle</th>
+        <th>Date</th>
+        <th>Time</th>
+        <th>Message</th>
+        <th>Status</th>
+        <th>Details</th>
+    </tr>
+</thead>
 
-                        <td>
-                            <?= htmlspecialchars($row['model_name']) ?>
-                            <br>
-                            <small>(<?= htmlspecialchars($row['model_variant']) ?>)</small>
-                        </td>
+<tbody>
+<?php while($row = $result->fetch_assoc()): ?>
+    <tr>
 
-                        <td><?= $row['date'] ?></td>
-                        <td><?= $row['time'] ?></td>
+        <td>
+            <?= htmlspecialchars($row['model_name']) ?>
+            <br>
+            <small class="text-muted">
+                <?= htmlspecialchars($row['model_variant']) ?>
+            </small>
+        </td>
 
-                        <td>
-                            <?= htmlspecialchars(mb_strimwidth($row['message'], 0, 30, "...")) ?>
-                        </td>
+        <td><?= date("M d, Y", strtotime($row['date'])) ?></td>
+        <td><?= date("h:i A", strtotime($row['time'])) ?></td>
 
-                        <td class="status-<?= $row['status'] ?>">
-                            <?= ucfirst($row['status']) ?>
-                        </td>
+        <td>
+            <?= htmlspecialchars(mb_strimwidth($row['message'], 0, 25, "...")) ?>
+        </td>
 
-                    </tr>
-                    <?php endwhile; ?>
-                </tbody>
+        <td class="status-<?= $row['status'] ?>">
+            <?= ucfirst($row['status']) ?>
+        </td>
+
+        <td>
+
+            <?php if ($row['status'] == 'rejected' && !empty($row['admin_notes'])): ?>
+
+                <button class="btn btn-sm btn-danger"
+                        data-bs-toggle="modal"
+                        data-bs-target="#adminModal<?= $row['id'] ?>">
+                    View Reason
+                </button>
+
+            <?php elseif ($row['status'] == 'approved' && !empty($row['admin_message'])): ?>
+
+                <button class="btn btn-sm btn-success"
+                        data-bs-toggle="modal"
+                        data-bs-target="#adminModal<?= $row['id'] ?>">
+                    View Message
+                </button>
+
+            <?php else: ?>
+
+                <span class="text-muted small">
+                    <?= ($row['status'] == 'pending') ? 'Waiting' : 'No details' ?>
+                </span>
+
+            <?php endif; ?>
+
+        </td>
+
+    </tr>
+<?php endwhile; ?>
+</tbody>
+
+</table>
             </table>
 
             <?php else: ?>
@@ -180,6 +198,51 @@ td.status-completed {
     </main>
 
 </div>
+
+<!-- ================= MODALS ================= -->
+<?php 
+$result->data_seek(0);
+while($row = $result->fetch_assoc()): 
+?>
+
+<div class="modal fade" id="adminModal<?= $row['id'] ?>" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content bg-dark text-white">
+
+      <div class="modal-header">
+        <h5 class="modal-title">
+            <?= ucfirst($row['status']) ?> Details
+        </h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+
+      <div class="modal-body">
+
+        <?php if ($row['status'] == 'rejected'): ?>
+
+            <h6 class="text-danger">Rejection Reason:</h6>
+            <p><?= htmlspecialchars($row['admin_notes'] ?: 'No reason provided') ?></p>
+
+        <?php elseif ($row['status'] == 'approved'): ?>
+
+            <h6 class="text-success">Admin Message:</h6>
+            <p><?= htmlspecialchars($row['admin_message'] ?: 'Approved without message') ?></p>
+
+        <?php else: ?>
+
+            <p>No additional details.</p>
+
+        <?php endif; ?>
+
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<?php endwhile; ?>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
 </body>
 </html>
