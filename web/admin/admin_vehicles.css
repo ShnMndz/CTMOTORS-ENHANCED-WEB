@@ -1,9 +1,16 @@
-body {
-    background:#f4f6f9;
-    font-family:'Segoe UI',sans-serif;
+/* =========================
+   FORCE DARK MODE (GLOBAL FIX)
+========================= */
+
+/* BODY OVERRIDE (important for consistency) */
+body{
+    background:#0b0b0b !important;
+    color:#fff !important;
 }
 
-/* SIDEBAR */
+/* =========================
+   SIDEBAR (unchanged good)
+========================= */
 .sidebar {
     width:240px;
     height:100vh;
@@ -13,53 +20,121 @@ body {
     padding:20px;
 }
 
-.sidebar h4 {
-    font-weight:bold;
-    margin-bottom:20px;
-}
-
-.sidebar a {
-    color:#fff;
-    display:flex;
-    align-items:center;
-    gap:10px;
-    margin:10px 0;
-    text-decoration:none;
-    padding:10px;
-    border-radius:8px;
-    transition:0.3s;
-}
-
-.sidebar a:hover {
-    background:rgba(255,255,255,0.15);
-}
-
-.sidebar a.active {
-    background:rgba(0,0,0,0.2);
-}
-
-/* CONTENT */
+/* =========================
+   CONTENT
+========================= */
 .content {
     margin-left:260px;
     padding:30px;
 }
 
-/* TABLE */
-.table img.product-img {
+/* =========================
+   FORCE MODAL DARK (IMPORTANT)
+========================= */
+.modal-backdrop{
+    background:#000 !important;
+    opacity:0.7 !important;
+}
+
+.modal-content{
+    background:#0f0f0f !important;
+    color:#fff !important;
+    border:1px solid #222 !important;
+}
+
+.modal-header,
+.modal-body,
+.modal-footer{
+    background:#0f0f0f !important;
+    border-color:#222 !important;
+}
+
+/* =========================
+   FORCE ALL INPUTS DARK (GLOBAL FIX)
+========================= */
+input,
+select,
+textarea,
+.form-control,
+.form-select{
+    background:#1a1a1a !important;
+    color:#fff !important;
+    border:1px solid #333 !important;
+}
+
+/* FOCUS STATE */
+input:focus,
+select:focus,
+textarea:focus,
+.form-control:focus,
+.form-select:focus{
+    background:#1a1a1a !important;
+    border-color:#dc3545 !important;
+    box-shadow:none !important;
+    color:#fff !important;
+}
+
+/* OPTIONS (dropdown fix) */
+select option{
+    background:#1a1a1a !important;
+    color:#fff !important;
+}
+
+/* PLACEHOLDER */
+::placeholder{
+    color:#777 !important;
+    opacity:1;
+}
+
+/* LABELS */
+label{
+    color:#aaa !important;
+}
+
+/* =========================
+   BUTTONS
+========================= */
+.modal .btn-primary{
+    background:#dc3545 !important;
+    border:none !important;
+}
+
+.modal .btn-primary:hover{
+    background:#b52a34 !important;
+}
+
+.modal .btn-success{
+    background:#198754 !important;
+}
+
+/* =========================
+   TABLE (optional cleanup)
+========================= */
+.table{
+    background:#111 !important;
+    color:#fff !important;
+}
+
+.table thead{
+    background:#dc3545 !important;
+}
+
+.table td,
+.table th{
+    border-color:#222 !important;
+}
+
+/* IMAGE */
+.table img.product-img{
     width:80px;
+    border-radius:8px;
+    border:1px solid #333;
 }
 
-.features-box {
-    max-width:200px;
-    white-space:pre-wrap;
-}
-
+/* IMAGE PREVIEW */
 #image-preview{
-    max-width:100%;
-    margin-top:10px;
-}
-
-/* MODAL */
-.modal .form-control, .modal .form-select {
-    margin-bottom:10px;
+    background:#1a1a1a !important;
+    border:1px solid #333 !important;
+    padding:10px;
+    border-radius:10px;
 }

@@ -1,6 +1,7 @@
 body {
-    background: #242424;
+    background: #1e1e1e;
     font-family: 'Segoe UI', sans-serif;
+    color: #fff;
 }
 
 /* SIDEBAR */
@@ -11,22 +12,28 @@ body {
     background: linear-gradient(180deg, #dc3545, #b52a34);
     color: #fff;
     padding: 20px;
+    box-shadow: 5px 0 15px rgba(0,0,0,0.3);
 }
 
+/* SIDEBAR LINKS */
 .sidebar a {
-    color: #000000;
+    color: #fff;
     display: flex;
     align-items: center;
     gap: 10px;
     margin: 10px 0;
     text-decoration: none;
-    padding: 10px;
+    padding: 10px 12px;
     border-radius: 8px;
+    transition: 0.2s ease;
+    font-weight: 500;
 }
 
+/* ACTIVE + HOVER */
 .sidebar a.active,
 .sidebar a:hover {
-    background: rgba(0,0,0,0.2);
+    background: rgba(255,255,255,0.15);
+    transform: translateX(5px);
 }
 
 /* CONTENT */
@@ -35,34 +42,156 @@ body {
     padding: 30px;
 }
 
-/* CARD STYLE */
+/* HEADINGS */
+h2 {
+    color: #fff;
+    font-weight: bold;
+}
+
+/* STATS CARDS */
 .card.stat-card {
     border: none;
     border-radius: 15px;
     padding: 20px;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.08);
     text-align: center;
+    background: #2a2a2a;
+    color: #fff;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.4);
     transition: 0.3s;
 }
 
 .card.stat-card:hover {
     transform: translateY(-5px);
+    background: #333;
 }
 
-/* NUMBER ON TOP */
+/* NUMBER */
 .card.stat-card h2 {
     font-size: 28px;
     font-weight: bold;
     margin-bottom: 5px;
+    color: #dc3545;
 }
 
+/* SUBTEXT */
 .card.stat-card small {
-    color: #777;
+    color: #bbb;
     letter-spacing: 1px;
+}
+
+/* TABLE DARK FIX */
+.table {
+    background: #2a2a2a;
+    color: #fff;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.table thead {
+    background: #dc3545;
+    color: #fff;
+}
+
+.table td, .table th {
+    border-color: #444 !important;
+}
+
+/* BUTTON FIX */
+.btn-success {
+    background: #28a745;
+}
+
+.btn-warning {
+    color: #000;
+}
+
+/* MODAL DARK FIX */
+.modal-content {
+    background: #2a2a2a;
+    color: #fff;
+    border-radius: 12px;
+}
+
+/* INPUT FIELDS */
+.form-control,
+.form-select {
+    background: #1e1e1e;
+    color: #fff;
+    border: 1px solid #444;
+}
+
+.form-control:focus,
+.form-select:focus {
+    background: #1e1e1e;
+    color: #fff;
+    border-color: #dc3545;
+    box-shadow: none;
 }
 
 /* MOBILE */
 @media (max-width: 768px) {
-    .sidebar { position: relative; width: 100%; }
-    .content { margin-left: 0; }
+    .sidebar {
+        position: relative;
+        width: 100%;
+        text-align: center;
+    }
+
+    .content {
+        margin-left: 0;
+    }
+}
+
+/* DARK FORM MODAL */
+.modal-content {
+    background: #111 !important;
+    color: #fff;
+    border: 1px solid #333;
+    border-radius: 12px;
+}
+
+/* MODAL HEADER */
+.modal-header {
+    border-bottom: 1px solid #333;
+}
+
+/* MODAL FOOTER */
+.modal-footer {
+    border-top: 1px solid #333;
+}
+
+/* INPUTS */
+.form-control,
+.form-select {
+    background: #1a1a1a !important;
+    color: #fff !important;
+    border: 1px solid #333 !important;
+}
+
+.form-control:focus,
+.form-select:focus {
+    background: #1a1a1a !important;
+    border-color: #dc3545 !important;
+    box-shadow: none !important;
+    color: #fff !important;
+}
+
+/* LABEL FIX (for floating labels) */
+.form-floating label {
+    color: #aaa;
+}
+
+/* PLACEHOLDER */
+::placeholder {
+    color: #777 !important;
+}
+
+/* INPUT GROUP BUTTON (eye icon etc.) */
+.input-group .btn {
+    background: #1a1a1a;
+    border: 1px solid #333;
+    color: #fff;
+}
+
+.input-group .btn:hover {
+    background: #222;
 }

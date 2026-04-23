@@ -9,9 +9,9 @@ if (!isset($_SESSION['user']) || $_SESSION['role'] !== 'admin') {
 
 $currentPage = 'users';
 
-// ---------------------
-// ADD USER
-// ---------------------
+/* ---------------------
+   ADD USER
+--------------------- */
 if(isset($_POST['add_user'])){
 
     $fullname = trim($_POST['fullname']);
@@ -39,9 +39,9 @@ if(isset($_POST['add_user'])){
     exit();
 }
 
-// ---------------------
-// UPDATE USER ROLE
-// ---------------------
+/* ---------------------
+   UPDATE USER ROLE
+--------------------- */
 if(isset($_POST['save_user'])){
 
     $stmt = $conn->prepare("UPDATE users SET role=? WHERE id=?");
@@ -52,9 +52,9 @@ if(isset($_POST['save_user'])){
     exit();
 }
 
-// ---------------------
-// DELETE USER
-// ---------------------
+/* ---------------------
+   DELETE USER
+--------------------- */
 if(isset($_GET['delete_user'])){
 
     if($_GET['delete_user'] == $_SESSION['user_id']){
@@ -70,9 +70,9 @@ if(isset($_GET['delete_user'])){
     exit();
 }
 
-// ---------------------
-// FETCH USERS & STATS
-// ---------------------
+/* ---------------------
+   FETCH DATA
+--------------------- */
 $result_users = $conn->query("SELECT * FROM users ORDER BY id DESC");
 
 $total_users = $conn->query("SELECT COUNT(*) as total FROM users")->fetch_assoc()['total'];
@@ -100,10 +100,12 @@ $users_this_month = $conn->query("
 <link rel="stylesheet" href="users.css">
 <link rel="stylesheet" href="admin_dashboard.css">
 
-<!-- ONLY ADDITION: fade animation -->
 <style>
-.alert{
-    transition: all 0.5s ease;
+.alert{transition:0.5s ease;}
+.stat-card{
+    padding:20px;
+    border-radius:12px;
+    text-align:center;
 }
 </style>
 
@@ -122,16 +124,17 @@ $users_this_month = $conn->query("
         <i class="fas fa-users"></i> Manage Users
     </a>
 
-    <a href="admin_vehicles.php" class="<?= $currentPage=='vehicles'?'active':'' ?>">
+    <a href="admin_vehicles.php">
         <i class="fas fa-car"></i> Manage Vehicles
     </a>
 
     <a href="admin_posts.php">
-        <i class="fas fa-newspaper"></i>Posts
+        <i class="fas fa-newspaper"></i> Posts
     </a>
 
     <a href="admin_test_drives.php">
-        <i class="fas fa-key"></i>Test Drive
+        <i class="fas fa-key"></i> Test Drive
+    </a>
 
     <a href="../logout.php">
         <i class="fas fa-sign-out-alt"></i> Logout
@@ -143,7 +146,7 @@ $users_this_month = $conn->query("
 
 <h2>Users</h2>
 
-<!-- ALERTS (UNCHANGED LOGIC + only fade class added) -->
+<!-- ALERTS -->
 <?php if(isset($_GET['success']) && $_GET['success']=='added'): ?>
 <div class="alert alert-success auto-fade">User added successfully!</div>
 <?php endif; ?>
@@ -164,60 +167,20 @@ $users_this_month = $conn->query("
 <div class="alert alert-warning auto-fade">You cannot delete your own account!</div>
 <?php endif; ?>
 
-<!-- ADD USER BUTTON -->
 <button class="btn btn-success mb-3" data-bs-toggle="modal" data-bs-target="#addUserModal">
-    + Add New User
++ Add New User
 </button>
 
 <!-- STATS -->
 <div class="row mb-4">
-
-    <div class="col-md-3">
-        <div class="card stat-card">
-            <h2><?= $total_users ?></h2>
-            <small>Total Users</small>
-        </div>
-    </div>
-
-    <div class="col-md-3">
-        <div class="card stat-card">
-            <h2><?= $total_admins ?></h2>
-            <small>Admins</small>
-        </div>
-    </div>
-
-    <div class="col-md-3">
-        <div class="card stat-card">
-            <h2><?= $total_regular ?></h2>
-            <small>Users</small>
-        </div>
-    </div>
-
-    <div class="col-md-3">
-        <div class="card stat-card">
-            <h2><?= $users_this_month ?></h2>
-            <small>Users This Month</small>
-        </div>
-    </div>
-
-</div>
-
-<!-- SEARCH -->
-<div class="row mb-3">
-    <div class="col-md-4">
-        <input type="text" id="searchName" class="form-control" placeholder="Search by Name">
-    </div>
-    <div class="col-md-3">
-        <select id="filterRole" class="form-select">
-            <option value="">All Roles</option>
-            <option value="admin">Admin</option>
-            <option value="user">User</option>
-        </select>
-    </div>
+<div class="col-md-3"><div class="card stat-card"><h2><?= $total_users ?></h2><small>Total Users</small></div></div>
+<div class="col-md-3"><div class="card stat-card"><h2><?= $total_admins ?></h2><small>Admins</small></div></div>
+<div class="col-md-3"><div class="card stat-card"><h2><?= $total_regular ?></h2><small>Users</small></div></div>
+<div class="col-md-3"><div class="card stat-card"><h2><?= $users_this_month ?></h2><small>This Month</small></div></div>
 </div>
 
 <!-- TABLE -->
-<table class="table table-bordered" id="usersTable">
+<table class="table table-bordered">
 <thead class="table-success">
 <tr>
 <th>ID</th>
@@ -240,28 +203,21 @@ $users_this_month = $conn->query("
 <td><?= htmlspecialchars($u['email']) ?></td>
 
 <td>
-<?php if($u['role'] == 'admin'): ?>
-    <span class="badge bg-danger px-3 py-2">
-        <i class="fas fa-shield-alt"></i> Admin
-    </span>
+<?php if($u['role']=='admin'): ?>
+<span class="badge bg-danger">Admin</span>
 <?php else: ?>
-    <span class="badge bg-primary px-3 py-2">
-        <i class="fas fa-user"></i> User
-    </span>
+<span class="badge bg-primary">User</span>
 <?php endif; ?>
 </td>
 
 <td>
-
-<!-- ONLY ADDITION: confirm delete -->
 <a class="btn btn-danger btn-sm"
-   href="?delete_user=<?= $u['id'] ?>"
-   onclick="return confirm('Are you sure you want to delete this user?');">
-   Delete
+href="?delete_user=<?= $u['id'] ?>"
+onclick="return confirm('Delete this user?')">
+Delete
 </a>
 
 <button class="btn btn-warning btn-sm edit-btn">Edit</button>
-
 </td>
 
 </tr>
@@ -269,38 +225,42 @@ $users_this_month = $conn->query("
 </tbody>
 </table>
 
+</div>
+
 <!-- EDIT MODAL -->
 <div class="modal fade" id="modal">
 <div class="modal-dialog">
 <div class="modal-content">
 
 <form method="POST">
+<div class="modal-header">
+<h5>Edit User</h5>
+<button class="btn-close" data-bs-dismiss="modal"></button>
+</div>
+
 <div class="modal-body">
 
 <input type="hidden" name="id" id="user-id">
 
-<div class="mb-2">
-<label>Full Name</label>
+<div class="form-floating mb-2">
 <input type="text" id="user-name" class="form-control" readonly>
+<label>Name</label>
 </div>
 
-<div class="mb-2">
-<label>Email</label>
+<div class="form-floating mb-2">
 <input type="email" id="user-email" class="form-control" readonly>
+<label>Email</label>
 </div>
 
-<div class="mb-2">
-<label>Role</label>
 <select name="role" id="user-role" class="form-select">
 <option value="user">User</option>
 <option value="admin">Admin</option>
 </select>
-</div>
 
 </div>
 
 <div class="modal-footer">
-<button name="save_user" class="btn btn-primary">Save</button>
+<button class="btn btn-primary w-100" name="save_user">Save</button>
 </div>
 
 </form>
@@ -309,7 +269,7 @@ $users_this_month = $conn->query("
 </div>
 </div>
 
-<!-- ADD USER MODAL -->
+<!-- ADD MODAL -->
 <div class="modal fade" id="addUserModal">
 <div class="modal-dialog">
 <div class="modal-content">
@@ -317,14 +277,21 @@ $users_this_month = $conn->query("
 <form method="POST">
 
 <div class="modal-header">
-<h5>Add New User</h5>
+<h5>Add User</h5>
+<button class="btn-close" data-bs-dismiss="modal"></button>
 </div>
 
 <div class="modal-body">
 
 <input type="text" name="fullname" class="form-control mb-2" placeholder="Full Name" required>
 <input type="email" name="email" class="form-control mb-2" placeholder="Email" required>
-<input type="password" name="password" class="form-control mb-2" placeholder="Password" required>
+
+<div class="input-group mb-2">
+<input type="password" name="password" id="addPass" class="form-control" placeholder="Password" required>
+<button type="button" class="btn btn-outline-secondary" onclick="togglePass('addPass')">
+<i class="fas fa-eye"></i>
+</button>
+</div>
 
 <select name="role" class="form-select">
 <option value="user">User</option>
@@ -334,7 +301,7 @@ $users_this_month = $conn->query("
 </div>
 
 <div class="modal-footer">
-<button name="add_user" class="btn btn-success">Add User</button>
+<button class="btn btn-success w-100" name="add_user">Create</button>
 </div>
 
 </form>
@@ -346,50 +313,28 @@ $users_this_month = $conn->query("
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
-function openModal(id,name,email,role){
-    document.getElementById('user-id').value = id;
-    document.getElementById('user-name').value = name;
-    document.getElementById('user-email').value = email;
-    document.getElementById('user-role').value = role;
-    new bootstrap.Modal(document.getElementById('modal')).show();
+function togglePass(id){
+    let input = document.getElementById(id);
+    input.type = input.type === "password" ? "text" : "password";
 }
 
 document.querySelectorAll('.edit-btn').forEach(btn=>{
     btn.onclick = function(){
         let tr = this.closest('tr');
-        openModal(tr.dataset.id, tr.dataset.name, tr.dataset.email, tr.dataset.role);
+        document.getElementById('user-id').value = tr.dataset.id;
+        document.getElementById('user-name').value = tr.dataset.name;
+        document.getElementById('user-email').value = tr.dataset.email;
+        document.getElementById('user-role').value = tr.dataset.role;
+        new bootstrap.Modal(document.getElementById('modal')).show();
     }
 });
 
-const searchInput = document.getElementById('searchName');
-const roleFilter = document.getElementById('filterRole');
-const table = document.getElementById('usersTable').getElementsByTagName('tbody')[0];
-
-function filterTable(){
-    const search = searchInput.value.toLowerCase();
-    const role = roleFilter.value;
-
-    Array.from(table.rows).forEach(row=>{
-        const name = row.cells[1].textContent.toLowerCase();
-        const rowRole = row.dataset.role;
-
-        row.style.display = (name.includes(search) && (!role || rowRole === role)) ? '' : 'none';
-    });
-}
-
-searchInput.addEventListener('input', filterTable);
-roleFilter.addEventListener('change', filterTable);
-
-// ONLY ADDITION: AUTO FADE ALERTS
-document.addEventListener("DOMContentLoaded", function () {
-    const alerts = document.querySelectorAll(".auto-fade");
-
-    alerts.forEach(alert => {
-        setTimeout(() => {
-            alert.style.opacity = "0";
-            setTimeout(() => alert.remove(), 500);
-        }, 3000);
-    });
+// AUTO FADE ALERTS
+document.querySelectorAll(".auto-fade").forEach(alert=>{
+    setTimeout(()=>{
+        alert.style.opacity="0";
+        setTimeout(()=>alert.remove(),500);
+    },3000);
 });
 </script>
 
