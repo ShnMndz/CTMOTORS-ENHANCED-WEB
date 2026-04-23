@@ -56,7 +56,7 @@ $pending_test_drives = $conn->query("
     <a href="admin_dashboard.php" class="<?= $currentPage=='dashboard'?'active':'' ?>">
         <i class="fas fa-chart-line"></i> Dashboard
     </a>
-
+    <a href="admin_profile.php"><i class="fas fa-user"></i>Your Profile</a>
     <a href="admin_users.php"><i class="fas fa-users"></i> Manage Users</a>
     <a href="admin_vehicles.php"><i class="fas fa-car"></i> Manage Vehicles</a>
     <a href="admin_posts.php"><i class="fas fa-newspaper"></i> Posts</a>

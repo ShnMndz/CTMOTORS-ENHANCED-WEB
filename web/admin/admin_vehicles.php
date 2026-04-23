@@ -170,6 +170,8 @@ $result = $stmt->get_result();
         <i class="fas fa-chart-line"></i> Dashboard
     </a>
 
+    <a href="admin_profile.php"><i class="fas fa-user"></i>Your Profile</a>
+
     <a href="admin_users.php">
         <i class="fas fa-users"></i> Manage Users
     </a>
