@@ -15,6 +15,10 @@ $stmt->bind_param("i", $id);
 $stmt->execute();
 $user = $stmt->get_result()->fetch_assoc();
 
+// TIME + DATE
+date_default_timezone_set('Asia/Manila');
+$currentDateTime = date("l, F d, Y - h:i A");
+
 // ==========================
 // GET LATEST 5 TEST DRIVES
 // ==========================
@@ -43,14 +47,11 @@ $testdrives = $stmt->get_result();
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
 
 <style>
-
-/* PAGE */
 body {
     background: #f5f7fb;
     color: #222;
 }
 
-/* TABLE (WHITE) */
 .table {
     background: #ffffff !important;
 }
@@ -69,27 +70,10 @@ body {
     background: #f9fbff !important;
 }
 
-/* STATUS COLORS (TABLE ONLY) */
-td.status-pending {
-    color: #ff9800 !important;
-    font-weight: 600;
-}
-
-td.status-approved {
-    color: #28a745 !important;
-    font-weight: 600;
-}
-
-td.status-rejected {
-    color: #dc3545 !important;
-    font-weight: 600;
-}
-
-td.status-completed {
-    color: #0dcaf0 !important;
-    font-weight: 600;
-}
-
+td.status-pending { color: #ff9800 !important; font-weight: 600; }
+td.status-approved { color: #28a745 !important; font-weight: 600; }
+td.status-rejected { color: #dc3545 !important; font-weight: 600; }
+td.status-completed { color: #0dcaf0 !important; font-weight: 600; }
 </style>
 
 </head>
@@ -121,8 +105,7 @@ td.status-completed {
             </a>
         </div>
 
-    
-            <nav class="menu">
+        <nav class="menu">
             <a href="user_dashboard.php" class="menu-btn active">
                 <i class="fa-solid fa-user"></i>
                 Profile Status
@@ -144,10 +127,16 @@ td.status-completed {
     <!-- MAIN PANEL -->
     <main class="panel">
 
+        <!-- TOP BAR (UPDATED) -->
         <div class="top-bar">
             <div>
-                <h3>Dashboard</h3>
-                <p class="text-muted">Welcome back 👋</p>
+                <h3>
+                    Good day, <?= htmlspecialchars($user['fullname']) ?> 👋
+                </h3>
+
+                <p class="text-muted mb-0">
+                    <?= $currentDateTime ?>
+                </p>
             </div>
 
             <a href="../home.php" class="btn btn-outline-dark">
@@ -186,7 +175,7 @@ td.status-completed {
 
                         <tbody>
                         <?php while($row = $testdrives->fetch_assoc()): 
-                            $status = strtolower($row['status']); // FIX
+                            $status = strtolower($row['status']);
                         ?>
                             <tr>
 
