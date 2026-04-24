@@ -114,6 +114,11 @@ if (isset($_SESSION['user_id'])) {
 
             <!-- RIGHT SIDE -->
              <div class="d-flex align-items-center gap-2 mt-3 mt-lg-0 justify-content-center justify-content-lg-end">
+                <?php if(isset($_SESSION['user_id'])): ?>
+
+    <?php include $_SERVER['DOCUMENT_ROOT'] . "/citimotorsweb/web/includes/notifications.php"; ?>
+
+<?php endif; ?>
 
                 <?php if(isset($_SESSION['user_id'])): ?>
 
