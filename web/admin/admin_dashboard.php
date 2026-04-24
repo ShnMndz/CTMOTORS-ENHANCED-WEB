@@ -154,6 +154,67 @@ function updateDateTime(){
 updateDateTime();
 setInterval(updateDateTime, 60000);
 </script>
+<script>
+function updateDateTime(){
+    document.getElementById("liveDate").innerHTML =
+        new Date().toDateString();
+}
+updateDateTime();
+setInterval(updateDateTime, 60000);
+
+// REAL-TIME TEST DRIVE NOTIF
+function updateTestDriveNotif(){
+    fetch('admin_test_drive_count.php')
+        .then(res => res.json())
+        .then(data => {
+            const count = data.count;
+
+            // update sidebar badge
+            const badge = document.querySelector('.badge-notif');
+            
+            if(count > 0){
+                if(badge){
+                    badge.innerText = count;
+                    badge.style.display = "inline-block";
+                }
+            } else {
+                if(badge){
+                    badge.style.display = "none";
+                }
+            }
+
+            // update dashboard number (Pending Test Drives card)
+            const cards = document.querySelectorAll('.stat-card h2');
+            cards.forEach(el => {
+                // first card is pending test drives in your layout
+                if(el.closest('.stat-card').innerText.includes("Pending Test Drives")){
+                    el.innerText = count;
+                }
+            });
+
+            // notification dot
+            const dot = document.querySelector('.notif-dot');
+            const card = document.querySelector('.stat-card');
+
+            if(count > 0){
+                if(!dot){
+                    const span = document.createElement('span');
+                    span.className = 'notif-dot';
+                    span.innerText = '!';
+                    card.appendChild(span);
+                }
+            } else {
+                if(dot){
+                    dot.remove();
+                }
+            }
+        });
+}
+
+// run every 5 seconds
+updateTestDriveNotif();
+setInterval(updateTestDriveNotif, 5000);
+</script>
 
 </body>
 </html>

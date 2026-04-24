@@ -24,4 +24,4 @@ $stmt->execute();
 // go back to previous page
 header("Location: " . $_SERVER['HTTP_REFERER']);
 exit();
-?>                                     
+?>
