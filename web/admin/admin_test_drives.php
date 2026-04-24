@@ -10,7 +10,38 @@ if (!isset($_SESSION['user']) || $_SESSION['role'] !== 'admin') {
 $currentPage = 'test_drives';
 
 // ==========================
-// UPDATE STATUS (FIXED + NOTIF)
+// FILTERS
+// ==========================
+$search = isset($_GET['search']) ? trim($_GET['search']) : '';
+$statusFilter = isset($_GET['status']) ? trim($_GET['status']) : '';
+$filterDate = isset($_GET['date']) ? trim($_GET['date']) : '';
+
+$where = "1=1";
+
+// SEARCH
+if (!empty($search)) {
+    $safeSearch = $conn->real_escape_string($search);
+    $where .= " AND (
+        td.fullname LIKE '%$safeSearch%' 
+        OR td.email LIKE '%$safeSearch%' 
+        OR v.model_name LIKE '%$safeSearch%' 
+        OR v.model_variant LIKE '%$safeSearch%'
+    )";
+}
+
+// STATUS
+if (!empty($statusFilter)) {
+    $safeStatus = $conn->real_escape_string($statusFilter);
+    $where .= " AND td.status = '$safeStatus'";
+}
+
+// DATE (SINGLE)
+if (!empty($filterDate)) {
+    $where .= " AND td.date = '$filterDate'";
+}
+
+// ==========================
+// UPDATE STATUS + NOTIF
 // ==========================
 if (isset($_POST['update_status'])) {
 
@@ -20,17 +51,6 @@ if (isset($_POST['update_status'])) {
     $admin_notes = isset($_POST['admin_notes']) ? trim($_POST['admin_notes']) : null;
     $admin_message = isset($_POST['admin_message']) ? trim($_POST['admin_message']) : null;
 
-    if ($status == 'rejected' && empty($admin_notes)) {
-        $_SESSION['error'] = "Reject reason is required.";
-        header("Location: admin_test_drives.php");
-        exit();
-    }
-
-    if ($status == 'approved' && empty($admin_message)) {
-        $admin_message = null;
-    }
-
-    // GET USER ID
     $stmt = $conn->prepare("SELECT user_id FROM test_drives WHERE id = ?");
     $stmt->bind_param("i", $id);
     $stmt->execute();
@@ -40,7 +60,6 @@ if (isset($_POST['update_status'])) {
 
         $user_id = $data['user_id'];
 
-        // UPDATE STATUS
         $stmt = $conn->prepare("
             UPDATE test_drives 
             SET status=?, admin_notes=?, admin_message=? 
@@ -49,7 +68,6 @@ if (isset($_POST['update_status'])) {
         $stmt->bind_param("sssi", $status, $admin_notes, $admin_message, $id);
         $stmt->execute();
 
-        // NOTIFICATIONS
         $title = "";
         $message = "";
 
@@ -78,15 +96,25 @@ if (isset($_POST['update_status'])) {
     exit();
 }
 
-// FETCH DATA
+// ==========================
+// DATA FETCH
+// ==========================
 $result = $conn->query("
     SELECT td.*, v.model_name, v.model_variant 
     FROM test_drives td
     JOIN vehicles v ON td.vehicle_id = v.id
+    WHERE $where
     ORDER BY td.created_at DESC
 ");
 
-// PENDING COUNT
+$result2 = $conn->query("
+    SELECT td.*, v.model_name, v.model_variant 
+    FROM test_drives td
+    JOIN vehicles v ON td.vehicle_id = v.id
+    WHERE $where
+    ORDER BY td.created_at DESC
+");
+
 $pendingCount = $conn->query("
     SELECT COUNT(*) as total FROM test_drives WHERE status='pending'
 ")->fetch_assoc()['total'];
@@ -106,6 +134,46 @@ $pendingCount = $conn->query("
 .status-pending { color: orange; font-weight: bold; }
 .status-approved { color: green; font-weight: bold; }
 .status-rejected { color: red; font-weight: bold; }
+
+/* DARK MODAL DESIGN */
+.dark-modal {
+    background: #0f0f10;
+    color: #fff;
+    border-radius: 12px;
+    border: 1px solid #2a2a2a;
+}
+
+.dark-header {
+    background: #111;
+    border-bottom: 1px solid #2a2a2a;
+    color: #fff;
+}
+
+.dark-body {
+    background: #0f0f10;
+    padding: 20px;
+}
+
+.dark-footer {
+    background: #111;
+    border-top: 1px solid #2a2a2a;
+}
+
+/* MESSAGE BOX STYLE */
+.message-box {
+    background: #1a1a1a;
+    padding: 15px;
+    border-radius: 10px;
+    border-left: 4px solid #ffcc00;
+    white-space: pre-line;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+/* CLOSE BUTTON WHITE */
+.btn-close-white {
+    filter: invert(1);
+}
 </style>
 </head>
 
@@ -135,6 +203,42 @@ $pendingCount = $conn->query("
 <div class="content">
 
 <h2 class="mb-4">🚗 Test Drive Requests</h2>
+
+<!-- FILTERS -->
+<form method="GET" class="row g-2 mb-3">
+
+    <div class="col-md-5">
+        <input type="text" name="search" class="form-control"
+               placeholder="Search name, email, vehicle..."
+               value="<?= htmlspecialchars($search) ?>">
+    </div>
+
+    <div class="col-md-2">
+        <select name="status" class="form-select">
+            <option value="">All Status</option>
+            <option value="pending" <?= $statusFilter=='pending'?'selected':'' ?>>Pending</option>
+            <option value="approved" <?= $statusFilter=='approved'?'selected':'' ?>>Approved</option>
+            <option value="rejected" <?= $statusFilter=='rejected'?'selected':'' ?>>Rejected</option>
+            <option value="completed" <?= $statusFilter=='completed'?'selected':'' ?>>Completed</option>
+        </select>
+    </div>
+
+    <div class="col-md-3">
+        <input type="date" name="date" class="form-control"
+               value="<?= htmlspecialchars($filterDate) ?>">
+    </div>
+
+    <div class="col-md-1">
+        <button class="btn btn-primary w-100">
+            <i class="fas fa-search"></i>
+        </button>
+    </div>
+
+    <div class="col-md-1">
+        <a href="admin_test_drives.php" class="btn btn-secondary w-100">Reset</a>
+    </div>
+
+</form>
 
 <div class="card p-3">
 
@@ -171,7 +275,14 @@ $pendingCount = $conn->query("
     <td><?= $row['date'] ?></td>
     <td><?= $row['time'] ?></td>
 
-    <td><?= htmlspecialchars(mb_strimwidth($row['message'], 0, 25, "...")) ?></td>
+    <!-- VIEW MESSAGE BUTTON -->
+    <td>
+        <button class="btn btn-info btn-sm"
+                data-bs-toggle="modal"
+                data-bs-target="#msgModal<?= $row['id'] ?>">
+            <i class="fas fa-eye"></i> View
+        </button>
+    </td>
 
     <td class="status-<?= $row['status'] ?>">
         <?= ucfirst($row['status']) ?>
@@ -217,80 +328,91 @@ $pendingCount = $conn->query("
 </div>
 
 <!-- ================= MODALS ================= -->
-
-<?php
-$result2 = $conn->query("
-    SELECT td.*, v.model_name, v.model_variant 
-    FROM test_drives td
-    JOIN vehicles v ON td.vehicle_id = v.id
-    ORDER BY td.created_at DESC
-");
-?>
-
 <?php while($row = $result2->fetch_assoc()): ?>
 
-<!-- APPROVE MODAL -->
-<div class="modal fade" id="approveModal<?= $row['id'] ?>" tabindex="-1">
-  <div class="modal-dialog">
-    <div class="modal-content">
+<!-- MESSAGE MODAL -->
+<!-- MESSAGE MODAL (BLACK DESIGN) -->
+<div class="modal fade" id="msgModal<?= $row['id'] ?>" tabindex="-1">
+<div class="modal-dialog modal-dialog-centered">
+<div class="modal-content dark-modal">
 
-      <form method="POST">
-
-        <div class="modal-header">
-            <h5 class="modal-title">Approve Request</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-        </div>
-
-        <div class="modal-body">
-
-            <input type="hidden" name="id" value="<?= $row['id'] ?>">
-            <input type="hidden" name="status" value="approved">
-
-            <label>Admin Message (Optional)</label>
-            <textarea name="admin_message" class="form-control"></textarea>
-
-        </div>
-
-        <div class="modal-footer">
-            <button class="btn btn-success" name="update_status">Approve</button>
-        </div>
-
-      </form>
-
-    </div>
-  </div>
+<div class="modal-header dark-header">
+<h5 class="modal-title">Test Drive Message</h5>
+<button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
 </div>
 
-<!-- REJECT MODAL -->
-<div class="modal fade" id="rejectModal<?= $row['id'] ?>" tabindex="-1">
-  <div class="modal-dialog">
-    <div class="modal-content">
-
-      <form method="POST">
-
-        <div class="modal-header">
-            <h5 class="modal-title">Reject Request</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-        </div>
-
-        <div class="modal-body">
-
-            <input type="hidden" name="id" value="<?= $row['id'] ?>">
-            <input type="hidden" name="status" value="rejected">
-
-            <label>Admin Notes (Required)</label>
-            <textarea name="admin_notes" class="form-control" required></textarea>
-
-        </div>
-
-        <div class="modal-footer">
-            <button class="btn btn-danger" name="update_status">Reject</button>
-        </div>
-
-      </form>
-
+<div class="modal-body dark-body">
+    <div class="message-box">
+        <?= nl2br(htmlspecialchars($row['message'])) ?>
     </div>
-  </div>
+</div>
+
+<div class="modal-footer dark-footer">
+<button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+</div>
+
+</div>
+</div>
+</div>
+
+<!-- APPROVE -->
+<div class="modal fade" id="approveModal<?= $row['id'] ?>" tabindex="-1">
+<div class="modal-dialog">
+<div class="modal-content">
+
+<form method="POST">
+
+<div class="modal-header">
+<h5 class="modal-title">Approve Request</h5>
+<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+</div>
+
+<div class="modal-body">
+<input type="hidden" name="id" value="<?= $row['id'] ?>">
+<input type="hidden" name="status" value="approved">
+
+<label>Admin Message</label>
+<textarea name="admin_message" class="form-control"></textarea>
+</div>
+
+<div class="modal-footer">
+<button class="btn btn-success" name="update_status">Approve</button>
+</div>
+
+</form>
+
+</div>
+</div>
+</div>
+
+<!-- REJECT -->
+<div class="modal fade" id="rejectModal<?= $row['id'] ?>" tabindex="-1">
+<div class="modal-dialog">
+<div class="modal-content">
+
+<form method="POST">
+
+<div class="modal-header">
+<h5 class="modal-title">Reject Request</h5>
+<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+</div>
+
+<div class="modal-body">
+<input type="hidden" name="id" value="<?= $row['id'] ?>">
+<input type="hidden" name="status" value="rejected">
+
+<label>Admin Notes</label>
+<textarea name="admin_notes" class="form-control" required></textarea>
+</div>
+
+<div class="modal-footer">
+<button class="btn btn-danger" name="update_status">Reject</button>
+</div>
+
+</form>
+
+</div>
+</div>
 </div>
 
 <?php endwhile; ?>
