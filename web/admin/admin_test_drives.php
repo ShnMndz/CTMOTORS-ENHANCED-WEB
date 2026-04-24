@@ -174,6 +174,8 @@ $pendingCount = $conn->query("
 .btn-close-white {
     filter: invert(1);
 }
+
+
 </style>
 </head>
 
@@ -358,16 +360,16 @@ $pendingCount = $conn->query("
 <!-- APPROVE -->
 <div class="modal fade" id="approveModal<?= $row['id'] ?>" tabindex="-1">
 <div class="modal-dialog">
-<div class="modal-content">
+<div class="modal-content dark-modal">
 
 <form method="POST">
 
-<div class="modal-header">
+<div class="modal-header dark-header">
 <h5 class="modal-title">Approve Request</h5>
 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
 </div>
 
-<div class="modal-body">
+<div class="modal-body dark-body">
 <input type="hidden" name="id" value="<?= $row['id'] ?>">
 <input type="hidden" name="status" value="approved">
 
@@ -375,7 +377,7 @@ $pendingCount = $conn->query("
 <textarea name="admin_message" class="form-control"></textarea>
 </div>
 
-<div class="modal-footer">
+<div class="modal-footer dark-footer">
 <button class="btn btn-success" name="update_status">Approve</button>
 </div>
 
@@ -388,16 +390,16 @@ $pendingCount = $conn->query("
 <!-- REJECT -->
 <div class="modal fade" id="rejectModal<?= $row['id'] ?>" tabindex="-1">
 <div class="modal-dialog">
-<div class="modal-content">
+<div class="modal-content dark-modal">
 
 <form method="POST">
 
-<div class="modal-header">
+<div class="modal-header dark-header">
 <h5 class="modal-title">Reject Request</h5>
 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
 </div>
 
-<div class="modal-body">
+<div class="modal-body dark-body">
 <input type="hidden" name="id" value="<?= $row['id'] ?>">
 <input type="hidden" name="status" value="rejected">
 
@@ -405,7 +407,7 @@ $pendingCount = $conn->query("
 <textarea name="admin_notes" class="form-control" required></textarea>
 </div>
 
-<div class="modal-footer">
+<div class="modal-footer dark-footer">
 <button class="btn btn-danger" name="update_status">Reject</button>
 </div>
 
