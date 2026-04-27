@@ -40,9 +40,38 @@ $unread = $stmt->get_result()->fetch_assoc()['total'];
     </div>
 </div>
 
+<!-- 🔊 SOUND -->
+<audio id="notifSound" src="/citimotorsweb/web/sounds/notif.mp3" preload="auto"></audio>
+
+<!-- 🎨 HIGHLIGHT -->
+<style>
+@keyframes highlightFade {
+    0% { background-color: #ffe066; }
+    100% { background-color: transparent; }
+}
+.new-notif {
+    animation: highlightFade 2s ease;
+}
+</style>
+
 <script>
 if (!window.notifInit) {
     window.notifInit = true;
+
+    let lastSeenId = 0;
+    let firstLoad = true;
+
+    // 🔓 SOUND UNLOCK (FIX FOR CHROME BLOCKING AUDIO)
+    document.addEventListener("click", function unlockSound() {
+        const sound = document.getElementById("notifSound");
+        if (sound) {
+            sound.play().then(() => {
+                sound.pause();
+                sound.currentTime = 0;
+            }).catch(() => {});
+        }
+        document.removeEventListener("click", unlockSound);
+    });
 
     function toggleNotif() {
         const dropdown = document.getElementById("notifDropdown");
@@ -63,6 +92,7 @@ if (!window.notifInit) {
         }
     });
 
+    // 🔥 LOAD NOTIFICATIONS (WITH SOUND FIX)
     function loadNotifications(){
         fetch("/citimotorsweb/web/get_notifications.php")
             .then(res => res.json())
@@ -73,14 +103,26 @@ if (!window.notifInit) {
                 if (data.length === 0) {
                     html = `<div class="text-center text-muted p-2">No notifications</div>`;
                 } else {
+
                     data.forEach(n => {
 
                         let link = (n.type === "vehicle")
                             ? `/citimotorsweb/web/products/view.php?id=${n.reference_id}`
                             : `/citimotorsweb/web/users/my_testdrives.php`;
 
+                        let isNew = n.id > lastSeenId;
+
+                        // 🔊 PLAY SOUND ONLY FOR NEW NOTIFS
+                        if (!firstLoad && isNew) {
+                            const sound = document.getElementById("notifSound");
+                            if (sound) {
+                                sound.currentTime = 0;
+                                sound.play().catch(() => {});
+                            }
+                        }
+
                         html += `
-                            <div class="position-relative border-bottom p-2 ${n.is_read == 0 ? 'bg-light' : ''}">
+                            <div class="position-relative border-bottom p-2 ${n.is_read == 0 ? 'bg-light' : ''} ${isNew ? 'new-notif' : ''}">
 
                                 <a href="/citimotorsweb/web/delete_notif.php?id=${n.id}"
                                    onclick="event.preventDefault(); deleteNotif(${n.id});"
@@ -94,13 +136,20 @@ if (!window.notifInit) {
                                 </a>
                             </div>
                         `;
+
+                        // update latest ID
+                        if (n.id > lastSeenId) {
+                            lastSeenId = n.id;
+                        }
                     });
                 }
 
                 document.querySelector(".notif-body").innerHTML = html;
+                firstLoad = false;
             });
     }
 
+    // 🔥 DELETE NOTIF
     function deleteNotif(id){
         fetch(`/citimotorsweb/web/delete_notif.php?id=${id}`)
             .then(res => res.json())
@@ -110,11 +159,14 @@ if (!window.notifInit) {
             });
     }
 
+    // 🔥 BADGE UPDATE
     function updateBadge(){
         fetch("/citimotorsweb/web/user_notif_count.php")
             .then(res => res.json())
             .then(data => {
+
                 const badge = document.querySelector(".notif-badge");
+                if(!badge) return;
 
                 if(data.count > 0){
                     badge.innerText = data.count;
@@ -125,56 +177,14 @@ if (!window.notifInit) {
             });
     }
 
-    // AUTO UPDATE
+    // 🚀 INITIAL LOAD
     updateBadge();
-    setInterval(updateBadge, 5000);
-}
-</script>
+    loadNotifications();
 
-<script>
-// AUTO REFRESH NOTIFICATION LIST (REAL-TIME FEEL)
-setInterval(() => {
-    const dropdown = document.getElementById("notifDropdown");
-
-    // only refresh if dropdown is OPEN
-    if (dropdown && dropdown.style.display === "block") {
+    // 🔁 REAL-TIME LOOP (FIXED)
+    setInterval(() => {
         loadNotifications();
-    }
-}, 5000);
-</script>
-
-<script>
-// UPDATE BADGE ONLY
-function updateBadge(){
-    fetch("/citimotorsweb/web/user_notif_count.php")
-        .then(res => res.json())
-        .then(data => {
-
-            const badge = document.querySelector(".notif-badge");
-
-            if(!badge) return;
-
-            if(data.count > 0){
-                badge.innerText = data.count;
-                badge.style.display = "inline-block";
-            } else {
-                badge.style.display = "none";
-            }
-        });
+        updateBadge();
+    }, 5000);
 }
-
-// run every 5 seconds
-updateBadge();
-setInterval(updateBadge, 5000);
-</script>
-
-<script>
-// refresh dropdown if open
-setInterval(() => {
-    const dropdown = document.getElementById("notifDropdown");
-
-    if (dropdown && dropdown.style.display === "block") {
-        loadNotifications();
-    }
-}, 5000);
 </script>
