@@ -146,14 +146,9 @@ $pending_test_drives = $conn->query("
 
 </div>
 
-<script>
-function updateDateTime(){
-    document.getElementById("liveDate").innerHTML =
-        new Date().toDateString();
-}
-updateDateTime();
-setInterval(updateDateTime, 60000);
-</script>
+<!-- 🔊 SOUND -->
+<audio id="testDriveSound" src="/citimotorsweb/web/sounds/testdrivenotif.mp3" preload="auto"></audio>
+
 <script>
 function updateDateTime(){
     document.getElementById("liveDate").innerHTML =
@@ -162,16 +157,61 @@ function updateDateTime(){
 updateDateTime();
 setInterval(updateDateTime, 60000);
 
-// REAL-TIME TEST DRIVE NOTIF
+/* =========================
+   SOUND UNLOCK (IMPORTANT)
+========================= */
+document.addEventListener("click", function unlockSound() {
+    const sound = document.getElementById("testDriveSound");
+
+    if (sound) {
+        sound.play().then(() => {
+            sound.pause();
+            sound.currentTime = 0;
+        }).catch(() => {});
+    }
+
+    document.removeEventListener("click", unlockSound);
+});
+
+/* =========================
+   REAL-TIME NOTIFICATION
+========================= */
+
+let previousTestDriveCount = 0;
+
 function updateTestDriveNotif(){
     fetch('admin_test_drive_count.php')
         .then(res => res.json())
         .then(data => {
+
             const count = data.count;
 
-            // update sidebar badge
+            // 🔥 DETECT NEW REQUEST BEFORE UI UPDATE
+            const isNew = count > previousTestDriveCount;
+
+            if (isNew) {
+                const sound = document.getElementById("testDriveSound");
+
+                if (sound) {
+                    sound.currentTime = 0;
+
+                    // 🔊 force immediate play
+                    let playPromise = sound.play();
+
+                    if (playPromise !== undefined) {
+                        playPromise.catch(err => {
+                            console.log("Sound blocked:", err);
+                        });
+                    }
+                }
+            }
+
+            // update AFTER sound check
+            previousTestDriveCount = count;
+
+            // badge update
             const badge = document.querySelector('.badge-notif');
-            
+
             if(count > 0){
                 if(badge){
                     badge.innerText = count;
@@ -183,16 +223,15 @@ function updateTestDriveNotif(){
                 }
             }
 
-            // update dashboard number (Pending Test Drives card)
+            // dashboard number
             const cards = document.querySelectorAll('.stat-card h2');
             cards.forEach(el => {
-                // first card is pending test drives in your layout
                 if(el.closest('.stat-card').innerText.includes("Pending Test Drives")){
                     el.innerText = count;
                 }
             });
 
-            // notification dot
+            // notif dot
             const dot = document.querySelector('.notif-dot');
             const card = document.querySelector('.stat-card');
 
@@ -211,7 +250,7 @@ function updateTestDriveNotif(){
         });
 }
 
-// run every 5 seconds
+// run loop
 updateTestDriveNotif();
 setInterval(updateTestDriveNotif, 5000);
 </script>
