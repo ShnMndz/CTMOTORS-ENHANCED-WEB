@@ -60,7 +60,7 @@ include 'db.php';
     z-index: 1;
 }
 
-/* 🔥 Smooth fade to next section (NO MORE PUTOL) */
+
 .hero-brochure-2::after {
     content: "";
     position: absolute;
@@ -68,10 +68,10 @@ include 'db.php';
 
     background: linear-gradient(
         to bottom,
-        #000 0%,                 /* fade into Hero 1 (dark) */
-        rgba(0,0,0,0) 15%,      /* transparent (show image) */
-        rgba(0,0,0,0) 75%,      /* keep image visible */
-        #f8f9fa 100%            /* fade into next section */
+        #000 0%,                
+        rgba(0,0,0,0) 15%,     
+        rgba(0,0,0,0) 75%,      
+        #f8f9fa 100%            
     );
 
     z-index: 1;
