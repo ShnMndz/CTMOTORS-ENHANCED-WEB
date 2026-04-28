@@ -2,140 +2,265 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Contact Us</title>
+    <title>Contact CT Motors Makati</title>
 
     <!-- Bootstrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Fonts & Icons -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+    
+    <!-- Global Styles -->
     <link rel="stylesheet" href="/citimotorsweb/web/global.css">
 
     <style>
         body {
             margin: 0;
-            font-family: Arial, sans-serif;
+            font-family: 'Poppins', sans-serif;
+            background: #0d0d0d;
+            color: #fff;
         }
 
-        /* HERO SECTION */
-        .hero {
-            position: relative;
-            height: 100vh;
-            background: url('../img/contactus.png') no-repeat center center/cover;
-            display: flex;
-            align-items: center;
-            color: white;
+        .contact-hero {
+            padding: 80px 0;
         }
 
-        /* DARK OVERLAY */
-        .hero::before {
-            content: "";
-            position: absolute;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            background: linear-gradient(to right, rgba(0,0,0,0.85) 40%, rgba(0,0,0,0.3));
+        h1 {
+            font-size: 42px;
+            font-weight: 700;
         }
 
-        .hero-content {
-            position: relative;
-            z-index: 2;
-            max-width: 700px;
+        .text-danger {
+            color: #e20000 !important;
         }
 
-        .hero h1 {
-            font-size: 48px;
-            font-weight: 800;
-            margin-bottom: 20px;
+        .subtext {
+            max-width: 600px;
+            opacity: 0.8;
         }
 
-        .hero p {
-            font-size: 16px;
-            line-height: 1.7;
-            margin-bottom: 30px;
-            opacity: 0.9;
+        .status {
+            margin-top: 10px;
+            font-size: 14px;
+            color: #ccc;
         }
 
-        /* CONTACT DETAILS */
-        .contact-info {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            margin-bottom: 30px;
+        .open-dot {
+            height: 8px;
+            width: 8px;
+            background: #00ff88;
+            display: inline-block;
+            border-radius: 50%;
+            margin-right: 6px;
         }
 
-        .contact-info div {
-            font-size: 15px;
-            display: flex;
-            align-items: center;
-        }
-
-        .contact-info i {
-            color: #E20000;
-            margin-right: 10px;
-            width: 20px;
-        }
-
-        /* BUTTON */
-        .btn-custom {
-            border: 1px solid white;
-            color: white;
-            padding: 10px 20px;
-            text-transform: uppercase;
+        .action-buttons .btn {
+            margin: 5px 5px 0 0;
+            border-radius: 20px;
             font-size: 13px;
-            letter-spacing: 1px;
-            transition: 0.3s;
         }
 
-        .btn-custom:hover {
-            background: #E20000;
-            border-color: #E20000;
+        .btn-danger {
+            background: #e20000;
+            border: none;
         }
 
-        /* MOBILE */
+        .btn-outline-danger {
+            border-color: #e20000;
+            color: #e20000;
+        }
+
+        .btn-outline-danger:hover {
+            background: #e20000;
+            color: #fff;
+        }
+
+        .section-title {
+            color: #888;
+            font-size: 12px;
+            margin-bottom: 15px;
+        }
+
+        .info-card {
+            display: flex;
+            gap: 15px;
+            background: #161616;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 12px;
+            align-items: center;
+        }
+
+        .info-card i {
+            color: #e20000;
+            font-size: 18px;
+        }
+
+        .info-card p {
+            margin: 0;
+            font-size: 14px;
+        }
+
+        .info-card a {
+            color: #e20000;
+            font-size: 13px;
+            text-decoration: none;
+        }
+
+        .hours-card {
+            background: #161616;
+            padding: 15px;
+            border-radius: 10px;
+        }
+
+        .day {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            font-size: 14px;
+            border-bottom: 1px solid #222;
+        }
+
+        .day:last-child {
+            border-bottom: none;
+        }
+
+        .day.active {
+            color: #ff4d4d;
+        }
+
+        .day.closed span {
+            color: #777;
+        }
+
+        .socials .btn {
+            margin-right: 10px;
+        }
+
         @media (max-width: 768px) {
-            .hero {
-                height: auto;
-                padding: 80px 20px;
-            }
-
-            .hero h1 {
-                font-size: 32px;
+            h1 {
+                font-size: 28px;
             }
         }
     </style>
 </head>
 <body>
 
-<!-- NAVBAR -->
+<!-- NAVBAR (Optional PHP include) -->
 <?php include $_SERVER['DOCUMENT_ROOT'].'/citimotorsweb/web/includes/navbar.php'; ?>
 
-<!-- HERO SECTION -->
-<section class="hero">
+<section class="contact-hero">
     <div class="container">
-        <div class="hero-content">
 
-            <h1>CONTACT CT MOTORS MAKATI</h1>
+        <!-- LABEL -->
+        <span class="badge bg-danger mb-3">MAKATI BRANCH</span>
 
-            <p>
-                Ct Motors Philippines welcomes your inquiries. We would be glad to hear from you.
-                Should you have questions about our vehicles or services, feel free to contact us.
-            </p>
+        <!-- TITLE -->
+        <h1>Contact <span class="text-danger">CT Motors</span> Makati</h1>
 
-            <!-- CONTACT DETAILS -->
-            <div class="contact-info">
-                <div><i class="fas fa-map-marker-alt"></i>Don Bosco St. cor. Chino Roces Ave. Formerly Pasong Tamo St. Makati, City</div>
-                <div><i class="fas fa-envelope"></i>ctcitimotorsinc.makati@gmail.com</div>
-                <div><i class="fas fa-phone"></i> 0955-054-9087</div>
-                <div><i class="fas fa-clock"></i>9:00 am to 5:00 pm</div>
+        <!-- DESCRIPTION -->
+        <p class="subtext">
+            We'd be glad to hear from you. Reach us for vehicle inquiries,
+            test drives, parts, or service appointments.
+        </p>
+
+        <!-- STATUS -->
+        <div class="status">
+            <span class="open-dot"></span> Open now · Closes at 5:00 PM
+            <span class="ms-3">Response time ~ 15 minutes</span>
+        </div>
+
+        <!-- BUTTONS -->
+        <div class="action-buttons mt-3">
+            <a class="btn btn-outline-danger">Book test drive</a>
+        </div>
+
+        <!-- CONTENT -->
+        <div class="row mt-5">
+
+            <!-- LEFT SIDE -->
+            <div class="col-lg-6">
+
+                <h6 class="section-title">GET IN TOUCH</h6>
+
+                <div class="info-card">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <div>
+                        <strong>Address</strong>
+                        <p>Don Bosco St. cor. Chino Roces Ave., Makati</p>
+                        <a href="#">Map →</a>
+                    </div>
+                </div>
+
+                <div class="info-card">
+                    <i class="fas fa-phone"></i>
+                    <div>
+                        <strong>Phone / Viber</strong>
+                        <p>0955-054-9087</p>
+                        <a href="tel:09550549087">Call →</a>
+                    </div>
+                </div>
+
+                <div class="info-card">
+                    <i class="fas fa-envelope"></i>
+                    <div>
+                        <strong>Email</strong>
+                        <p>ctcitimotorsinc.makati@gmail.com</p>
+                        <a href="mailto:ctcitimotorsinc.makati@gmail.com">Send →</a>
+                    </div>
+                </div>
+
             </div>
 
-            <!-- BUTTON -->
-            <a href="#" class="btn btn-custom">Find a Dealership</a>
+            <!-- RIGHT SIDE -->
+            <div class="col-lg-6">
 
+                <h6 class="section-title">BRANCH HOURS</h6>
+
+               <?php
+$days = [
+    "Monday" => "9:00 AM – 5:00 PM",
+    "Tuesday" => "9:00 AM – 5:00 PM",
+    "Wednesday" => "9:00 AM – 5:00 PM",
+    "Thursday" => "9:00 AM – 5:00 PM",
+    "Friday" => "9:00 AM – 5:00 PM",
+    "Saturday" => "9:00 AM – 3:00 PM",
+    "Sunday" => "Closed"
+];
+
+$today = date('l'); // gets current day like "Tuesday"
+?>
+
+<div class="hours-card">
+<?php foreach ($days as $day => $hours): ?>
+    <div class="day 
+        <?php echo ($day == $today) ? 'active' : ''; ?> 
+        <?php echo ($hours == 'Closed') ? 'closed' : ''; ?>">
+        
+        <?php echo $day; ?>
+        <?php if ($day == $today) echo " (Today)"; ?>
+        
+        <span><?php echo $hours; ?></span>
+    </div>
+<?php endforeach; ?>
+</div>
+                </div>
+
+                <h6 class="section-title mt-4">FOLLOW US</h6>
+
+                <div class="socials">
+                    <a class="btn btn-outline-light btn-sm">Facebook</a>
+                    <a class="btn btn-outline-light btn-sm">Instagram</a>
+                    <a class="btn btn-outline-light btn-sm">WhatsApp</a>
+                </div>
+
+            </div>
         </div>
     </div>
 </section>
 
-</body>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
 </html>
