@@ -48,160 +48,8 @@ if ($schedule[$currentDay]) {
     
     <!-- Global Styles -->
     <link rel="stylesheet" href="/citimotorsweb/web/global.css">
+    <link rel="stylesheet" href="contacts.css">
 
-    <style>
-        body {
-            margin: 0;
-            font-family: 'Poppins', sans-serif;
-            background: #0d0d0d;
-            color: #fff;
-        }
-
-        .contact-hero {
-            padding: 80px 0;
-        }
-
-        h1 {
-            font-size: 42px;
-            font-weight: 700;
-        }
-
-        .text-danger {
-            color: #e20000 !important;
-        }
-
-        .subtext {
-            max-width: 600px;
-            opacity: 0.8;
-        }
-
-        .status {
-            margin-top: 10px;
-            font-size: 14px;
-            color: #ccc;
-        }
-
-        .open-dot {
-            height: 8px;
-            width: 8px;
-            background: #00ff88;
-            display: inline-block;
-            border-radius: 50%;
-            margin-right: 6px;
-        }
-
-        .action-buttons .btn {
-            margin: 5px 5px 0 0;
-            border-radius: 20px;
-            font-size: 13px;
-        }
-
-        .btn-danger {
-            background: #e20000;
-            border: none;
-        }
-
-        .btn-outline-danger {
-            border-color: #e20000;
-            color: #e20000;
-        }
-
-        .btn-outline-danger:hover {
-            background: #e20000;
-            color: #fff;
-        }
-
-        .section-title {
-            color: #888;
-            font-size: 12px;
-            margin-bottom: 15px;
-        }
-
-        .info-card {
-            display: flex;
-            gap: 15px;
-            background: #161616;
-            padding: 15px;
-            border-radius: 10px;
-            margin-bottom: 12px;
-            align-items: center;
-        }
-
-        .info-card i {
-            color: #e20000;
-            font-size: 18px;
-        }
-
-        .info-card p {
-            margin: 0;
-            font-size: 14px;
-        }
-
-        .info-card a {
-            color: #e20000;
-            font-size: 13px;
-            text-decoration: none;
-        }
-
-        .hours-card {
-            background: #161616;
-            padding: 15px;
-            border-radius: 10px;
-        }
-
-        .day {
-            display: flex;
-            justify-content: space-between;
-            padding: 8px 0;
-            font-size: 14px;
-            border-bottom: 1px solid #222;
-        }
-
-        .day:last-child {
-            border-bottom: none;
-        }
-
-        .day.active {
-            color: #ff4d4d;
-        }
-
-        .day.closed span {
-            color: #777;
-        }
-
-        .socials .btn {
-            margin-right: 10px;
-        }
-
-        .map-container {
-            margin-top: 40px;
-            border-radius: 10px;
-            overflow: hidden;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-            display: none;
-            transition: all 0.3s ease;
-        }
-
-        .map-container.show {
-            display: block;
-        }
-
-        .map-container iframe {
-            width: 100%;
-            height: 400px;
-            border: none;
-        }
-
-        @media (max-width: 768px) {
-            h1 {
-                font-size: 28px;
-            }
-
-            .map-container iframe {
-                height: 300px;
-            }
-        }
-    </style>
 </head>
 <body>
 
@@ -234,8 +82,8 @@ if ($schedule[$currentDay]) {
 
         <!-- BUTTONS -->
         <div class="action-buttons mt-3">
-            <a class="btn btn-outline-danger">Book test drive</a>
-        </div>
+    <a href="../tools/testdrive.php" class="btn btn-outline-danger">Book test drive</a>
+</div>
 
         <!-- CONTENT -->
         <div class="row mt-5">
@@ -249,7 +97,7 @@ if ($schedule[$currentDay]) {
                     <i class="fas fa-map-marker-alt"></i>
                     <div>
                         <strong>Address</strong>
-                        <p>Don Bosco St. cor. Chino Roces Ave., Makati</p>
+                        <p>Cor Chino Roces Ave, Don Bosco, Makati City, 1200 Metro Manila</p>
                         <a href="#" id="mapToggle" onclick="toggleMap(event)">View Map →</a>
                     </div>
                 </div>
