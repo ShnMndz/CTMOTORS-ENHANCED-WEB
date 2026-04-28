@@ -173,9 +173,32 @@ if ($schedule[$currentDay]) {
             margin-right: 10px;
         }
 
+        .map-container {
+            margin-top: 40px;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            display: none;
+            transition: all 0.3s ease;
+        }
+
+        .map-container.show {
+            display: block;
+        }
+
+        .map-container iframe {
+            width: 100%;
+            height: 400px;
+            border: none;
+        }
+
         @media (max-width: 768px) {
             h1 {
                 font-size: 28px;
+            }
+
+            .map-container iframe {
+                height: 300px;
             }
         }
     </style>
@@ -227,7 +250,7 @@ if ($schedule[$currentDay]) {
                     <div>
                         <strong>Address</strong>
                         <p>Don Bosco St. cor. Chino Roces Ave., Makati</p>
-                        <a href="#">Map →</a>
+                        <a href="#" id="mapToggle" onclick="toggleMap(event)">View Map →</a>
                     </div>
                 </div>
 
@@ -295,10 +318,33 @@ $today = date('l'); // gets current day like "Tuesday"
 
             </div>
         </div>
+
+        <!-- MAP SECTION -->
+        <div class="map-container">
+           <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15447.597893179798!2d121.0135519!3d14.5477409!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3397c94e86c1ab53%3A0xe1e52d406b5ff76b!2sCitimotors%20Inc%20Makati%20(BRAND%20NEW%20UNITS)%20-%20SALES%20DEPARTMENT!5e0!3m2!1sen!2sph!4v1777356564189!5m2!1sen!2sph" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
     </div>
 </section>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    function toggleMap(event) {
+        event.preventDefault();
+        const mapContainer = document.querySelector('.map-container');
+        const mapToggle = document.getElementById('mapToggle');
+        
+        mapContainer.classList.toggle('show');
+        
+        // Update text
+        if (mapContainer.classList.contains('show')) {
+            mapToggle.textContent = 'Hide Map →';
+            // Smooth scroll to map
+            mapContainer.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        } else {
+            mapToggle.textContent = 'View Map →';
+        }
+    }
+</script>
 
 </body>
 </html>
