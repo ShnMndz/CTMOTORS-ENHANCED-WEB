@@ -5,6 +5,9 @@ include '../db.php';
 $success = "";
 $error = "";
 
+// GET VEHICLE ID FROM URL IF COMING FROM PRODUCT DETAILS
+$selected_vehicle_id = isset($_GET['id']) ? intval($_GET['id']) : 0;
+
 // FETCH VEHICLES
 $vehicles = $conn->query("SELECT id, model_name, model_variant, image FROM vehicles ORDER BY model_name ASC");
 
@@ -212,8 +215,12 @@ label {
         <select name="vehicle_id" id="vehicleSelect" class="form-control" required>
             <option value="">-- Choose Vehicle --</option>
 
-            <?php while($v = $vehicles->fetch_assoc()): ?>
-                <option value="<?= $v['id']; ?>" data-image="<?= $v['image']; ?>">
+            <?php 
+            // Reset pointer to beginning for second query
+            $vehicles = $conn->query("SELECT id, model_name, model_variant, image FROM vehicles ORDER BY model_name ASC");
+            while($v = $vehicles->fetch_assoc()): ?>
+                <option value="<?= $v['id']; ?>" data-image="<?= $v['image']; ?>" 
+                    <?= ($v['id'] == $selected_vehicle_id) ? 'selected' : ''; ?>>
                     <?= $v['model_name'] . ' (' . $v['model_variant'] . ')'; ?>
                 </option>
             <?php endwhile; ?>
@@ -252,8 +259,9 @@ label {
 </div>
 
 <script>
-document.getElementById("vehicleSelect").addEventListener("change", function() {
-    let selected = this.options[this.selectedIndex];
+function updateVehiclePreview() {
+    let select = document.getElementById("vehicleSelect");
+    let selected = select.options[select.selectedIndex];
     let image = selected.getAttribute("data-image");
     let img = document.getElementById("vehicleImage");
 
@@ -267,7 +275,17 @@ document.getElementById("vehicleSelect").addEventListener("change", function() {
     } else {
         img.style.display = "none";
     }
+}
+
+// Update preview on page load if a vehicle is pre-selected
+document.addEventListener("DOMContentLoaded", function() {
+    if (document.getElementById("vehicleSelect").value) {
+        updateVehiclePreview();
+    }
 });
+
+// Update preview when dropdown changes
+document.getElementById("vehicleSelect").addEventListener("change", updateVehiclePreview);
 </script>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
