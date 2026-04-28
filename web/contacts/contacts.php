@@ -1,3 +1,38 @@
+<?php
+date_default_timezone_set('Asia/Manila');
+?>
+
+<?php
+date_default_timezone_set('Asia/Manila');
+
+$currentDay = date('l');
+$currentTime = date('H:i');
+
+// Define schedule (24-hour format for logic)
+$schedule = [
+    "Monday" => ["09:00", "17:00"],
+    "Tuesday" => ["09:00", "17:00"],
+    "Wednesday" => ["09:00", "17:00"],
+    "Thursday" => ["09:00", "17:00"],
+    "Friday" => ["09:00", "17:00"],
+    "Saturday" => ["09:00", "15:00"],
+    "Sunday" => null // closed
+];
+
+$isOpen = false;
+$closingTime = "";
+
+if ($schedule[$currentDay]) {
+    $open = $schedule[$currentDay][0];
+    $close = $schedule[$currentDay][1];
+
+    if ($currentTime >= $open && $currentTime < $close) {
+        $isOpen = true;
+        $closingTime = date("g:i A", strtotime($close));
+    }
+}
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -167,9 +202,12 @@
 
         <!-- STATUS -->
         <div class="status">
-            <span class="open-dot"></span> Open now · Closes at 5:00 PM
-            <span class="ms-3">Response time ~ 15 minutes</span>
-        </div>
+    <?php if ($isOpen): ?>
+        <span style="color:#00ff88;">🟢 Open now</span> · Closes at <?php echo $closingTime; ?>
+    <?php else: ?>
+        <span style="color:#ff4d4d;">🔴 Closed</span>
+    <?php endif; ?>
+
 
         <!-- BUTTONS -->
         <div class="action-buttons mt-3">
