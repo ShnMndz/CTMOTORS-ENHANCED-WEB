@@ -5,25 +5,23 @@ $imgPath = "../img/";
 $category = isset($_GET['category']) ? trim($_GET['category']) : '';
 
 /* =========================
-   CATEGORY CONDITION
+   CATEGORY SAFE
 ========================= */
-$categoryFilter = "";
-
-if (!empty($category)) {
-    $categorySafe = $conn->real_escape_string($category);
-    $categoryFilter = "AND category = '$categorySafe'";
-}
+$categorySafe = $conn->real_escape_string($category);
 
 /* =========================
-   FEATURED POST
+   FEATURED (ONLY FOR ALL)
 ========================= */
-$featured = $conn->query("
-    SELECT * FROM posts 
-    WHERE is_featured = 1
-    $categoryFilter
-    ORDER BY created_at DESC 
-    LIMIT 1
-")->fetch_assoc();
+$featured = null;
+
+if (empty($category)) {
+    $featured = $conn->query("
+        SELECT * FROM posts 
+        WHERE is_featured = 1
+        ORDER BY created_at DESC 
+        LIMIT 1
+    ")->fetch_assoc();
+}
 
 $featuredId = $featured['id'] ?? 0;
 
@@ -33,18 +31,18 @@ $featuredId = $featured['id'] ?? 0;
 $side = $conn->query("
     SELECT * FROM posts 
     WHERE id != $featuredId
-    $categoryFilter
+    " . (!empty($category) ? "AND category = '$categorySafe'" : "") . "
     ORDER BY created_at DESC 
     LIMIT 4
 ");
 
 /* =========================
-   LATEST POSTS (EXCLUDE FEATURED)
+   LATEST POSTS
 ========================= */
 $latest = $conn->query("
     SELECT * FROM posts 
     WHERE is_featured != 1
-    $categoryFilter
+    " . (!empty($category) ? "AND category = '$categorySafe'" : "") . "
     ORDER BY created_at DESC 
     LIMIT 6
 ");
@@ -158,12 +156,14 @@ body { background:#111; color:#fff; }
 <!-- FEATURED + SIDE -->
 <div class="row">
 
-<!-- FEATURED -->
+<!-- FEATURED (ONLY ALL) -->
+<?php if (empty($category) && $featured): ?>
 <div class="col-md-7">
-<?php if ($featured): ?>
+
 <?php $featLink = !empty($featured['link']) ? $featured['link'] : "#"; ?>
 
 <a href="<?= htmlspecialchars($featLink); ?>" target="_blank" class="text-white text-decoration-none">
+
 <div class="featured">
 
 <?php if ($featured['image']): ?>
@@ -177,25 +177,36 @@ body { background:#111; color:#fff; }
 </div>
 
 </div>
+
 </a>
-<?php else: ?>
-<p>No featured post available.</p>
-<?php endif; ?>
+
 </div>
+<?php endif; ?>
 
 <!-- SIDE -->
-<div class="col-md-5">
+<div class="<?= empty($category) ? 'col-md-5' : 'col-md-12' ?>">
+
 <?php while($row = $side->fetch_assoc()): ?>
 <?php $sideLink = !empty($row['link']) ? $row['link'] : "#"; ?>
 
 <a href="<?= htmlspecialchars($sideLink); ?>" target="_blank" class="text-white text-decoration-none">
+
 <div class="side-item">
-<small style="color:red; font-weight:600;"><?= strtoupper($row['category']); ?></small>
+
+<small style="color:red; font-weight:600;">
+<?= strtoupper($row['category']); ?>
+</small>
+
 <div><?= htmlspecialchars($row['title']); ?></div>
+
 <small><?= date("F d, Y", strtotime($row['created_at'])); ?></small>
+
 </div>
+
 </a>
+
 <?php endwhile; ?>
+
 </div>
 
 </div>
