@@ -48,7 +48,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $content = htmlspecialchars(trim($_POST['content']));
     $link = htmlspecialchars(trim($_POST['link']));
     $category = $_POST['category'];
+    $is_featured = isset($_POST['is_featured']) ? 1 : 0;
     $image = $_POST['old_image'] ?? "";
+
+    // OPTIONAL: Only 1 featured at a time
+    if ($is_featured) {
+        $conn->query("UPDATE posts SET is_featured = 0");
+    }
 
     if (!empty($_FILES['image']['name'])) {
         $newImage = time() . "_" . basename($_FILES['image']['name']);
@@ -65,16 +71,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (!empty($id)) {
         $stmt = $conn->prepare("
             UPDATE posts 
-            SET title=?, content=?, image=?, link=?, category=? 
+            SET title=?, content=?, image=?, link=?, category=?, is_featured=? 
             WHERE id=?
         ");
-        $stmt->bind_param("sssssi", $title, $content, $image, $link, $category, $id);
+        $stmt->bind_param("sssssii", $title, $content, $image, $link, $category, $is_featured, $id);
     } else {
         $stmt = $conn->prepare("
-            INSERT INTO posts (title, content, image, link, category, created_at)
-            VALUES (?, ?, ?, ?, ?, NOW())
+            INSERT INTO posts (title, content, image, link, category, is_featured, created_at)
+            VALUES (?, ?, ?, ?, ?, ?, NOW())
         ");
-        $stmt->bind_param("sssss", $title, $content, $image, $link, $category);
+        $stmt->bind_param("sssssi", $title, $content, $image, $link, $category, $is_featured);
     }
 
     echo $stmt->execute()
@@ -102,52 +108,35 @@ $result = $conn->query("SELECT * FROM posts ORDER BY id DESC");
 <div class="sidebar">
     <h4>Admin Panel</h4>
 
-    <a href="admin_dashboard.php">
-        <i class="fas fa-chart-line"></i> Dashboard
-    </a>
-
-    <a href="admin_profile.php"><i class="fas fa-user"></i>Your Profile</a>
-
-    <a href="admin_users.php">
-        <i class="fas fa-users"></i> Manage Users
-    </a>
-
-    <a href="admin_vehicles.php">
-        <i class="fas fa-car"></i> Manage Vehicles
-    </a>
-
-    <a href="admin_posts.php" class="active">
-        <i class="fas fa-newspaper"></i>Posts
-    </a>
-
-        <a href="admin_test_drives.php">
-        <i class="fas fa-key"></i>Test Drive
-
-    <a href="../logout.php">
-        <i class="fas fa-sign-out-alt"></i> Logout
-    </a>
+    <a href="admin_dashboard.php"><i class="fas fa-chart-line"></i> Dashboard</a>
+    <a href="admin_profile.php"><i class="fas fa-user"></i> Your Profile</a>
+    <a href="admin_users.php"><i class="fas fa-users"></i> Manage Users</a>
+    <a href="admin_vehicles.php"><i class="fas fa-car"></i> Manage Vehicles</a>
+    <a href="admin_posts.php" class="active"><i class="fas fa-newspaper"></i> Posts</a>
+    <a href="admin_test_drives.php"><i class="fas fa-key"></i> Test Drive</a>
+    <a href="../logout.php"><i class="fas fa-sign-out-alt"></i> Logout</a>
 </div>
-
 
 <div class="content">
 
 <h2>Articles</h2>
 
-<!-- ✅ BUTTON -->
 <button class="btn btn-dark mb-3" onclick="toggleForm()">+ New Article</button>
 
-<!-- ✅ SEARCH + FILTER -->
+<!-- SEARCH + FILTER -->
 <div class="d-flex gap-2 mb-3">
     <input type="text" id="searchInput" class="form-control" placeholder="Search...">
+
     <select id="categoryFilter" class="form-control" style="max-width:200px;">
         <option value="">All</option>
         <option value="Car News">Car News</option>
         <option value="Tips and Guides">Tips and Guides</option>
         <option value="Announcement">Announcement</option>
+        <option value="Promo">Promo</option>
     </select>
 </div>
 
-<!-- ✅ FORM (HIDDEN) -->
+<!-- FORM -->
 <div id="articleForm" style="<?= $editData ? 'display:block;' : 'display:none;' ?>" class="card p-3 mb-4">
 
 <form method="POST" enctype="multipart/form-data">
@@ -163,12 +152,29 @@ value="<?= htmlspecialchars($editData['title'] ?? '') ?>" placeholder="Title" re
 <input type="url" name="link" class="form-control mb-2"
 value="<?= htmlspecialchars($editData['link'] ?? '') ?>" placeholder="Link">
 
+<?php
+$categories = ['Car News', 'Tips and Guides', 'Announcement', 'Promo'];
+$currentCat = $editData['category'] ?? '';
+?>
+
 <select name="category" class="form-control mb-2" required>
 <option value="">Category</option>
-<option value="Car News">Car News</option>
-<option value="Tips and Guides">Tips and Guides</option>
-<option value="Announcement">Announcement</option>
+<?php foreach ($categories as $catOption): ?>
+<option value="<?= $catOption ?>" <?= $currentCat === $catOption ? 'selected' : '' ?>>
+    <?= $catOption ?>
+</option>
+<?php endforeach; ?>
 </select>
+
+<!-- ⭐ FEATURED -->
+<?php $isFeatured = $editData['is_featured'] ?? 0; ?>
+<div class="form-check mb-2">
+    <input type="checkbox" name="is_featured" value="1" class="form-check-input"
+        <?= $isFeatured ? 'checked' : '' ?>>
+    <label class="form-check-label">
+        ⭐ Featured Post
+    </label>
+</div>
 
 <input type="file" name="image" class="form-control mb-2">
 
@@ -179,7 +185,7 @@ value="<?= htmlspecialchars($editData['link'] ?? '') ?>" placeholder="Link">
 </form>
 </div>
 
-<!-- ✅ TABLE -->
+<!-- TABLE -->
 <table class="table table-bordered">
 
 <thead>
@@ -207,6 +213,7 @@ value="<?= htmlspecialchars($editData['link'] ?? '') ?>" placeholder="Link">
 </td>
 
 <td><?= htmlspecialchars($row['title']); ?></td>
+
 <td>
 <?php
 $cat = $row['category'];
@@ -215,6 +222,7 @@ $badgeClass = match($cat) {
     'Car News' => 'bg-primary',
     'Tips and Guides' => 'bg-success',
     'Announcement' => 'bg-warning text-dark',
+    'Promo' => 'bg-danger',
     default => 'bg-secondary'
 };
 ?>
@@ -222,6 +230,10 @@ $badgeClass = match($cat) {
 <span class="badge <?= $badgeClass ?>">
     <?= htmlspecialchars($cat); ?>
 </span>
+
+<?php if (!empty($row['is_featured'])): ?>
+    <span class="badge bg-dark ms-1">⭐ Featured</span>
+<?php endif; ?>
 </td>
 
 <td>
@@ -243,7 +255,6 @@ $badgeClass = match($cat) {
 
 </div>
 
-<!-- ✅ SCRIPTS -->
 <script>
 function toggleForm() {
     let form = document.getElementById("articleForm");
