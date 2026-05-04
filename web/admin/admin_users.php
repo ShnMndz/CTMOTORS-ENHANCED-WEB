@@ -186,9 +186,11 @@ $users_this_month = $conn->query("
 <thead class="table-success">
 <tr>
 <th>ID</th>
+<th>Avatar</th>
 <th>Name</th>
 <th>Email</th>
 <th>Role</th>
+<th>Created At</th>
 <th>Action</th>
 </tr>
 </thead>
@@ -201,6 +203,13 @@ $users_this_month = $conn->query("
     data-role="<?= $u['role'] ?>">
 
 <td><?= $u['id'] ?></td>
+<td>
+<?php if(!empty($u['profile_pic'])): ?>
+<img src="../uploads/<?= $u['profile_pic'] ?>" width="50" height="50" style="border-radius:50%;">
+<?php else: ?>
+<i class="fas fa-user-circle" style="font-size:50px; color:#ccc;"></i>
+<?php endif; ?>
+</td>
 <td><?= htmlspecialchars($u['fullname']) ?></td>
 <td><?= htmlspecialchars($u['email']) ?></td>
 
@@ -213,13 +222,24 @@ $users_this_month = $conn->query("
 </td>
 
 <td>
-<a class="btn btn-danger btn-sm"
+<?php if(!empty($u['created_at'])): ?>
+<?= date('Y-m-d H:i', strtotime($u['created_at'])) ?>
+<?php else: ?>
+N/A
+<?php endif; ?>
+</td>
+
+<td>
+<a class="btn btn-sm btn-danger"
 href="?delete_user=<?= $u['id'] ?>"
-onclick="return confirm('Delete this user?')">
-Delete
+onclick="return confirm('Delete this user?')"
+title="Delete">
+<i class="fas fa-trash"></i>
 </a>
 
-<button class="btn btn-warning btn-sm edit-btn">Edit</button>
+<button class="btn btn-sm btn-warning edit-btn" title="Edit">
+<i class="fa-solid fa-gear"></i>
+</button>
 </td>
 
 </tr>
