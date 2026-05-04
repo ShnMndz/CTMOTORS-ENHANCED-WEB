@@ -7,6 +7,8 @@ if (!isset($_SESSION['user_id'])) {
     exit();
 }
 
+$currentPage = 'profile';
+
 $id = $_SESSION['user_id'];
 
 /* FETCH USER */
@@ -75,7 +77,7 @@ if (isset($_POST['save_all'])) {
     $_SESSION['message'] = $updated ? "Profile updated successfully!" : "No changes made.";
     $_SESSION['type'] = $updated ? "success" : "warning";
 
-    header("Location: admin_dashboard.php");
+    header("Location: admin_profile.php");
     exit();
 }
 
@@ -130,6 +132,10 @@ if (isset($_POST['change_password'])) {
 <title>Admin Profile</title>
 
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+
+<link rel="stylesheet" href="users.css">
+<link rel="stylesheet" href="admin_dashboard.css">
 
 <style>
 body{
@@ -169,6 +175,40 @@ body{
 </head>
 
 <body>
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+    <h4>Admin Panel</h4>
+
+    <a href="admin_dashboard.php" class="<?= $currentPage=='dashboard'?'active':'' ?>">
+        <i class="fas fa-chart-line"></i> Dashboard
+    </a>
+
+    <a href="admin_profile.php" class="<?= $currentPage=='profile'?'active':'' ?>"><i class="fas fa-user"></i>Your Profile</a>
+
+    <a href="admin_users.php" class="<?= $currentPage=='users'?'active':'' ?>">
+        <i class="fas fa-users"></i> Manage Users
+    </a>
+
+    <a href="admin_vehicles.php">
+        <i class="fas fa-car"></i> Manage Vehicles
+    </a>
+
+    <a href="admin_posts.php">
+        <i class="fas fa-newspaper"></i> Posts
+    </a>
+
+    <a href="admin_test_drives.php">
+        <i class="fas fa-key"></i> Test Drive
+    </a>
+
+    <a href="../logout.php">
+        <i class="fas fa-sign-out-alt"></i> Logout
+    </a>
+</div>
+
+<!-- CONTENT -->
+<div class="content">
 
 <div class="container">
 
@@ -231,6 +271,8 @@ Update Password
 </button>
 
 </form>
+
+</div>
 
 </div>
 

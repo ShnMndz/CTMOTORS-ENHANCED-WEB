@@ -153,9 +153,9 @@ if (isset($_POST['login'])) {
     .login-card {
         width: 100%;
         max-width: 420px;
-        background: #ffffff;
+        background: transparent;
         border-radius: 24px;
-        box-shadow: 0 24px 80px rgba(15, 23, 42, 0.12);
+        box-shadow: none;
         padding: 42px 36px;
     }
     .login-card .logo-circle {
@@ -183,7 +183,9 @@ if (isset($_POST['login'])) {
         border-radius: 14px;
         padding: 16px 18px;
         border: 1px solid #e5e7eb;
+        background: transparent;
         margin-bottom: 16px;
+        color: #111827;
     }
     .login-card .form-control:focus {
         border-color: #d9252b;

@@ -40,12 +40,27 @@ if(isset($_POST['add_user'])){
 }
 
 /* ---------------------
-   UPDATE USER ROLE
+   UPDATE USER
 --------------------- */
 if(isset($_POST['save_user'])){
 
-    $stmt = $conn->prepare("UPDATE users SET role=? WHERE id=?");
-    $stmt->bind_param("si", $_POST['role'], $_POST['id']);
+    $fullname = trim($_POST['fullname']);
+    $email = trim($_POST['email']);
+    $role = $_POST['role'];
+    $id = $_POST['id'];
+
+    $check = $conn->prepare("SELECT id FROM users WHERE email=? AND id<>?");
+    $check->bind_param("si", $email, $id);
+    $check->execute();
+    $res = $check->get_result();
+
+    if($res->num_rows > 0){
+        header("Location: admin_users.php?error=email_exists");
+        exit();
+    }
+
+    $stmt = $conn->prepare("UPDATE users SET fullname=?, email=?, role=? WHERE id=?");
+    $stmt->bind_param("sssi", $fullname, $email, $role, $id);
     $stmt->execute();
 
     header("Location: admin_users.php?success=updated");
@@ -269,12 +284,12 @@ title="Delete">
 <input type="hidden" name="id" id="user-id">
 
 <div class="form-floating mb-2">
-<input type="text" id="user-name" class="form-control" readonly>
+<input type="text" id="user-name" name="fullname" class="form-control" required>
 <label>Name</label>
 </div>
 
 <div class="form-floating mb-2">
-<input type="email" id="user-email" class="form-control" readonly>
+<input type="email" id="user-email" name="email" class="form-control" required>
 <label>Email</label>
 </div>
 

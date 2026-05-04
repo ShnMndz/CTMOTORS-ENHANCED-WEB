@@ -87,8 +87,21 @@ h2 {
     overflow: hidden;
 }
 
-.table thead {
-    background: #dc3545;
+.table thead,
+.table-success {
+    background: #2a2a2a !important;
+    color: #fff !important;
+}
+
+.table thead th,
+.table-success th {
+    background: #2a2a2a !important;
+    color: #fff !important;
+}
+
+.table-bordered td,
+.table-bordered th {
+    background: #1a1a1a;
     color: #fff;
 }
 
@@ -105,19 +118,48 @@ h2 {
     color: #000;
 }
 
+.alert {
+    background: #1a1a1a;
+    color: #fff;
+    border: 1px solid #333;
+}
+
+.alert-success {
+    background: #236f30;
+    color: #e6f4ea;
+}
+
+.alert-danger {
+    background: #7f1d1d;
+    color: #fee2e2;
+}
+
+.alert-warning {
+    background: #713f12;
+    color: #fff3cd;
+}
+
 /* MODAL DARK FIX */
 .modal-content {
-    background: #2a2a2a;
+    background: #1a1a1a !important;
     color: #fff;
     border-radius: 12px;
+    border: 1px solid #333;
+}
+
+.modal-header,
+.modal-body,
+.modal-footer {
+    background: #1a1a1a !important;
+    color: #fff;
 }
 
 /* INPUT FIELDS */
 .form-control,
 .form-select {
-    background: #1e1e1e;
-    color: #fff;
-    border: 1px solid #444;
+    background: #111 !important;
+    color: #fff !important;
+    border: 1px solid #333 !important;
 }
 
 .form-control:focus,
