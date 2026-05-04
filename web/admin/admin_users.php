@@ -73,18 +73,15 @@ if(isset($_GET['delete_user'])){
 /* ---------------------
    FETCH DATA
 --------------------- */
-$result_users = $conn->query("SELECT * FROM users ORDER BY id DESC");
+$search = isset($_GET['search']) ? trim($_GET['search']) : '';
+$searchQuery = '';
 
-$total_users = $conn->query("SELECT COUNT(*) as total FROM users")->fetch_assoc()['total'];
-$total_admins = $conn->query("SELECT COUNT(*) as total FROM users WHERE role='admin'")->fetch_assoc()['total'];
-$total_regular = $conn->query("SELECT COUNT(*) as total FROM users WHERE role='user'")->fetch_assoc()['total'];
+if (!empty($search)) {
+    $search = $conn->real_escape_string($search);
+    $searchQuery = " WHERE fullname LIKE '%$search%' OR email LIKE '%$search%'";
+}
 
-$users_this_month = $conn->query("
-    SELECT COUNT(*) as total 
-    FROM users 
-    WHERE MONTH(created_at) = MONTH(CURRENT_DATE())
-    AND YEAR(created_at) = YEAR(CURRENT_DATE())
-")->fetch_assoc()['total'];
+$result_users = $conn->query("SELECT * FROM users $searchQuery ORDER BY id DESC");
 
 ?>
 
@@ -173,12 +170,19 @@ $users_this_month = $conn->query("
 + Add New User
 </button>
 
-<!-- STATS -->
-<div class="row mb-4">
-<div class="col-md-3"><div class="card stat-card"><h2><?= $total_users ?></h2><small>Total Users</small></div></div>
-<div class="col-md-3"><div class="card stat-card"><h2><?= $total_admins ?></h2><small>Admins</small></div></div>
-<div class="col-md-3"><div class="card stat-card"><h2><?= $total_regular ?></h2><small>Users</small></div></div>
-<div class="col-md-3"><div class="card stat-card"><h2><?= $users_this_month ?></h2><small>This Month</small></div></div>
+<!-- SEARCH FILTER -->
+<div class="mb-3">
+<form method="GET" class="d-flex gap-2">
+<input type="text" name="search" class="form-control" placeholder="Search by name or email..." value="<?= htmlspecialchars($search) ?>">
+<button type="submit" class="btn btn-primary">
+<i class="fas fa-search"></i> Search
+</button>
+<?php if (!empty($search)): ?>
+<a href="admin_users.php" class="btn btn-secondary">
+<i class="fas fa-times"></i> Clear
+</a>
+<?php endif; ?>
+</form>
 </div>
 
 <!-- TABLE -->

@@ -243,8 +243,18 @@ $badgeClass = match($cat) {
 <td><?= date("F d, Y", strtotime($row['created_at'])); ?></td>
 
 <td>
-<a href="?edit=<?= $row['id'] ?>" class="btn btn-sm btn-primary">Edit</a>
-<a href="?delete=<?= $row['id'] ?>" class="btn btn-sm btn-danger">Delete</a>
+<a href="?edit=<?= $row['id'] ?>"
+class="btn btn-sm btn-primary"
+title="Edit">
+<i class="fas fa-gear"></i>
+</a>
+
+<a href="?delete=<?= $row['id'] ?>"
+class="btn btn-sm btn-danger"
+title="Delete"
+onclick="return confirm('Delete this article?');">
+<i class="fas fa-trash"></i>
+</a>
 </td>
 
 </tr>
