@@ -262,10 +262,16 @@ data-image="<?= $v['image'] ?>"
 </td>
 
 <td>
-<a href="?delete_vehicle=<?= $v['id'] ?>" class="btn btn-danger btn-sm"
-onclick="return confirm('Delete this vehicle?');">Delete</a>
+<a href="?delete_vehicle=<?= $v['id'] ?>"
+class="btn btn-sm btn-danger"
+onclick="return confirm('Delete this vehicle?');"
+title="Delete">
+<i class="fas fa-trash"></i>
+</a>
 
-<button class="btn btn-warning btn-sm edit-btn">Edit</button>
+<button class="btn btn-sm btn-warning edit-btn" title="Edit">
+<i class="fas fa-gear"></i>
+</button>
 </td>
 
 </tr>
