@@ -134,24 +134,35 @@ input { background-color: #f8f9fa !important; }
     <div class="row">
 
       <div class="col-md-3 footer-column">
-        <h3>About Us</h3>
+        <h3>Main</h3>
         <ul>
-          <li><a href="../aboutus/aboutus.php#vision">Corporate Vision</a></li>
-          <li><a href="../aboutus/aboutus.php#mission">Mission Statement</a></li>
-          <li><a href="../aboutus/aboutus.php#history">Company History</a></li>
+          <li><a href="../home.php">Home</a></li>
+          <li><a href="../aboutus/aboutus.php">About Us</a></li>
+          <li><a href="../news/articles.php">News</a></li>
+          <li><a href="../contacts/contacts.php">Contact Us</a></li>
         </ul>
       </div>
 
       <div class="col-md-3 footer-column">
-        <h3>Product Vehicles</h3>
+        <h3>Tools & Service</h3>
         <ul>
+          <li><a href="../tools/vehicle_price_list.php">Price List</a></li>
+          <li><a href="../tools/compare.php">Compare Vehicles</a></li>
+          <li><a href="../tools/testdrive.php">Book a Test Drive</a></li>
+        </ul>
+      </div>
+
+      <div class="col-md-3 footer-column">
+        <h3>Products</h3>
+        <ul>
+          <li><a href="products.php">All Vehicles</a></li>
           <?php
           $vehicle_links = $conn->query("
             SELECT * FROM vehicles v1 
             WHERE image IS NOT NULL AND image != '' 
             AND price IS NOT NULL
             AND v1.id = (SELECT MIN(v2.id) FROM vehicles v2 WHERE v2.model_name = v1.model_name)
-            ORDER BY id ASC
+            ORDER BY id ASC LIMIT 5
           ");
           while($v = $vehicle_links->fetch_assoc()){
               echo "<li><a href='product-details.php?id=".$v['id']."'>".htmlspecialchars($v['model_name'])."</a></li>";
@@ -164,7 +175,7 @@ input { background-color: #f8f9fa !important; }
         <h3>Parts & Services</h3>
         <ul>
           <li><a href="../partsandservices/genuine_parts.php">Genuine Parts</a></li>
-          <li><a href="../partsandservices/services.php">Service and Body Shop</a></li>
+          <li><a href="../partsandservices/services.php">Services</a></li>
         </ul>
       </div>
 
