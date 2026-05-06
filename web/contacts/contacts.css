@@ -1,13 +1,18 @@
-        body {
-            margin: 0;
-            font-family: 'Poppins', sans-serif;
-            background: #0d0d0d;
-            color: #fff;
-        }
+      body {
+    margin: 0;
+    font-family: 'Poppins', sans-serif;
+    background-color: #0d0d0d;
+    background-image: url('/citimotorsweb/web/img/contactbg.png'); /* 👈 your image path */
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    color: #fff;
+}
 
-        .contact-hero {
-            padding: 80px 0;
-        }
+       .contact-hero {
+    padding: 80px 0;
+    background: rgba(0, 0, 0, 0.75); /* dark overlay over the bg image */
+}
 
         h1 {
             font-size: 42px;
