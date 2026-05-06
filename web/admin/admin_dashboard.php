@@ -61,6 +61,10 @@ $pending_test_drives = $conn->query("
     <a href="admin_vehicles.php"><i class="fas fa-car"></i> Manage Vehicles</a>
     <a href="admin_posts.php"><i class="fas fa-newspaper"></i> Posts</a>
 
+    <a href="recent_activity.php" class="<?= $currentPage=='recent_activity'?'active':'' ?>">
+        <i class="fas fa-history"></i> Recent Activity
+    </a>
+
     <a href="admin_test_drives.php">
         <i class="fas fa-key"></i> Test Drives
         <?php if($pending_test_drives > 0): ?>

@@ -35,6 +35,8 @@ if(isset($_POST['add_user'])){
     $stmt->bind_param("ssss", $fullname, $email, $hashedPassword, $role);
     $stmt->execute();
 
+    logActivity($conn, $_SESSION['user'], 'Added User', "Added user: $fullname ($email) with role $role");
+
     header("Location: admin_users.php?success=added");
     exit();
 }
@@ -59,9 +61,31 @@ if(isset($_POST['save_user'])){
         exit();
     }
 
+    $oldStmt = $conn->prepare("SELECT fullname, email, role FROM users WHERE id=?");
+    $oldStmt->bind_param("i", $id);
+    $oldStmt->execute();
+    $oldData = $oldStmt->get_result()->fetch_assoc();
+
     $stmt = $conn->prepare("UPDATE users SET fullname=?, email=?, role=? WHERE id=?");
     $stmt->bind_param("sssi", $fullname, $email, $role, $id);
     $stmt->execute();
+
+    $changes = [];
+    if ($oldData['fullname'] !== $fullname) {
+        $changes[] = "name from {$oldData['fullname']} to $fullname";
+    }
+    if ($oldData['email'] !== $email) {
+        $changes[] = "email from {$oldData['email']} to $email";
+    }
+    if ($oldData['role'] !== $role) {
+        $changes[] = "role from {$oldData['role']} to $role";
+    }
+
+    $description = !empty($changes)
+        ? "Updated user: {$fullname} ({$email}) - " . implode(', ', $changes)
+        : "Updated user: {$fullname} ({$email})";
+
+    logActivity($conn, $_SESSION['user'], 'Updated User', $description);
 
     header("Location: admin_users.php?success=updated");
     exit();
@@ -77,9 +101,19 @@ if(isset($_GET['delete_user'])){
         exit();
     }
 
+    $deleteId = intval($_GET['delete_user']);
+    $infoStmt = $conn->prepare("SELECT fullname, email, role FROM users WHERE id=?");
+    $infoStmt->bind_param("i", $deleteId);
+    $infoStmt->execute();
+    $userInfo = $infoStmt->get_result()->fetch_assoc();
+
     $stmt = $conn->prepare("DELETE FROM users WHERE id=?");
-    $stmt->bind_param("i", $_GET['delete_user']);
+    $stmt->bind_param("i", $deleteId);
     $stmt->execute();
+
+    if ($userInfo) {
+        logActivity($conn, $_SESSION['user'], 'Deleted User', "Deleted user: {$userInfo['fullname']} ({$userInfo['email']}) role {$userInfo['role']}");
+    }
 
     header("Location: admin_users.php?success=deleted");
     exit();
@@ -144,6 +178,10 @@ $result_users = $conn->query("SELECT * FROM users $searchQuery ORDER BY id DESC"
 
     <a href="admin_posts.php">
         <i class="fas fa-newspaper"></i> Posts
+    </a>
+
+    <a href="recent_activity.php">
+        <i class="fas fa-history"></i> Recent Activity
     </a>
 
     <a href="admin_test_drives.php">

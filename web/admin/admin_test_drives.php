@@ -68,6 +68,8 @@ if (isset($_POST['update_status'])) {
         $stmt->bind_param("sssi", $status, $admin_notes, $admin_message, $id);
         $stmt->execute();
 
+        logActivity($conn, $_SESSION['user'], 'Updated Test Drive Status', "Updated test drive ID: $id to status: $status");
+
         $title = "";
         $message = "";
 
@@ -190,6 +192,8 @@ $pendingCount = $conn->query("
     <a href="admin_users.php"><i class="fas fa-users"></i>Manage Users</a>
     <a href="admin_vehicles.php"><i class="fas fa-car"></i>Manage Vehicles</a>
     <a href="admin_posts.php"><i class="fas fa-newspaper"></i>Posts</a>
+
+    <a href="recent_activity.php"><i class="fas fa-history"></i> Recent Activity</a>
 
     <a href="admin_test_drives.php" class="active">
         <i class="fas fa-key"></i>Test Drive

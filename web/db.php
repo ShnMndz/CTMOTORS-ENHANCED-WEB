@@ -6,6 +6,17 @@ if (!isset($conn)) {
     if ($conn->connect_error) {
         die("Connection failed: " . $conn->connect_error);
     }
+
+    // Create activities table if not exists
+    $conn->query("
+        CREATE TABLE IF NOT EXISTS activities (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            user VARCHAR(255) NOT NULL,
+            action VARCHAR(255) NOT NULL,
+            description TEXT,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+    ");
 }
 
 /* =========================

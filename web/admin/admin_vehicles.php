@@ -85,6 +85,8 @@ if(isset($_POST['save_vehicle'])){
     }
 
     if($stmt->execute()){
+        $action = $id > 0 ? 'Updated Vehicle' : 'Added Vehicle';
+        logActivity($conn, $_SESSION['user'], $action, "Vehicle: $model_name $model_variant");
         $_SESSION['success'] = $id > 0 ? "Vehicle updated successfully!" : "Vehicle added successfully!";
         header("Location: admin_vehicles.php");
         exit();
@@ -97,6 +99,7 @@ if(isset($_POST['save_vehicle'])){
 if(isset($_GET['delete_vehicle'])){
     $id = intval($_GET['delete_vehicle']);
     $conn->query("DELETE FROM vehicles WHERE id=$id");
+    logActivity($conn, $_SESSION['user'], 'Deleted Vehicle', "Deleted vehicle ID: $id");
     header("Location: admin_vehicles.php");
     exit();
 }
@@ -182,6 +185,10 @@ $result = $stmt->get_result();
 
     <a href="admin_posts.php">
         <i class="fas fa-newspaper"></i>Posts
+    </a>
+
+    <a href="recent_activity.php">
+        <i class="fas fa-history"></i> Recent Activity
     </a>
 
         <a href="admin_test_drives.php">

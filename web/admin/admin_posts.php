@@ -26,6 +26,8 @@ if (isset($_GET['delete'])) {
     $stmt->bind_param("i", $id);
     $stmt->execute();
 
+    logActivity($conn, $_SESSION['user'], 'Deleted Post', "Deleted post ID: $id");
+
     header("Location: admin_posts.php");
     exit();
 }
@@ -83,9 +85,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $stmt->bind_param("sssssi", $title, $content, $image, $link, $category, $is_featured);
     }
 
-    echo $stmt->execute()
-        ? "<script>alert('Saved!'); window.location='admin_posts.php';</script>"
-        : "<script>alert('Error');</script>";
+    if ($stmt->execute()) {
+        $action = !empty($id) ? 'Updated Post' : 'Added Post';
+        logActivity($conn, $_SESSION['user'], $action, "Post: $title");
+        echo "<script>alert('Saved!'); window.location='admin_posts.php';</script>";
+    } else {
+        echo "<script>alert('Error');</script>";
+    }
 }
 
 $result = $conn->query("SELECT * FROM posts ORDER BY id DESC");
@@ -113,6 +119,7 @@ $result = $conn->query("SELECT * FROM posts ORDER BY id DESC");
     <a href="admin_users.php"><i class="fas fa-users"></i> Manage Users</a>
     <a href="admin_vehicles.php"><i class="fas fa-car"></i> Manage Vehicles</a>
     <a href="admin_posts.php" class="active"><i class="fas fa-newspaper"></i> Posts</a>
+    <a href="recent_activity.php"><i class="fas fa-history"></i> Recent Activity</a>
     <a href="admin_test_drives.php"><i class="fas fa-key"></i> Test Drive</a>
     <a href="../logout.php"><i class="fas fa-sign-out-alt"></i> Logout</a>
 </div>

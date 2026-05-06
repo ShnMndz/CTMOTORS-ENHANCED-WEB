@@ -2,7 +2,7 @@
 session_start();
 include '../db.php';
 
-if (!isset($_SESSION['user_id'])) {
+if (!isset($_SESSION['user']) || $_SESSION['role'] !== 'admin') {
     header("Location: ../login.php");
     exit();
 }
@@ -17,10 +17,18 @@ $stmt->bind_param("i", $id);
 $stmt->execute();
 $user = $stmt->get_result()->fetch_assoc();
 
-if (!$user || $user['role'] !== 'admin') {
+if (!$user) {
     header("Location: ../login.php");
     exit();
 }
+
+$currentPage = 'profile';
+
+$pending_test_drives = $conn->query("
+    SELECT COUNT(*) as total 
+    FROM test_drives 
+    WHERE status = 'pending'
+")->fetch_assoc()['total'];
 
 /* =========================
    UPDATE PROFILE
@@ -38,6 +46,7 @@ if (isset($_POST['save_all'])) {
             $update = $conn->prepare("UPDATE users SET fullname=?, email=? WHERE id=?");
             $update->bind_param("ssi", $fullname, $email, $id);
             $update->execute();
+            $_SESSION['user'] = $fullname; // Update session
             $updated = true;
         }
     }
@@ -76,6 +85,10 @@ if (isset($_POST['save_all'])) {
 
     $_SESSION['message'] = $updated ? "Profile updated successfully!" : "No changes made.";
     $_SESSION['type'] = $updated ? "success" : "warning";
+
+    if ($updated) {
+        logActivity($conn, $_SESSION['user'], 'Updated Profile', "Updated profile information");
+    }
 
     header("Location: admin_profile.php");
     exit();
@@ -116,6 +129,8 @@ if (isset($_POST['change_password'])) {
     $update = $conn->prepare("UPDATE users SET password=? WHERE id=?");
     $update->bind_param("si", $hashed, $id);
     $update->execute();
+
+    logActivity($conn, $_SESSION['user'], 'Changed Password', "Changed admin password");
 
     $_SESSION['message'] = "Password changed successfully!";
     $_SESSION['type'] = "success";
@@ -198,8 +213,15 @@ body{
         <i class="fas fa-newspaper"></i> Posts
     </a>
 
+    <a href="recent_activity.php">
+        <i class="fas fa-history"></i> Recent Activity
+    </a>
+
     <a href="admin_test_drives.php">
         <i class="fas fa-key"></i> Test Drive
+        <?php if($pending_test_drives > 0): ?>
+            <span class="badge bg-danger badge-notif"><?= $pending_test_drives ?></span>
+        <?php endif; ?>
     </a>
 
     <a href="../logout.php">
