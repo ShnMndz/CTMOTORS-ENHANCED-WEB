@@ -1,30 +1,3 @@
-<?php
-session_start();
-include '../db.php';
-
-// Check if admin (optional read-only mode)
-$isAdmin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
-
-// Optional filter by type
-$filter_type = isset($_GET['type']) ? $_GET['type'] : 'all';
-
-// Fetch vehicles
-$sql = "SELECT * FROM vehicles v1 
-        WHERE image IS NOT NULL AND image != '' 
-        AND price IS NOT NULL
-        AND v1.id = (SELECT MIN(v2.id) FROM vehicles v2 WHERE v2.model_name = v1.model_name)";
-
-if($filter_type === 'passenger' || $filter_type === 'commercial'){
-    $sql .= " AND vehicle_type='$filter_type'";
-}
-
-$sql .= " ORDER BY id ASC";
-
-$vehicles_result = $conn->query($sql);
-?>
-
-<?php include '../includes/navbar.php'; ?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -33,49 +6,56 @@ $vehicles_result = $conn->query($sql);
 
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../global.css">
 <link rel="stylesheet" href="../css/products.css">
-
-<style>
-body { font-family: 'Poppins', sans-serif; background:#f8fafc; }
-
-.product-item img {
-    max-height: 180px;
-    object-fit: cover;
-    border-radius:8px;
-}
-
-.product-item h5 {
-    font-size:1rem;
-    font-weight:600;
-    margin-top:0.5rem;
-}
-
-.product-item p { display: none; }
-
-/* Footer */
-.footer { background-color: #f8f9fa; padding: 30px 0; margin-top: 50px; }
-.footer-column { margin-bottom: 20px; }
-.footer-column h3 { font-size: 16px; margin-bottom: 10px; }
-.footer-column ul { list-style: none; padding-left: 0; }
-.footer-column ul li { margin-bottom: 6px; }
-.footer-column ul li a { text-decoration: none; color: #333; }
-.footer-bottom { font-size: 13px; color: #666; }
-
-/* Admin read-only */
-<?php if($isAdmin): ?>
-a, button, input {
-    pointer-events: none !important;
-    cursor: default !important;
-}
-input { background-color: #f8f9fa !important; }
-<?php endif; ?>
-</style>
 </head>
 
 <body>
 
+<?php
+session_start();
+include '../db.php';
+include '../includes/navbar.php';
+
+// Check if admin (optional read-only mode)
+$isAdmin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
+
+// Sanitize filter
+$allowed_types  = ['all', 'passenger', 'commercial'];
+$filter_type    = isset($_GET['type']) && in_array($_GET['type'], $allowed_types)
+                  ? $_GET['type']
+                  : 'all';
+
+// Fetch vehicles (using prepared statement)
+$base_sql = "SELECT * FROM vehicles v1 
+             WHERE image IS NOT NULL AND image != '' 
+             AND price IS NOT NULL
+             AND v1.id = (SELECT MIN(v2.id) FROM vehicles v2 WHERE v2.model_name = v1.model_name)";
+
+if ($filter_type === 'passenger' || $filter_type === 'commercial') {
+    $stmt = $conn->prepare($base_sql . " AND vehicle_type = ? ORDER BY id ASC");
+    $stmt->bind_param("s", $filter_type);
+    $stmt->execute();
+    $vehicles_result = $stmt->get_result();
+} else {
+    $vehicles_result = $conn->query($base_sql . " ORDER BY id ASC");
+}
+?>
+
+<?php if ($isAdmin): ?>
+<style>
+/* Admin read-only — scope tightly to avoid breaking layout */
+#productsGrid a,
+#productsGrid button,
+.product-search-bar button {
+    pointer-events: none !important;
+    cursor: default !important;
+}
+</style>
+<?php endif; ?>
+
 <!-- Search + Filter -->
-<div class="container my-4">
+<div class="container my-4 product-search-bar">
     <div class="row justify-content-center g-3">
         <div class="col-md-4">
             <input type="text" id="productSearch" class="form-control form-control-lg"
@@ -83,9 +63,9 @@ input { background-color: #f8f9fa !important; }
         </div>
         <div class="col-md-3">
             <select id="filterType" class="form-select form-select-lg" onchange="filterType()">
-                <option value="all" <?php if($filter_type==='all') echo 'selected'; ?>>All Types</option>
-                <option value="passenger" <?php if($filter_type==='passenger') echo 'selected'; ?>>Passenger</option>
-                <option value="commercial" <?php if($filter_type==='commercial') echo 'selected'; ?>>Commercial</option>
+                <option value="all"        <?= $filter_type === 'all'        ? 'selected' : '' ?>>All Types</option>
+                <option value="passenger"  <?= $filter_type === 'passenger'  ? 'selected' : '' ?>>Passenger</option>
+                <option value="commercial" <?= $filter_type === 'commercial' ? 'selected' : '' ?>>Commercial</option>
             </select>
         </div>
     </div>
@@ -95,24 +75,22 @@ input { background-color: #f8f9fa !important; }
 <section class="container my-5">
     <div class="row g-4" id="productsGrid">
 
-        <?php if($vehicles_result->num_rows > 0): ?>
+        <?php if ($vehicles_result && $vehicles_result->num_rows > 0): ?>
 
-            <?php while($row = $vehicles_result->fetch_assoc()): ?>
+            <?php while ($row = $vehicles_result->fetch_assoc()): ?>
 
             <div class="col-lg-4 col-md-6 col-sm-12 product-item"
-                 data-type="<?php echo $row['vehicle_type']; ?>">
+                 data-type="<?= htmlspecialchars($row['vehicle_type']) ?>">
 
-                <a href="product-details.php?id=<?php echo $row['id']; ?>"
+                <a href="product-details.php?id=<?= (int)$row['id'] ?>"
                    style="text-decoration:none; color:inherit;">
 
-                    <img src="../img/<?php echo htmlspecialchars($row['image']); ?>"
-                         alt="<?php echo htmlspecialchars($row['model_name']); ?>"
+                    <img src="../img/<?= htmlspecialchars($row['image']) ?>"
+                         alt="<?= htmlspecialchars($row['model_name']) ?>"
                          style="width:100%; height:180px; object-fit:cover; border-radius:8px;">
 
                     <div class="text-center mt-2">
-                        <h5 class="mb-0">
-                            <?php echo htmlspecialchars($row['model_name']); ?>
-                        </h5>
+                        <h5 class="mb-0"><?= htmlspecialchars($row['model_name']) ?></h5>
                     </div>
 
                 </a>
@@ -122,7 +100,7 @@ input { background-color: #f8f9fa !important; }
             <?php endwhile; ?>
 
         <?php else: ?>
-            <p class="text-center">No vehicles found.</p>
+            <p class="text-center text-muted">No vehicles found.</p>
         <?php endif; ?>
 
     </div>
@@ -158,14 +136,14 @@ input { background-color: #f8f9fa !important; }
           <li><a href="products.php">All Vehicles</a></li>
           <?php
           $vehicle_links = $conn->query("
-            SELECT * FROM vehicles v1 
-            WHERE image IS NOT NULL AND image != '' 
-            AND price IS NOT NULL
-            AND v1.id = (SELECT MIN(v2.id) FROM vehicles v2 WHERE v2.model_name = v1.model_name)
-            ORDER BY id ASC LIMIT 5
+              SELECT * FROM vehicles v1 
+              WHERE image IS NOT NULL AND image != '' 
+              AND price IS NOT NULL
+              AND v1.id = (SELECT MIN(v2.id) FROM vehicles v2 WHERE v2.model_name = v1.model_name)
+              ORDER BY id ASC LIMIT 5
           ");
-          while($v = $vehicle_links->fetch_assoc()){
-              echo "<li><a href='product-details.php?id=".$v['id']."'>".htmlspecialchars($v['model_name'])."</a></li>";
+          while ($v = $vehicle_links->fetch_assoc()) {
+              echo "<li><a href='product-details.php?id=" . (int)$v['id'] . "'>" . htmlspecialchars($v['model_name']) . "</a></li>";
           }
           ?>
         </ul>
@@ -191,19 +169,17 @@ input { background-color: #f8f9fa !important; }
 
 <script>
 function searchProducts() {
-    let input = document.getElementById("productSearch").value.toLowerCase();
-    let products = document.getElementsByClassName("product-item");
-
+    const input    = document.getElementById("productSearch").value.toLowerCase();
+    const products = document.getElementsByClassName("product-item");
     for (let i = 0; i < products.length; i++) {
-        let name = products[i].innerText.toLowerCase();
+        const name = products[i].innerText.toLowerCase();
         products[i].style.display = name.includes(input) ? "" : "none";
     }
 }
 
 function filterType() {
-    let type = document.getElementById("filterType").value;
-    let products = document.getElementsByClassName("product-item");
-
+    const type     = document.getElementById("filterType").value;
+    const products = document.getElementsByClassName("product-item");
     for (let i = 0; i < products.length; i++) {
         products[i].style.display =
             (type === 'all' || products[i].getAttribute('data-type') === type)
