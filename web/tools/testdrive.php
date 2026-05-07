@@ -178,7 +178,7 @@ label {
 
 <?php if (!isset($_SESSION['user_id'])): ?>
     <div class="alert alert-warning text-center">
-        Please <a href="../login.php" style="color:#fff;text-decoration:underline;">login</a> first.
+        Please <a href="../login.php" style="color:#8b0000; font-weight:600; text-decoration:underline;">login</a> first.
     </div>
 <?php endif; ?>
 
