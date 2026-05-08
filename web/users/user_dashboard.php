@@ -39,7 +39,7 @@ $testdrives = $stmt->get_result();
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>User Dashboard</title>
+<title>User Profile - CITI MOTORS</title>
 
 <link rel="stylesheet" href="user_dashboard.css">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
