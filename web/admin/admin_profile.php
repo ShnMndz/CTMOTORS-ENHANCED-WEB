@@ -71,7 +71,7 @@ if (isset($_POST['save_all'])) {
         }
     }
 
-    /* Phone — add columns if they exist */
+    /* Phone */
     $cols = $conn->query("SHOW COLUMNS FROM users LIKE 'phone'");
     if ($cols && $cols->num_rows > 0 && $phone !== ($user['phone'] ?? '')) {
         $upd = $conn->prepare("UPDATE users SET phone=? WHERE id=?");
@@ -83,7 +83,7 @@ if (isset($_POST['save_all'])) {
  
     /* PROFILE PICTURE */
     if (!empty($_FILES['profile_pic']['name'])) {
-        $fileName = time() . "_" . basename($_FILES['profile_pic']['name']);
+        $fileName = time() . "_" . basename($_FILES['profile_pic']['name']);                                                      
         $target   = "../uploads/" . $fileName;
         $allowed  = ['jpg', 'jpeg', 'png', 'webp'];
         $ext      = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
