@@ -1,0 +1,202 @@
+* { box-sizing: border-box; }
+
+    body {
+        font-family: 'Poppins', sans-serif;
+        background: #0a0a0a;
+        color: #fff;
+    }
+
+    /* ── Section header ── */
+    .oem-badge {
+        display: inline-block;
+        background: rgba(226, 0, 0, 0.12);
+        color: #e84040;
+        font-size: 11px;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        padding: 4px 14px;
+        border-radius: 20px;
+        border: 0.5px solid rgba(226, 0, 0, 0.3);
+        margin-bottom: 1rem;
+    }
+
+    .section-title {
+        color: #E20000;
+        font-size: 2rem;
+        font-weight: 700;
+        letter-spacing: 0.04em;
+        margin-bottom: 0.4rem;
+    }
+
+    .section-subtitle {
+        color: rgba(255,255,255,0.45);
+        font-size: 14px;
+        margin-bottom: 2.5rem;
+    }
+
+    /* ── Feature boxes (Why Choose Us) ── */
+    .feature-card {
+        background: rgba(255,255,255,0.04);
+        border: 0.5px solid rgba(255,255,255,0.1);
+        border-radius: 12px;
+        padding: 1.5rem 1.25rem;
+        height: 100%;
+        transition: border-color 0.25s, transform 0.25s;
+        text-align: center;
+    }
+
+    .feature-card:hover {
+        border-color: rgba(226, 0, 0, 0.45);
+        transform: translateY(-4px);
+    }
+
+    .feature-icon-box {
+        width: 48px;
+        height: 48px;
+        background: rgba(226, 0, 0, 0.12);
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 0.85rem;
+        color: #E20000;
+        font-size: 22px;
+    }
+
+    .feature-card h6 {
+        color: #fff;
+        font-size: 13.5px;
+        font-weight: 600;
+        margin-bottom: 0.4rem;
+    }
+
+    .feature-card p {
+        color: rgba(255,255,255,0.5);
+        font-size: 12px;
+        line-height: 1.65;
+        margin: 0;
+    }
+
+    /* ── Service image cards ── */
+    .service-card {
+        background: rgba(255,255,255,0.04);
+        border: 0.5px solid rgba(255,255,255,0.1);
+        border-radius: 12px;
+        overflow: hidden;
+        height: 100%;
+        transition: border-color 0.25s, transform 0.25s;
+    }
+
+    .service-card:hover {
+        border-color: rgba(226, 0, 0, 0.45);
+        transform: translateY(-4px);
+    }
+
+    .service-img {
+        width: 100%;
+        height: 200px;
+        object-fit: cover;
+        display: block;
+    }
+
+    .service-card-body {
+        padding: 1rem 1.25rem;
+        text-align: center;
+    }
+
+    .service-card-body h5 {
+        color: #fff;
+        font-size: 14px;
+        font-weight: 600;
+        margin: 0;
+    }
+
+    /* ── Divider ── */
+    .section-divider {
+        border: none;
+        border-top: 0.5px solid rgba(255,255,255,0.08);
+        margin: 2.5rem 0;
+    }
+
+    /* ── Stats row ── */
+    .stat-card {
+        background: rgba(255,255,255,0.04);
+        border: 0.5px solid rgba(255,255,255,0.08);
+        border-radius: 10px;
+        padding: 1rem;
+        text-align: center;
+    }
+
+    .stat-val {
+        font-size: 1.35rem;
+        font-weight: 700;
+        color: #E20000;
+    }
+
+    .stat-label {
+        font-size: 11px;
+        color: rgba(255,255,255,0.4);
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        margin-top: 4px;
+    }
+
+    /* ── Quote / body copy ── */
+    .quote-mark {
+        font-size: 52px;
+        color: rgba(226, 0, 0, 0.25);
+        line-height: 1;
+        font-family: Georgia, serif;
+        margin-bottom: -0.5rem;
+    }
+
+    .quote-text {
+        font-size: 15px;
+        font-style: italic;
+        color: rgba(255,255,255,0.65);
+        line-height: 1.6;
+        margin-bottom: 1.5rem;
+    }
+
+    .body-copy {
+        font-size: 13px;
+        color: rgba(255,255,255,0.42);
+        line-height: 1.85;
+        max-width: 800px;
+        margin: 0 auto 2rem;
+    }
+
+    /* ── CTA buttons ── */
+    .btn-custom {
+        background: #E20000;
+        color: #fff;
+        border: none;
+        padding: 11px 28px;
+        border-radius: 6px;
+        font-weight: 600;
+        font-size: 14px;
+        font-family: 'Poppins', sans-serif;
+        transition: 0.25s;
+    }
+
+    .btn-custom:hover {
+        background: #ff1a1a;
+        transform: translateY(-2px);
+        color: #fff;
+    }
+
+    .btn-outline-custom {
+        background: transparent;
+        color: rgba(255,255,255,0.55);
+        border: 0.5px solid rgba(255,255,255,0.2);
+        padding: 11px 28px;
+        border-radius: 6px;
+        font-size: 14px;
+        font-family: 'Poppins', sans-serif;
+        transition: 0.25s;
+    }
+
+    .btn-outline-custom:hover {
+        background: rgba(255,255,255,0.05);
+        color: #fff;
+    }
