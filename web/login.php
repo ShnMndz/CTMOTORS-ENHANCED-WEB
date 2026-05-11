@@ -292,9 +292,56 @@ if (isset($_POST['login'])) {
             padding: 32px 24px;
         }
     }
+
+        /* LOADING SCREEN */
+    #loadingScreen{
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(255,255,255,0.95);
+        backdrop-filter: blur(5px);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        z-index: 99999;
+    }
+
+    .loader{
+        width: 65px;
+        height: 65px;
+        border: 5px solid #e5e7eb;
+        border-top: 5px solid #d9252b;
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
+    }
+
+    .loading-text{
+        margin-top: 18px;
+        font-size: 1rem;
+        font-weight: 600;
+        color: #111827;
+        letter-spacing: 0.5px;
+    }
+
+    @keyframes spin{
+        100%{
+            transform: rotate(360deg);
+        }
+    }
+
 </style>
 </head>
 <body>
+
+<!-- Loading Screen -->
+<div id="loadingScreen">
+    <div class="loader"></div>
+    <div class="loading-text">Signing in...</div>
+</div>
+
 <div class="page-shell">
     <section class="brand-panel">
         <div class="brand-inner">
@@ -319,7 +366,7 @@ if (isset($_POST['login'])) {
                 <?php echo htmlspecialchars($login_error); ?>
             </div>
             <?php endif; ?>
-            <form method="POST">
+            <form method="POST" id="loginForm">
                 <input type="email" name="email" class="form-control" placeholder="Email address" required>
                 <input type="password" name="password" class="form-control" placeholder="Password" required>
                 <a href="#" class="forgot-link">Forgot password?</a>
@@ -333,6 +380,13 @@ if (isset($_POST['login'])) {
         </div>
     </section>
 </div>
+<script>
+document.getElementById("loginForm").addEventListener("submit", function() {
+
+    document.getElementById("loadingScreen").style.display = "flex";
+
+});
+</script>
 </body>
 </html>
 
