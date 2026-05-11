@@ -136,10 +136,11 @@ if (isset($_SESSION['user_id'])) {
                     </a>
 
 
-                    <a href="<?= $base ?>/logout.php" class="btn btn-danger btn-sm">
-                        Logout
-                    </a>
-
+                   <a href="<?= $base ?>/logout.php" 
+   class="btn btn-danger btn-sm"
+   onclick="return confirm('Are you sure you want to logout?')">
+    Logout
+</a>
 
                 <?php else: ?>
 
