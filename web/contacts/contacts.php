@@ -63,7 +63,7 @@ if ($schedule[$currentDay]) {
         <span class="badge bg-danger mb-3">MAKATI BRANCH</span>
 
         <!-- TITLE -->
-        <h1>Contact <span class="text-danger">CT Motors</span> Makati</h1>
+        <h1>Contact <span class="text-danger">CITI Motors</span> Makati</h1>
 
         <!-- DESCRIPTION -->
         <p class="subtext">
