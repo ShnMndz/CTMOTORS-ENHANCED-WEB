@@ -17,6 +17,11 @@ if (!isset($conn)) {
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )
     ");
+
+    if (isset($_SESSION['user_id'])) {
+    $conn->query("UPDATE users SET last_active = NOW() WHERE id = " . intval($_SESSION['user_id']));
+}
+ 
 }
 
 /* =========================
@@ -40,3 +45,4 @@ if (!function_exists('logActivity')) {
     }
 }
 ?>
+

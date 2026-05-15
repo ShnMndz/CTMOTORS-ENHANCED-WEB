@@ -5,7 +5,7 @@ include 'db.php';
 // Handle login
 if (isset($_POST['login'])) {
     $email = $_POST['email'];
-    $pass = $_POST['password'];
+    $pass  = $_POST['password'];
 
     $stmt = $conn->prepare("SELECT id, fullname, password, role FROM users WHERE email = ?");
     $stmt->bind_param("s", $email);
@@ -16,10 +16,16 @@ if (isset($_POST['login'])) {
         $user = $result->fetch_assoc();
 
         if (password_verify($pass, $user['password'])) {
+
             // Store user info in session
-            $_SESSION['user'] = $user['fullname'];
-            $_SESSION['role'] = $user['role'];
+            $_SESSION['user']    = $user['fullname'];
+            $_SESSION['role']    = $user['role'];
             $_SESSION['user_id'] = $user['id'];
+
+            // ── Update last_active on login ──
+            $upd = $conn->prepare("UPDATE users SET last_active = NOW() WHERE id = ?");
+            $upd->bind_param("i", $user['id']);
+            $upd->execute();
 
             // Redirect based on role
             if ($user['role'] === 'admin') {
@@ -29,6 +35,7 @@ if (isset($_POST['login'])) {
                 header("Location: home.php");
                 exit();
             }
+
         } else {
             $login_error = 'Wrong password';
         }
@@ -38,7 +45,6 @@ if (isset($_POST['login'])) {
     $stmt->close();
 }
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -132,18 +138,9 @@ if (isset($_POST['login'])) {
         border-radius: 999px;
         background: rgba(255,255,255,0.08);
     }
-    .brand-graphic::before {
-        width: 220px;
-        height: 64px;
-        bottom: 18px;
-        left: 24px;
-    }
-    .brand-graphic::after {
-        width: 90px;
-        height: 90px;
-        bottom: 58px;
-        right: 34px;
-    }
+    .brand-graphic::before { width:220px; height:64px; bottom:18px; left:24px; }
+    .brand-graphic::after  { width:90px; height:90px; bottom:58px; right:34px; }
+
     .form-panel {
         display: flex;
         align-items: center;
@@ -199,9 +196,7 @@ if (isset($_POST['login'])) {
         font-weight: 600;
         text-decoration: none;
     }
-    .login-card .forgot-link:hover {
-        text-decoration: underline;
-    }
+    .login-card .forgot-link:hover { text-decoration: underline; }
     .login-card .btn-primary {
         border-radius: 14px;
         padding: 14px 18px;
@@ -210,9 +205,7 @@ if (isset($_POST['login'])) {
         font-size: 1rem;
         font-weight: 700;
     }
-    .login-card .btn-primary:hover {
-        background: #b01f22;
-    }
+    .login-card .btn-primary:hover { background: #b01f22; }
     .login-card .divider {
         display: flex;
         align-items: center;
@@ -222,18 +215,9 @@ if (isset($_POST['login'])) {
         font-size: 0.95rem;
     }
     .login-card .divider::before,
-    .login-card .divider::after {
-        content: '';
-        flex: 1;
-        height: 1px;
-        background: #e5e7eb;
-    }
-    .login-card .divider::before {
-        margin-right: 12px;
-    }
-    .login-card .divider::after {
-        margin-left: 12px;
-    }
+    .login-card .divider::after { content:''; flex:1; height:1px; background:#e5e7eb; }
+    .login-card .divider::before { margin-right:12px; }
+    .login-card .divider::after  { margin-left:12px; }
     .login-card .google-btn {
         width: 100%;
         border-radius: 14px;
@@ -247,23 +231,15 @@ if (isset($_POST['login'])) {
         justify-content: center;
         gap: 10px;
     }
-    .login-card .google-btn i {
-        color: #ea4335;
-    }
+    .login-card .google-btn i { color: #ea4335; }
     .login-card .signup-link {
         margin-top: 26px;
         text-align: center;
         color: #6b7280;
         font-size: 0.95rem;
     }
-    .login-card .signup-link a {
-        color: #d9252b;
-        font-weight: 700;
-        text-decoration: none;
-    }
-    .login-card .signup-link a:hover {
-        text-decoration: underline;
-    }
+    .login-card .signup-link a { color:#d9252b; font-weight:700; text-decoration:none; }
+    .login-card .signup-link a:hover { text-decoration:underline; }
     .login-card .alert {
         border-radius: 14px;
         border: none;
@@ -271,35 +247,22 @@ if (isset($_POST['login'])) {
         margin-bottom: 20px;
         font-size: 0.95rem;
     }
-    .login-card .alert-danger {
-        background-color: #fee2e2;
-        color: #7f1d1d;
+    .login-card .alert-danger { background-color:#fee2e2; color:#7f1d1d; }
+
+    @media (max-width:992px) {
+        .page-shell { grid-template-columns:1fr; }
+        .brand-panel, .form-panel { padding:30px 24px; }
     }
-    @media (max-width: 992px) {
-        .page-shell {
-            grid-template-columns: 1fr;
-        }
-        .brand-panel,
-        .form-panel {
-            padding: 30px 24px;
-        }
-    }
-    @media (max-width: 640px) {
-        .brand-panel {
-            padding: 24px 20px;
-        }
-        .login-card {
-            padding: 32px 24px;
-        }
+    @media (max-width:640px) {
+        .brand-panel { padding:24px 20px; }
+        .login-card  { padding:32px 24px; }
     }
 
-        /* LOADING SCREEN */
-    #loadingScreen{
+    /* LOADING SCREEN */
+    #loadingScreen {
         position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
+        top: 0; left: 0;
+        width: 100%; height: 100%;
         background: rgba(255,255,255,0.95);
         backdrop-filter: blur(5px);
         display: none;
@@ -308,30 +271,21 @@ if (isset($_POST['login'])) {
         flex-direction: column;
         z-index: 99999;
     }
-
-    .loader{
-        width: 65px;
-        height: 65px;
+    .loader {
+        width: 65px; height: 65px;
         border: 5px solid #e5e7eb;
         border-top: 5px solid #d9252b;
         border-radius: 50%;
         animation: spin 0.8s linear infinite;
     }
-
-    .loading-text{
+    .loading-text {
         margin-top: 18px;
         font-size: 1rem;
         font-weight: 600;
         color: #111827;
         letter-spacing: 0.5px;
     }
-
-    @keyframes spin{
-        100%{
-            transform: rotate(360deg);
-        }
-    }
-
+    @keyframes spin { 100% { transform: rotate(360deg); } }
 </style>
 </head>
 <body>
@@ -343,6 +297,7 @@ if (isset($_POST['login'])) {
 </div>
 
 <div class="page-shell">
+
     <section class="brand-panel">
         <div class="brand-inner">
             <div class="brand-badge">
@@ -354,39 +309,47 @@ if (isset($_POST['login'])) {
         </div>
         <div class="brand-graphic"></div>
     </section>
+
     <section class="form-panel">
         <div class="login-card">
+
             <div class="logo-circle">
                 <img src="img/logo.png" alt="CITI MOTORS">
             </div>
+
             <h3>Welcome back</h3>
             <p class="subtitle">Sign in to your account</p>
+
             <?php if (isset($login_error)): ?>
             <div class="alert alert-danger" role="alert">
-                <?php echo htmlspecialchars($login_error); ?>
+                <?= htmlspecialchars($login_error) ?>
             </div>
             <?php endif; ?>
+
             <form method="POST" id="loginForm">
-                <input type="email" name="email" class="form-control" placeholder="Email address" required>
-                <input type="password" name="password" class="form-control" placeholder="Password" required>
+                <input type="email"    name="email"    class="form-control" placeholder="Email address" required>
+                <input type="password" name="password" class="form-control" placeholder="Password"      required>
                 <a href="#" class="forgot-link">Forgot password?</a>
                 <button name="login" class="btn btn-primary w-100">Login</button>
             </form>
+
             <div class="divider">or</div>
+
             <button class="google-btn" type="button">
                 <i class="fab fa-google"></i> Continue with Google
             </button>
+
             <p class="signup-link">Don't have an account? <a href="signup.php">Sign up</a></p>
+
         </div>
     </section>
+
 </div>
+
 <script>
-document.getElementById("loginForm").addEventListener("submit", function() {
-
+document.getElementById("loginForm").addEventListener("submit", function () {
     document.getElementById("loadingScreen").style.display = "flex";
-
 });
 </script>
 </body>
 </html>
-
