@@ -21,46 +21,20 @@ $pending_test_drives = $conn->query("
 $search = isset($_GET['search']) ? trim($_GET['search']) : '';
 
 if (!empty($search)) {
-
     $searchLike = "%" . $search . "%";
-
     $stmt = $conn->prepare("
-        SELECT * 
-        FROM activities
-        WHERE user LIKE ?
-        OR action LIKE ?
-        OR description LIKE ?
-        ORDER BY created_at DESC
-        LIMIT 50
+        SELECT * FROM activities
+        WHERE user LIKE ? OR action LIKE ? OR description LIKE ?
+        ORDER BY created_at DESC LIMIT 50
     ");
-
-    $stmt->bind_param(
-        "sss",
-        $searchLike,
-        $searchLike,
-        $searchLike
-    );
-
+    $stmt->bind_param("sss", $searchLike, $searchLike, $searchLike);
     $stmt->execute();
     $result = $stmt->get_result();
-
 } else {
-
-    $query = "
-        SELECT * 
-        FROM activities 
-        ORDER BY created_at DESC 
-        LIMIT 50
-    ";
-
-    $result = $conn->query($query);
+    $result = $conn->query("SELECT * FROM activities ORDER BY created_at DESC LIMIT 50");
 }
 
-/* =========================
-   FETCH ACTIVITIES
-========================= */
 $activities = [];
-
 if ($result) {
     while ($row = $result->fetch_assoc()) {
         $activities[] = $row;
@@ -69,217 +43,382 @@ if ($result) {
     $error = "Query failed: " . $conn->error;
 }
 
-/* =========================
-   CHECK TABLE
-========================= */
-$tableCheck = $conn->query("SHOW TABLES LIKE 'activities'");
+$tableCheck  = $conn->query("SHOW TABLES LIKE 'activities'");
 $tableExists = $tableCheck && $tableCheck->num_rows > 0;
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Recent Activity</title>
+<meta charset="UTF-8">
+<title>Recent Activity</title>
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="admin_dashboard.css">
 
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+<style>
+/* ── Mitsubishi theme — content area only ── */
 
-    <link rel="stylesheet" href="admin_dashboard.css">
+.content {
+    background: #080808;
+    font-family: 'Inter', sans-serif;
+    color: #ccc;
+}
 
-    <style>
+/* Page header */
+.mit-page-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 6px;
+}
+.mit-diamond {
+    width: 30px; height: 30px;
+    background: #e8001c;
+    clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+    flex-shrink: 0;
+}
+.mit-page-title {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: #fff;
+    margin: 0;
+}
+.mit-red-bar {
+    height: 2px;
+    background: #e8001c;
+    margin: 12px 0 20px;
+}
 
-        .search-box{
-            max-width:400px;
-        }
+/* Alerts */
+.mit-alert {
+    padding: 10px 14px;
+    font-size: 13px;
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 600;
+    letter-spacing: .05em;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+    border-left: 3px solid;
+}
+.mit-alert.warning { background: #1a1000; border-color: #ffa000; color: #ffa000; }
+.mit-alert.danger  { background: #1a0005; border-color: #e8001c; color: #e8001c; }
 
-        .table{
-            background:#fff;
-            border-radius:12px;
-            overflow:hidden;
-        }
+/* Search bar */
+.mit-search-bar {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-bottom: 18px;
+}
+.mit-search-bar input[type="text"] {
+    flex: 1;
+    min-width: 180px;
+    max-width: 380px;
+    height: 36px;
+    padding: 0 12px;
+    background: #111;
+    border: 1px solid #222;
+    color: #ccc;
+    font-size: 12px;
+    font-family: 'Inter', sans-serif;
+    outline: none;
+    border-radius: 0;
+}
+.mit-search-bar input::placeholder { color: #444; }
+.mit-search-bar input:focus        { border-color: #e8001c; }
 
-        .table thead{
-            background:#dc3545;
-            color:#fff;
-        }
+.btn-mit {
+    height: 36px;
+    padding: 0 16px;
+    border: none;
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    clip-path: polygon(0 0, calc(100% - 7px) 0, 100% 7px, 100% 100%, 7px 100%, 0 calc(100% - 7px));
+    text-decoration: none;
+    white-space: nowrap;
+    transition: background .12s;
+}
+.btn-mit.primary         { background: #e8001c; color: #fff; }
+.btn-mit.primary:hover   { background: #ff1a33; color: #fff; }
+.btn-mit.secondary       { background: transparent; border: 1px solid #333; color: #888; clip-path: none; }
+.btn-mit.secondary:hover { border-color: #555; color: #ccc; text-decoration: none; }
 
-        .table th{
-            border:none;
-        }
+/* Table wrapper */
+.mit-table-wrap {
+    border: 1px solid #1e1e1e;
+    overflow-x: auto;
+}
 
-        .table td{
-            vertical-align:middle;
-        }
+/* Table */
+.activity-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+    min-width: 640px;
+}
+.activity-table thead tr { background: #111; }
+.activity-table thead th {
+    padding: 10px 14px;
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: #555;
+    border-bottom: 2px solid #e8001c;
+    text-align: left;
+    white-space: nowrap;
+}
+.activity-table thead th:nth-child(1) { width: 14%; }
+.activity-table thead th:nth-child(2) { width: 18%; }
+.activity-table thead th:nth-child(3) { width: auto; }
+.activity-table thead th:nth-child(4) { width: 16%; }
 
-    </style>
+.activity-table tbody tr {
+    border-bottom: 1px solid #161616;
+    transition: background .1s;
+}
+.activity-table tbody tr:last-child { border-bottom: none; }
+.activity-table tbody tr:hover { background: #111; }
+.activity-table td {
+    padding: 10px 14px;
+    vertical-align: middle;
+    color: #aaa;
+}
 
+/* User chip */
+.user-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+}
+.user-avatar {
+    width: 24px; height: 24px;
+    background: #1a0005;
+    border: 1px solid #3a0010;
+    color: #e8001c;
+    font-size: 9px;
+    font-weight: 700;
+    font-family: 'Rajdhani', sans-serif;
+    letter-spacing: .05em;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+.user-name { color: #ccc; font-size: 12px; white-space: nowrap; }
+
+/* Action badge */
+.action-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 2px 9px;
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .07em;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+.action-badge::before {
+    content: '';
+    width: 5px; height: 5px;
+    background: currentColor;
+    clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+    flex-shrink: 0;
+}
+.badge-added     { color: #00c853; border: 1px solid #003318; }
+.badge-updated   { color: #40c4ff; border: 1px solid #003344; }
+.badge-deleted   { color: #e8001c; border: 1px solid #3a0008; }
+.badge-login     { color: #ffa000; border: 1px solid #3d2700; }
+.badge-default   { color: #888;    border: 1px solid #222;    }
+
+/* Description */
+.td-desc { color: #666; font-size: 11px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 300px; }
+
+/* Timestamp */
+.td-time {
+    color: #444;
+    font-size: 11px;
+    font-family: 'Rajdhani', sans-serif;
+    letter-spacing: .04em;
+    white-space: nowrap;
+}
+
+/* Empty state */
+.mit-empty {
+    text-align: center;
+    padding: 2.5rem 1rem;
+    color: #2a2a2a;
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+}
+.mit-empty i { display: block; font-size: 28px; margin-bottom: .5rem; color: #1e1e1e; }
+</style>
 </head>
 <body>
 
-<!-- SIDEBAR -->
+<!-- SIDEBAR — untouched -->
 <div class="sidebar">
-
     <h4>Admin Panel</h4>
 
     <a href="admin_dashboard.php" class="<?= $currentPage=='dashboard'?'active':'' ?>">
         <i class="fas fa-chart-line"></i> Dashboard
     </a>
-
     <a href="admin_profile.php">
         <i class="fas fa-user"></i> Your Profile
     </a>
-
     <a href="admin_users.php">
         <i class="fas fa-users"></i> Manage Users
     </a>
-
     <a href="admin_vehicles.php">
         <i class="fas fa-car"></i> Manage Vehicles
     </a>
-
     <a href="admin_posts.php">
         <i class="fas fa-newspaper"></i> Posts
     </a>
-
     <a href="recent_activity.php" class="<?= $currentPage=='recent_activity'?'active':'' ?>">
         <i class="fas fa-history"></i> Recent Activity
     </a>
-
     <a href="admin_test_drives.php">
         <i class="fas fa-key"></i> Test Drives
-
         <?php if($pending_test_drives > 0): ?>
-            <span class="badge bg-danger badge-notif">
-                <?= $pending_test_drives ?>
-            </span>
+            <span class="badge bg-danger badge-notif"><?= $pending_test_drives ?></span>
         <?php endif; ?>
     </a>
-
     <a href="../logout.php">
         <i class="fas fa-sign-out-alt"></i> Logout
     </a>
-
 </div>
 
-<!-- CONTENT -->
+<!-- CONTENT — Mitsubishi theme -->
 <div class="content">
 
-    <div id="greetingBox">
-        <h3>Recent Activity</h3>
+    <div class="mit-page-header">
+        <div class="mit-diamond"></div>
+        <h2 class="mit-page-title">Recent Activity</h2>
     </div>
+    <div class="mit-red-bar"></div>
 
-    <div class="container mt-4">
+    <?php if (!$tableExists): ?>
+        <div class="mit-alert warning">Activities table does not exist.</div>
+    <?php elseif (isset($error)): ?>
+        <div class="mit-alert danger"><?= htmlspecialchars($error) ?></div>
+    <?php endif; ?>
 
-        <?php if (!$tableExists): ?>
-
-            <div class="alert alert-warning">
-                Activities table does not exist.
-            </div>
-
-        <?php elseif (isset($error)): ?>
-
-            <div class="alert alert-danger">
-                <?= htmlspecialchars($error); ?>
-            </div>
-
+    <!-- Search bar -->
+    <form method="GET">
+    <div class="mit-search-bar">
+        <input
+            type="text"
+            name="search"
+            placeholder="Search user, action, description…"
+            value="<?= htmlspecialchars($search) ?>"
+        >
+        <button type="submit" class="btn-mit primary">
+            <i class="fas fa-search"></i> Search
+        </button>
+        <?php if (!empty($search)): ?>
+            <a href="recent_activity.php" class="btn-mit secondary">
+                <i class="fas fa-times"></i> Reset
+            </a>
         <?php endif; ?>
-
-        <!-- HEADER + SEARCH -->
-        <div class="d-flex justify-content-between align-items-center flex-wrap mb-4">
-
-            <h2 class="mb-3 mb-md-0">
-                Recent Admin Activities
-            </h2>
-
-            <form method="GET" class="search-box d-flex">
-
-                <input 
-                    type="text"
-                    name="search"
-                    class="form-control me-2"
-                    placeholder="Search activity..."
-                    value="<?= htmlspecialchars($search) ?>"
-                >
-
-                <button class="btn btn-danger">
-                    <i class="fas fa-search"></i>
-                </button>
-
-                <?php if(!empty($search)): ?>
-                    <a href="recent_activity.php" class="btn btn-secondary ms-2">
-                        Reset
-                    </a>
-                <?php endif; ?>
-
-            </form>
-
-        </div>
-
-        <!-- TABLE -->
-        <div class="table-responsive">
-
-            <table class="table table-striped align-middle">
-
-                <thead>
-                    <tr>
-                        <th>User</th>
-                        <th>Action</th>
-                        <th>Description</th>
-                        <th>Timestamp</th>
-                    </tr>
-                </thead>
-
-                <tbody>
-
-                    <?php if (empty($activities)): ?>
-
-                        <tr>
-                            <td colspan="4" class="text-center py-4">
-                                No activities found.
-                            </td>
-                        </tr>
-
-                    <?php else: ?>
-
-                        <?php foreach ($activities as $activity): ?>
-
-                            <tr>
-
-                                <td>
-                                    <?= htmlspecialchars($activity['user']); ?>
-                                </td>
-
-                                <td>
-                                    <?= htmlspecialchars($activity['action']); ?>
-                                </td>
-
-                                <td>
-                                    <?= htmlspecialchars($activity['description'] ?? ''); ?>
-                                </td>
-
-                                <td>
-                                    <?= htmlspecialchars($activity['created_at']); ?>
-                                </td>
-
-                            </tr>
-
-                        <?php endforeach; ?>
-
-                    <?php endif; ?>
-
-                </tbody>
-
-            </table>
-
-        </div>
-
     </div>
+    </form>
 
-</div>
+    <!-- Table -->
+    <div class="mit-table-wrap">
+    <table class="activity-table">
+    <thead>
+        <tr>
+            <th>User</th>
+            <th>Action</th>
+            <th>Description</th>
+            <th>Timestamp</th>
+        </tr>
+    </thead>
+    <tbody>
+
+    <?php if (empty($activities)): ?>
+        <tr>
+            <td colspan="4">
+                <div class="mit-empty">
+                    <i class="fas fa-history"></i>
+                    No activities found
+                </div>
+            </td>
+        </tr>
+    <?php else: ?>
+        <?php foreach ($activities as $activity):
+
+            /* Avatar initials */
+            $parts    = explode(' ', trim($activity['user']));
+            $initials = strtoupper(substr($parts[0], 0, 1) . (isset($parts[1]) ? substr($parts[1], 0, 1) : ''));
+            if (strlen($initials) < 2) $initials = strtoupper(substr($activity['user'], 0, 2));
+
+            /* Action badge class */
+            $actionLower  = strtolower($activity['action']);
+            $badgeClass   = 'badge-default';
+            if (str_contains($actionLower, 'add') || str_contains($actionLower, 'creat') || str_contains($actionLower, 'insert')) {
+                $badgeClass = 'badge-added';
+            } elseif (str_contains($actionLower, 'updat') || str_contains($actionLower, 'edit')) {
+                $badgeClass = 'badge-updated';
+            } elseif (str_contains($actionLower, 'delet') || str_contains($actionLower, 'remov')) {
+                $badgeClass = 'badge-deleted';
+            } elseif (str_contains($actionLower, 'login') || str_contains($actionLower, 'logout') || str_contains($actionLower, 'auth')) {
+                $badgeClass = 'badge-login';
+            }
+
+            /* Format timestamp */
+            $ts = !empty($activity['created_at'])
+                ? date('M d, Y · H:i', strtotime($activity['created_at']))
+                : 'N/A';
+        ?>
+        <tr>
+            <td>
+                <div class="user-chip">
+                    <div class="user-avatar"><?= htmlspecialchars($initials) ?></div>
+                    <span class="user-name"><?= htmlspecialchars($activity['user']) ?></span>
+                </div>
+            </td>
+            <td>
+                <span class="action-badge <?= $badgeClass ?>">
+                    <?= htmlspecialchars($activity['action']) ?>
+                </span>
+            </td>
+            <td>
+                <div class="td-desc" title="<?= htmlspecialchars($activity['description'] ?? '') ?>">
+                    <?= htmlspecialchars($activity['description'] ?? '—') ?>
+                </div>
+            </td>
+            <td class="td-time"><?= $ts ?></td>
+        </tr>
+        <?php endforeach; ?>
+    <?php endif; ?>
+
+    </tbody>
+    </table>
+    </div><!-- /.mit-table-wrap -->
+
+</div><!-- /.content -->
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-
 </body>
-</html>
+</html>y
