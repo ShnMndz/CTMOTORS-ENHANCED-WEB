@@ -7,6 +7,68 @@ if (!isset($_SESSION['user']) || $_SESSION['role'] !== 'admin') {
     exit();
 }
 
+// ==========================
+// UPDATE STATUS + NOTIF
+// ✅ Must be BEFORE sidebar include to avoid headers already sent error
+// ==========================
+if (isset($_POST['update_status'])) {
+    $id            = $_POST['id'];
+    $status        = $_POST['status'];
+    $admin_notes   = isset($_POST['admin_notes'])   ? trim($_POST['admin_notes'])   : null;
+    $admin_message = isset($_POST['admin_message']) ? trim($_POST['admin_message']) : null;
+
+    $stmt = $conn->prepare("SELECT user_id FROM test_drives WHERE id = ?");
+    $stmt->bind_param("i", $id);
+    $stmt->execute();
+    $data = $stmt->get_result()->fetch_assoc();
+
+    if ($data) {
+        $user_id = $data['user_id'];
+
+        $stmt = $conn->prepare("
+            UPDATE test_drives
+            SET status=?, admin_notes=?, admin_message=?
+            WHERE id=?
+        ");
+        $stmt->bind_param("sssi", $status, $admin_notes, $admin_message, $id);
+        $stmt->execute();
+
+        // ✅ Fetch requester's name instead of ID
+        $nameRes       = $conn->query("SELECT fullname FROM test_drives WHERE id = " . intval($id));
+        $requesterName = $nameRes ? $nameRes->fetch_assoc()['fullname'] : "User #$id";
+
+        logActivity($conn, $_SESSION['user'], 'Updated Test Drive Status', "Updated test drive for $requesterName to status: $status");
+
+        $title = $message = "";
+
+        if ($status == 'approved') {
+            $title   = "Test Drive Approved";
+            $message = "Your test drive request has been approved.";
+        } elseif ($status == 'rejected') {
+            $title   = "Test Drive Rejected";
+            $message = "Your test drive request was rejected.";
+        } elseif ($status == 'completed') {
+            $title   = "Test Drive Completed";
+            $message = "Your test drive has been completed.";
+        }
+
+        if (!empty($title)) {
+            $stmt = $conn->prepare("
+                INSERT INTO notifications (user_id, title, message, type, reference_id)
+                VALUES (?, ?, ?, 'test_drive', ?)
+            ");
+            $stmt->bind_param("issi", $user_id, $title, $message, $id);
+            $stmt->execute();
+        }
+    }
+
+    header("Location: admin_test_drives.php");
+    exit();
+}
+
+// ==========================
+// Sidebar included AFTER all redirects
+// ==========================
 $currentPage = 'test_drives';
 include '../admin_sidebar/sidebar.php';
 
@@ -36,60 +98,6 @@ if (!empty($statusFilter)) {
 
 if (!empty($filterDate)) {
     $where .= " AND td.date = '$filterDate'";
-}
-
-// ==========================
-// UPDATE STATUS + NOTIF
-// ==========================
-if (isset($_POST['update_status'])) {
-    $id            = $_POST['id'];
-    $status        = $_POST['status'];
-    $admin_notes   = isset($_POST['admin_notes'])   ? trim($_POST['admin_notes'])   : null;
-    $admin_message = isset($_POST['admin_message']) ? trim($_POST['admin_message']) : null;
-
-    $stmt = $conn->prepare("SELECT user_id FROM test_drives WHERE id = ?");
-    $stmt->bind_param("i", $id);
-    $stmt->execute();
-    $data = $stmt->get_result()->fetch_assoc();
-
-    if ($data) {
-        $user_id = $data['user_id'];
-
-        $stmt = $conn->prepare("
-            UPDATE test_drives
-            SET status=?, admin_notes=?, admin_message=?
-            WHERE id=?
-        ");
-        $stmt->bind_param("sssi", $status, $admin_notes, $admin_message, $id);
-        $stmt->execute();
-
-        logActivity($conn, $_SESSION['user'], 'Updated Test Drive Status', "Updated test drive ID: $id to status: $status");
-
-        $title = $message = "";
-
-        if ($status == 'approved') {
-            $title   = "Test Drive Approved";
-            $message = "Your test drive request has been approved.";
-        } elseif ($status == 'rejected') {
-            $title   = "Test Drive Rejected";
-            $message = "Your test drive request was rejected.";
-        } elseif ($status == 'completed') {
-            $title   = "Test Drive Completed";
-            $message = "Your test drive has been completed.";
-        }
-
-        if (!empty($title)) {
-            $stmt = $conn->prepare("
-                INSERT INTO notifications (user_id, title, message, type, reference_id)
-                VALUES (?, ?, ?, 'test_drive', ?)
-            ");
-            $stmt->bind_param("issi", $user_id, $title, $message, $id);
-            $stmt->execute();
-        }
-    }
-
-    header("Location: admin_test_drives.php");
-    exit();
 }
 
 // ==========================
@@ -439,17 +447,16 @@ $pendingCount = $conn->query("
     clip-path: polygon(0 0, calc(100% - 7px) 0, 100% 7px, 100% 100%, 7px 100%, 0 calc(100% - 7px));
     transition: background .12s;
 }
-.btn-mit-submit.close-btn  { background: #1a1a1a; color: #888; }
-.btn-mit-submit.close-btn:hover  { background: #222; color: #ccc; }
-.btn-mit-submit.approve-btn { background: #006b2b; color: #fff; }
+.btn-mit-submit.close-btn       { background: #1a1a1a; color: #888; }
+.btn-mit-submit.close-btn:hover { background: #222; color: #ccc; }
+.btn-mit-submit.approve-btn     { background: #006b2b; color: #fff; }
 .btn-mit-submit.approve-btn:hover { background: #00a040; }
-.btn-mit-submit.reject-btn  { background: #e8001c; color: #fff; }
+.btn-mit-submit.reject-btn      { background: #e8001c; color: #fff; }
 .btn-mit-submit.reject-btn:hover  { background: #ff1a33; }
 </style>
 </head>
 
 <body>
-
 
 <!-- CONTENT — Mitsubishi theme -->
 <div class="content">
