@@ -8,6 +8,7 @@ if (!isset($_SESSION['user']) || $_SESSION['role'] !== 'admin') {
 }
 
 $currentPage = 'users';
+include 'sidebar.php';
 
 /* ---------------------
    ADD USER
@@ -263,22 +264,6 @@ $result_users = $conn->query("SELECT * FROM users $searchQuery ORDER BY id DESC"
 </head>
 <body>
 
-<!-- SIDEBAR — untouched -->
-<div class="sidebar">
-    <h4>Admin Panel</h4>
-    <a href="admin_dashboard.php" class="<?= $currentPage=='dashboard'?'active':'' ?>">
-        <i class="fas fa-chart-line"></i> Dashboard
-    </a>
-    <a href="admin_profile.php"><i class="fas fa-user"></i> Your Profile</a>
-    <a href="admin_users.php" class="<?= $currentPage=='users'?'active':'' ?>">
-        <i class="fas fa-users"></i> Manage Users
-    </a>
-    <a href="admin_vehicles.php"><i class="fas fa-car"></i> Manage Vehicles</a>
-    <a href="admin_posts.php"><i class="fas fa-newspaper"></i> Posts</a>
-    <a href="recent_activity.php"><i class="fas fa-history"></i> Recent Activity</a>
-    <a href="admin_test_drives.php"><i class="fas fa-key"></i> Test Drive</a>
-    <a href="../logout.php"><i class="fas fa-sign-out-alt"></i> Logout</a>
-</div>
 
 <!-- CONTENT -->
 <div class="content">

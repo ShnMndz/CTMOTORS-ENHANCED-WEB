@@ -4,30 +4,6 @@ body {
     color: #fff;
 }
 
-/* SIDEBAR */
-.sidebar {
-    width: 240px;
-    position: fixed;
-    height: 100%;
-    background: linear-gradient(180deg, #dc3545, #b52a34);
-    color: #fff;
-    padding: 20px;
-    box-shadow: 5px 0 15px rgba(0,0,0,0.3);
-}
-
-/* SIDEBAR LINKS */
-.sidebar a {
-    color: #fff;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin: 10px 0;
-    text-decoration: none;
-    padding: 10px 12px;
-    border-radius: 8px;
-    transition: 0.2s ease;
-    font-weight: 500;
-}
 
 /* ACTIVE + HOVER */
 .sidebar a.active,

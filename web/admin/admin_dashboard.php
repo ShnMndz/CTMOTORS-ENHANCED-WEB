@@ -7,7 +7,8 @@ if (!isset($_SESSION['user']) || $_SESSION['role'] !== 'admin') {
     exit();
 }
 
-$currentPage = 'dashboard';
+$currentPage = 'dashboard'; 
+include 'sidebar.php';
 
 /* STATS */
 $total_users = $conn->query("SELECT COUNT(*) as total FROM users")
@@ -48,36 +49,6 @@ $pending_test_drives = $conn->query("
 
 <body>
 
-<!-- SIDEBAR -->
-<div class="sidebar">
-
-    <h4>Admin Panel</h4>
-
-    <a href="admin_dashboard.php" class="<?= $currentPage=='dashboard'?'active':'' ?>">
-        <i class="fas fa-chart-line"></i> Dashboard
-    </a>
-    <a href="admin_profile.php"><i class="fas fa-user"></i>Your Profile</a>
-    <a href="admin_users.php"><i class="fas fa-users"></i> Manage Users</a>
-    <a href="admin_vehicles.php"><i class="fas fa-car"></i> Manage Vehicles</a>
-    <a href="admin_posts.php"><i class="fas fa-newspaper"></i> Posts</a>
-
-    <a href="recent_activity.php" class="<?= $currentPage=='recent_activity'?'active':'' ?>">
-        <i class="fas fa-history"></i> Recent Activity
-    </a>
-
-    <a href="admin_test_drives.php">
-        <i class="fas fa-key"></i> Test Drives
-        <?php if($pending_test_drives > 0): ?>
-            <span class="badge bg-danger badge-notif"><?= $pending_test_drives ?></span>
-        <?php endif; ?>
-    </a>
-
-   <a href="../logout.php" 
-   onclick="return confirm('Are you sure you want to logout?')">
-   <i class="fas fa-sign-out-alt"></i> Logout
-</a>
-
-</div>
 
 <!-- CONTENT -->
 <div class="content">

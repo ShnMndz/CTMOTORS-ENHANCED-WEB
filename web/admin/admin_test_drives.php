@@ -8,6 +8,7 @@ if (!isset($_SESSION['user']) || $_SESSION['role'] !== 'admin') {
 }
 
 $currentPage = 'test_drives';
+include 'sidebar.php';
 
 // ==========================
 // FILTERS
@@ -449,23 +450,6 @@ $pendingCount = $conn->query("
 
 <body>
 
-<!-- SIDEBAR — untouched, styled by admin_dashboard.css -->
-<div class="sidebar">
-    <h4>Admin Panel</h4>
-    <a href="admin_dashboard.php"><i class="fas fa-chart-line"></i> Dashboard</a>
-    <a href="admin_profile.php"><i class="fas fa-user"></i> Your Profile</a>
-    <a href="admin_users.php"><i class="fas fa-users"></i> Manage Users</a>
-    <a href="admin_vehicles.php"><i class="fas fa-car"></i> Manage Vehicles</a>
-    <a href="admin_posts.php"><i class="fas fa-newspaper"></i> Posts</a>
-    <a href="recent_activity.php"><i class="fas fa-history"></i> Recent Activity</a>
-    <a href="admin_test_drives.php" class="active">
-        <i class="fas fa-key"></i> Test Drive
-        <?php if ($pendingCount > 0): ?>
-            <span class="badge bg-warning text-dark"><?= $pendingCount ?></span>
-        <?php endif; ?>
-    </a>
-    <a href="../logout.php"><i class="fas fa-sign-out-alt"></i> Logout</a>
-</div>
 
 <!-- CONTENT — Mitsubishi theme -->
 <div class="content">

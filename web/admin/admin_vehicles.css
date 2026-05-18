@@ -9,18 +9,6 @@ body{
 }
 
 /* =========================
-   SIDEBAR (unchanged good)
-========================= */
-.sidebar {
-    width:240px;
-    height:100vh;
-    position:fixed;
-    background:linear-gradient(180deg,#dc3545,#b52a34);
-    color:#fff;
-    padding:20px;
-}
-
-/* =========================
    CONTENT
 ========================= */
 .content {
