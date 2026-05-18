@@ -203,6 +203,23 @@ function sidebarActive(string $page, string $currentPage): string {
 .content.sidebar-collapsed {
     margin-left: 70px;
 }
+
+/* SECTION LABEL */
+.sidebar-section {
+    color: #555;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin: 20px 0 10px;
+    padding: 0 14px;
+    white-space: nowrap;
+}
+
+/* Hide section labels when collapsed */
+.sidebar.collapsed .sidebar-section {
+    display: none;
+}
 </style>
 
 <div class="sidebar" id="adminSidebar">
@@ -217,6 +234,7 @@ function sidebarActive(string $page, string $currentPage): string {
         <span class="sidebar-label">Admin Panel</span>
     </h4>
 
+    <!-- MAIN -->
     <a href="admin_dashboard.php" class="<?= sidebarActive('dashboard', $currentPage ?? '') ?>" title="Dashboard">
         <i class="fas fa-chart-line"></i>
         <span class="sidebar-label">Dashboard</span>
@@ -227,20 +245,26 @@ function sidebarActive(string $page, string $currentPage): string {
         <span class="sidebar-label">Your Profile</span>
     </a>
 
+    <!-- MANAGE -->
+    <div class="sidebar-section">Manage</div>
+
     <a href="admin_users.php" class="<?= sidebarActive('users', $currentPage ?? '') ?>" title="Manage Users">
         <i class="fas fa-users"></i>
-        <span class="sidebar-label">Manage Users</span>
+        <span class="sidebar-label">Users</span>
     </a>
 
     <a href="admin_vehicles.php" class="<?= sidebarActive('vehicles', $currentPage ?? '') ?>" title="Manage Vehicles">
         <i class="fas fa-car"></i>
-        <span class="sidebar-label">Manage Vehicles</span>
+        <span class="sidebar-label">Vehicles</span>
     </a>
 
     <a href="admin_posts.php" class="<?= sidebarActive('posts', $currentPage ?? '') ?>" title="Posts">
         <i class="fas fa-newspaper"></i>
         <span class="sidebar-label">Posts</span>
     </a>
+
+    <!-- SYSTEM -->
+    <div class="sidebar-section">System</div>
 
     <a href="recent_activity.php" class="<?= sidebarActive('recent_activity', $currentPage ?? '') ?>" title="Recent Activity">
         <i class="fas fa-history"></i>
@@ -250,6 +274,7 @@ function sidebarActive(string $page, string $currentPage): string {
     <a href="admin_test_drives.php" class="<?= sidebarActive('test_drives', $currentPage ?? '') ?>" title="Test Drives">
         <i class="fas fa-key"></i>
         <span class="sidebar-label">Test Drives</span>
+
         <?php if ($pending_test_drives_sidebar > 0): ?>
             <span class="badge bg-danger badge-notif"><?= $pending_test_drives_sidebar ?></span>
         <?php endif; ?>
