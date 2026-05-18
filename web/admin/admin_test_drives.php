@@ -8,7 +8,7 @@ if (!isset($_SESSION['user']) || $_SESSION['role'] !== 'admin') {
 }
 
 $currentPage = 'test_drives';
-include 'sidebar.php';
+include '../admin_sidebar/sidebar.php';
 
 // ==========================
 // FILTERS

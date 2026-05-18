@@ -9,7 +9,7 @@ if (!isset($_SESSION['user']) || $_SESSION['role'] !== 'admin') {
 
 $imgPath = "../img/";
 $currentPage = 'posts'; 
-include 'sidebar.php';
+include '../admin_sidebar/sidebar.php';
 
 /* DELETE */
 if (isset($_GET['delete'])) {

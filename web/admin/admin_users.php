@@ -8,7 +8,7 @@ if (!isset($_SESSION['user']) || $_SESSION['role'] !== 'admin') {
 }
 
 $currentPage = 'users';
-include 'sidebar.php';
+include '../admin_sidebar/sidebar.php';
 
 /* ---------------------
    ADD USER

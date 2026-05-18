@@ -8,7 +8,7 @@ if (!isset($_SESSION['user']) || $_SESSION['role'] !== 'admin') {
 }
 
 $currentPage = 'recent_activity';; 
-include 'sidebar.php';
+include '../admin_sidebar/sidebar.php';
 
 $pending_test_drives = $conn->query("
     SELECT COUNT(*) as total 

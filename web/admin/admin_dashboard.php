@@ -8,7 +8,7 @@ if (!isset($_SESSION['user']) || $_SESSION['role'] !== 'admin') {
 }
 
 $currentPage = 'dashboard'; 
-include 'sidebar.php';
+include '../admin_sidebar/sidebar.php';
 
 /* STATS */
 $total_users = $conn->query("SELECT COUNT(*) as total FROM users")

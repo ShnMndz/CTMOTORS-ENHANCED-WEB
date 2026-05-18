@@ -8,7 +8,7 @@ if (!isset($_SESSION['user']) || $_SESSION['role'] !== 'admin') {
 }
 
 $currentPage = 'profile';
-include 'sidebar.php';
+include '../admin_sidebar/sidebar.php';
 $id = $_SESSION['user_id'];
 
 /* FETCH USER */
