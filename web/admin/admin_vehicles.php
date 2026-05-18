@@ -7,9 +7,6 @@ if (!isset($_SESSION['user']) || $_SESSION['role'] !== 'admin') {
     exit();
 }
 
-$currentPage = 'vehicles';
-include '../admin_sidebar/sidebar.php';
-
 // ---------------------
 // ADD / UPDATE VEHICLE
 // ---------------------
@@ -52,7 +49,8 @@ if(isset($_POST['save_vehicle'])){
         header("Location: admin_vehicles.php");
         exit();
     }
-}
+}$currentPage = 'vehicles';
+include '../admin_sidebar/sidebar.php';
 
 // ---------------------
 // DELETE VEHICLE

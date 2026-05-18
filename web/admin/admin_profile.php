@@ -7,8 +7,7 @@ if (!isset($_SESSION['user']) || $_SESSION['role'] !== 'admin') {
     exit();
 }
 
-$currentPage = 'profile';
-include '../admin_sidebar/sidebar.php';
+
 $id = $_SESSION['user_id'];
 
 /* FETCH USER */
@@ -161,6 +160,10 @@ if (isset($_POST['change_password'])) {
     header("Location: admin_profile.php");
     exit();
 }
+
+$currentPage = 'profile';
+include '../admin_sidebar/sidebar.php';
+
 
 /* Initials fallback */
 $initials = '';

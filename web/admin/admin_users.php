@@ -7,8 +7,7 @@ if (!isset($_SESSION['user']) || $_SESSION['role'] !== 'admin') {
     exit();
 }
 
-$currentPage = 'users';
-include '../admin_sidebar/sidebar.php';
+
 
 /* ---------------------
    ADD USER
@@ -39,6 +38,7 @@ if(isset($_POST['add_user'])){
     header("Location: admin_users.php?success=added");
     exit();
 }
+
 
 /* ---------------------
    UPDATE USER
@@ -81,6 +81,9 @@ if(isset($_POST['save_user'])){
     header("Location: admin_users.php?success=updated");
     exit();
 }
+
+$currentPage = 'users';
+include '../admin_sidebar/sidebar.php';
 
 /* ---------------------
    DELETE USER

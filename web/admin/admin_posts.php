@@ -8,8 +8,6 @@ if (!isset($_SESSION['user']) || $_SESSION['role'] !== 'admin') {
 }
 
 $imgPath = "../img/";
-$currentPage = 'posts'; 
-include '../admin_sidebar/sidebar.php';
 
 /* DELETE */
 if (isset($_GET['delete'])) {
@@ -33,6 +31,9 @@ if (isset($_GET['delete'])) {
     header("Location: admin_posts.php");
     exit();
 }
+
+$currentPage = 'posts'; 
+include '../admin_sidebar/sidebar.php';
 
 /* EDIT FETCH */
 $editData = null;
