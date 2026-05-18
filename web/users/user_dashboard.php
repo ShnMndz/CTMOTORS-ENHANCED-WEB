@@ -144,11 +144,89 @@ td.status-completed { color: #0dcaf0 !important; font-weight: 600; }
                 <p>No saved vehicles yet.</p>
             </div>
 
-            <div class="card">
-                <h4>Account Info</h4>
-                <p><b>Name:</b> <?= htmlspecialchars($user['fullname']) ?></p>
-                <p><b>Email:</b> <?= htmlspecialchars($user['email']) ?></p>
-            </div>
+          <div class="card">
+            
+    <h4>Account Info</h4>
+
+    <p>
+        <b>Name:</b>
+        <?= htmlspecialchars($user['fullname']) ?>
+    </p>
+
+    <p>
+        <b>Email:</b>
+        <?= htmlspecialchars($user['email']) ?>
+    </p>
+
+    <p>
+        <b>Birthday:</b>
+        <?= !empty($user['date_of_birth']) 
+            ? date("F d, Y", strtotime($user['date_of_birth'])) 
+            : '<span class="text-muted">Not set</span>' ?>
+    </p>
+
+    <p>
+        <b>Address:</b>
+        <?= !empty($user['address']) 
+            ? htmlspecialchars($user['address']) 
+            : '<span class="text-muted">Not set</span>' ?>
+    </p>
+
+    <p class="mb-0">
+        <b>Preferred Branch:</b>
+        <?= !empty($user['preferred_branch']) 
+            ? htmlspecialchars($user['preferred_branch']) 
+            : '<span class="text-muted">Not set</span>' ?>
+    </p>
+</div>
+            
+               <!-- VEHICLE PREFERENCES -->
+<div class="card">
+    <h4>Vehicle Preferences</h4>
+
+    <?php
+    $models = !empty($user['interested_models']) ? explode(',', $user['interested_models']) : [];
+    $fuel   = $user['fuel_preference'] ?? null;
+    $budget = $user['budget_range']    ?? null;
+    ?>
+
+    <?php if (empty($models) && !$fuel && !$budget): ?>
+        <p class="text-muted small">No preferences set yet. <a href="profile.php?tab=preferences">Set now →</a></p>
+    <?php else: ?>
+
+        <?php if (!empty($models)): ?>
+        <p class="mb-1"><b>Interested Models:</b></p>
+        <div class="d-flex flex-wrap gap-1 mb-3">
+            <?php foreach ($models as $model): ?>
+                <span style="
+                    background: #fff0f0;
+                    color: #e03e3e;
+                    border: 1px solid #f5c0c0;
+                    border-radius: 20px;
+                    padding: 2px 12px;
+                    font-size: 12px;
+                    font-weight: 500;
+                "><?= htmlspecialchars(trim($model)) ?></span>
+            <?php endforeach; ?>
+        </div>
+        <?php endif; ?>
+
+        <?php if ($fuel): ?>
+        <p class="mb-1"><b>Fuel Preference:</b>
+            <span class="text-muted"><?= htmlspecialchars($fuel) ?></span>
+        </p>
+        <?php endif; ?>
+
+        <?php if ($budget): ?>
+        <p class="mb-0"><b>Budget Range:</b>
+            <span class="text-muted"><?= htmlspecialchars($budget) ?></span>
+        </p>
+        <?php endif; ?>
+
+        <a href="profile.php?tab=preferences" class="small d-block mt-2">Edit preferences →</a>
+
+    <?php endif; ?>
+</div>
 
             <!-- TEST DRIVE -->
             <div class="card full">
