@@ -81,47 +81,8 @@ td.status-completed { color: #0dcaf0 !important; font-weight: 600; }
 
 <div class="dashboard">
 
-    <!-- SIDEBAR -->
-    <aside class="sidebar">
 
-        <div class="profile-box">
-            <img src="../uploads/<?= $user['profile_pic'] ?: 'default.png' ?>" class="avatar">
-
-            <div class="username">
-                <?= htmlspecialchars($user['fullname']) ?>
-            </div>
-
-            <div class="small">
-                <?= htmlspecialchars($user['email']) ?>
-            </div>
-
-            <div class="small">
-                Member since: <?= date("Y") ?>
-            </div>
-
-            <a href="profile.php">
-                <button class="btn-edit">Edit Profile</button>
-            </a>
-        </div>
-
-        <nav class="menu">
-            <a href="user_dashboard.php" class="menu-btn active">
-                <i class="fa-solid fa-user"></i>
-                Profile Status
-            </a>
-
-            <a href="my_testdrives.php" class="menu-btn">
-                <i class="fa-solid fa-calendar-check"></i>
-                Test Drive Request
-            </a>
-
-            <a href="saved_vehicles.php" class="menu-btn">
-                <i class="fa-solid fa-heart"></i>
-                Saved Vehicles
-            </a>
-        </nav>
-
-    </aside>
+    <?php include 'user_sidebar.php'; ?>
 
     <!-- MAIN PANEL -->
     <main class="panel">

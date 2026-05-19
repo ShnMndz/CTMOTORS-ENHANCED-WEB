@@ -115,61 +115,7 @@ body {
 
 <div class="dashboard">
 
-    <!-- SIDEBAR -->
-    <aside class="sidebar">
-
-        <div class="profile-box">
-            <img src="../uploads/<?= $user['profile_pic'] ?: 'default.png' ?>" class="avatar">
-
-            <div class="username">
-                <?= htmlspecialchars($user['fullname']) ?>
-            </div>
-
-            <div class="small">
-                <?= htmlspecialchars($user['email']) ?>
-            </div>
-
-            <div class="small">
-                Member since: <?= date("Y") ?>
-            </div>
-
-            <a href="profile.php">
-                <button class="btn-edit">Edit Profile</button>
-            </a>
-        </div>
-
-        <nav class="menu">
-            <a href="user_dashboard.php" class="menu-btn">
-                <i class="fa-solid fa-user"></i>
-                Profile Status
-            </a>
-
-            <a href="my_testdrives.php" class="menu-btn">
-                <i class="fa-solid fa-calendar-check"></i>
-                Test Drive Request
-            </a>
-
-            <a href="saved_vehicles.php" class="menu-btn active">
-                <i class="fa-solid fa-heart"></i>
-                Saved Vehicles
-            </a>
-        </nav>
-
-    </aside>
-
-    <!-- MAIN -->
-    <main class="panel">
-
-        <div class="top-bar">
-            <div>
-                <h3>Saved Vehicles</h3>
-                <p class="text-muted">Your wishlist collection ❤️</p>
-            </div>
-
-            <a href="../home.php" class="btn btn-outline-dark">
-                Return to Homepage
-            </a>
-        </div>
+    <?php include 'user_sidebar.php'; ?>
 
         <div class="grid">
 
