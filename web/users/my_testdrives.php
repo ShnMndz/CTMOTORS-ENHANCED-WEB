@@ -58,7 +58,10 @@ td.status-completed { color: #0dcaf0 !important; font-weight: 600; }
 
         <div class="box">
 
-            <h3>Test Drives History</h3>
+            <h3>
+    <i class="bi bi-speedometer2"></i>
+    Test Drive History
+</h3>
 
             <?php
             $stmt = $conn->prepare("
@@ -76,7 +79,7 @@ td.status-completed { color: #0dcaf0 !important; font-weight: 600; }
 
             <?php if ($result->num_rows > 0): ?>
 
-            <table class="table table-dark table-hover mt-3 text-center">
+        
                 <table class="table table-dark table-hover mt-3 text-center align-middle">
 
 <thead>
