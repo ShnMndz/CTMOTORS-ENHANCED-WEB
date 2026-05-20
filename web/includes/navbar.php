@@ -21,12 +21,14 @@ if (isset($_SESSION['user_id'])) {
 }
 ?>
 
+<link rel="stylesheet" href="<?= $base ?>/includes/navbar.css">
+
 <nav class="navbar navbar-expand-lg custom-navbar shadow-sm">
     <div class="container">
 
         <!-- Logo -->
         <a class="navbar-brand" href="<?= $base ?>/home.php">
-            <img src="<?= $base ?>/img/logo.png" class="navbar-logo">
+            <img src="<?= $base ?>/img/new-logo.png" class="navbar-logo">
         </a>
 
         <!-- Mobile toggle -->
