@@ -160,10 +160,10 @@ h2 {
 <!-- Hero Section -->
 <section class="hero-brochure d-flex align-items-center text-white">
     <div class="container text-center">
-        <h1 class="display-4 fw-bold">THE CITY NEEDS CITI MOTORS</h1>
+        <h1 class="display-4 fw-bold">THE CITY NEEDS  <span style="color: #E20000;">CITI MOTORS</span></h1>
         <p class="lead mt-3">Premium vehicles. Trusted service. Unmatched value.</p>
         <div class="mt-4">
-            <a href="products/products.php" class="btn btn-danger btn-lg me-2">View Vehicles</a>
+            <a href="products/products.php" class="btn btn-outline-light btn-lg">View Vehicles</a>
             <a href="tools/testdrive.php" class="btn btn-outline-light btn-lg">Book a Test Drive</a>
         </div>
     </div>
