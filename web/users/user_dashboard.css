@@ -33,6 +33,7 @@ body{
     padding:30px;
     box-sizing:border-box;
     background:#f5f7fb;
+    margin-left:260px;
 }
 
 .top-bar{
@@ -123,7 +124,23 @@ body{
     min-width:145px;
 }
 
-@media (max-width: 640px) {
+@media (max-width: 768px) {
+    .dashboard{
+        flex-direction:column;
+    }
+
+    .sidebar{
+        position:relative;
+        width:100%;
+        min-height:auto;
+        height:auto;
+        border-right:none;
+    }
+
+    .panel{
+        margin-left:0;
+    }
+
     .top-bar{
         flex-direction:column;
         align-items:flex-start;

@@ -3,12 +3,18 @@
 .sidebar{
     width:260px;
     min-width:260px;
+    height:100vh;
+    position:fixed;
+    top:0;
+    left:0;
     background:#050505;
     border-right:1px solid #1a1a1a;
     display:flex;
     flex-direction:column;
     padding:20px;
     box-sizing:border-box;
+    overflow-y:auto;
+    z-index:100;
 }
 
 /* PROFILE BOX */
