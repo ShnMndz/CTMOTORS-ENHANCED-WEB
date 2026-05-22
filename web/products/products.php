@@ -54,19 +54,55 @@ if ($filter_type === 'passenger' || $filter_type === 'commercial') {
 </style>
 <?php endif; ?>
 
-<!-- Search + Filter -->
-<div class="container my-4 product-search-bar">
-    <div class="row justify-content-center g-3">
-        <div class="col-md-4">
-            <input type="text" id="productSearch" class="form-control form-control-lg"
-                   placeholder="Search for vehicles..." onkeyup="searchProducts()">
-        </div>
-        <div class="col-md-3">
-            <select id="filterType" class="form-select form-select-lg" onchange="filterType()">
-                <option value="all"        <?= $filter_type === 'all'        ? 'selected' : '' ?>>All Types</option>
-                <option value="passenger"  <?= $filter_type === 'passenger'  ? 'selected' : '' ?>>Passenger</option>
-                <option value="commercial" <?= $filter_type === 'commercial' ? 'selected' : '' ?>>Commercial</option>
-            </select>
+<div class="product-search-bar">
+    <div class="container">
+        <div class="row align-items-center search-content">
+
+            <!-- LEFT -->
+            <div class="col-lg-5 mb-4 mb-lg-0">
+
+                <h1 class="hero-title">
+                    Explore Our
+                    <span>Vehicles</span>
+                </h1>
+
+                <p class="hero-subtitle">
+                    Find the perfect Mitsubishi that drives your ambition.
+                </p>
+
+            </div>
+
+            <!-- RIGHT -->
+            <div class="col-lg-7">
+
+                <div class="row g-3">
+
+                    <div class="col-md-7">
+                        <input
+                            type="text"
+                            id="productSearch"
+                            class="form-control"
+                            placeholder="Search for vehicles..."
+                            onkeyup="searchProducts()"
+                        >
+                    </div>
+
+                    <div class="col-md-5">
+                        <select
+                            id="filterType"
+                            class="form-select"
+                            onchange="filterType()"
+                        >
+                            <option value="all">All Types</option>
+                            <option value="passenger">Passenger</option>
+                            <option value="commercial">Commercial</option>
+                        </select>
+                    </div>
+
+                </div>
+
+            </div>
+
         </div>
     </div>
 </div>
@@ -107,57 +143,6 @@ if ($filter_type === 'passenger' || $filter_type === 'commercial') {
 </section>
 
 <!-- Footer -->
-<footer class="footer">
-  <div class="container">
-    <div class="row">
-
-      <div class="col-md-3 footer-column">
-        <h3>Main</h3>
-        <ul>
-          <li><a href="../home.php">Home</a></li>
-          <li><a href="../aboutus/aboutus.php">About Us</a></li>
-          <li><a href="../news/articles.php">News</a></li>
-          <li><a href="../contacts/contacts.php">Contact Us</a></li>
-        </ul>
-      </div>
-
-      <div class="col-md-3 footer-column">
-        <h3>Tools & Service</h3>
-        <ul>
-          <li><a href="../tools/vehicle_price_list.php">Price List</a></li>
-          <li><a href="../tools/compare.php">Compare Vehicles</a></li>
-          <li><a href="../tools/testdrive.php">Book a Test Drive</a></li>
-        </ul>
-      </div>
-
-      <div class="col-md-3 footer-column">
-        <h3>Products</h3>
-        <ul>
-          <li><a href="products.php">All Vehicles</a></li>
-          <?php
-          $vehicle_links = $conn->query("
-              SELECT * FROM vehicles v1 
-              WHERE image IS NOT NULL AND image != '' 
-              AND price IS NOT NULL
-              AND v1.id = (SELECT MIN(v2.id) FROM vehicles v2 WHERE v2.model_name = v1.model_name)
-              ORDER BY id ASC LIMIT 5
-          ");
-          while ($v = $vehicle_links->fetch_assoc()) {
-              echo "<li><a href='product-details.php?id=" . (int)$v['id'] . "'>" . htmlspecialchars($v['model_name']) . "</a></li>";
-          }
-          ?>
-        </ul>
-      </div>
-
-      <div class="col-md-3 footer-column">
-        <h3>Parts & Services</h3>
-        <ul>
-          <li><a href="../partsandservices/genuine_parts.php">Genuine Parts</a></li>
-          <li><a href="../partsandservices/services.php">Services</a></li>
-        </ul>
-      </div>
-
-    </div>
 
     <div class="footer-bottom text-center py-3">
       © Disclaimer: This website is made for test only by a student.
