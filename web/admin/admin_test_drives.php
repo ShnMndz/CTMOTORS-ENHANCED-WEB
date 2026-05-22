@@ -271,10 +271,14 @@ $pendingCount = $conn->query("
 }
 .drives-table tbody tr {
     border-bottom: 1px solid #161616;
-    transition: background .1s;
+    transition: background .1s, box-shadow .2s;
 }
 .drives-table tbody tr:last-child { border-bottom: none; }
 .drives-table tbody tr:hover { background: #111; }
+.drives-table tbody tr.pending-row {
+    box-shadow: inset 0 0 0 1px rgba(255, 160, 0, .18), 0 0 18px rgba(255, 160, 0, .18);
+    background: rgba(255, 160, 0, .04);
+}
 .drives-table td {
     padding: 10px 12px;
     vertical-align: middle;
@@ -523,7 +527,7 @@ $pendingCount = $conn->query("
         $hasRows = true;
         $statusClass = 'status-' . $row['status'];
     ?>
-    <tr>
+    <tr class="<?= $row['status'] === 'pending' ? 'pending-row' : '' ?>">
         <td class="td-name"><?= htmlspecialchars($row['fullname']) ?></td>
         <td class="td-email"><?= htmlspecialchars($row['email']) ?></td>
         <td><?= htmlspecialchars($row['contact']) ?></td>
