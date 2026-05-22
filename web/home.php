@@ -188,10 +188,9 @@ h2 {
                     Take on any journey with confidence, comfort, and control.
                 </p>
 
-                <a href="#" class="btn btn-outline-light mt-3 px-4 py-2">
-                    <i class="bi bi-plus"></i> READ MORE
-                </a>
-            </div>
+                <a href="partsandservices/genuine_parts.php" class="btn btn-outline-light mt-3 px-4 py-2">
+    <i class="bi bi-plus"></i> READ MORE
+</a>
 
             <!-- RIGHT SIDE (empty, image handles it) -->
             <div class="col-lg-6"></div>
