@@ -33,47 +33,27 @@ $stmt = $conn->prepare("
 $stmt->bind_param("i", $id);
 $stmt->execute();
 $testdrives = $stmt->get_result();
+
+// VEHICLE PREFERENCES
+$models = !empty($user['interested_models']) ? explode(',', $user['interested_models']) : [];
+$fuel   = $user['fuel_preference'] ?? null;
+$budget = $user['budget_range'] ?? null;
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
 <meta charset="UTF-8">
-<title>User Profile - CITI MOTORS</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>User Dashboard - CITI MOTORS</title>
 
 <link rel="stylesheet" href="user_dashboard.css">
+
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
-
-<style>
-body {
-    background: #f5f7fb;
-    color: #222;
-}
-
-.table {
-    background: #ffffff !important;
-}
-
-.table th {
-    background: #f1f3f6 !important;
-    color: #333 !important;
-}
-
-.table td {
-    background: #ffffff !important;
-    color: #333 !important;
-}
-
-.table-hover tbody tr:hover {
-    background: #f9fbff !important;
-}
-
-td.status-pending { color: #ff9800 !important; font-weight: 600; }
-td.status-approved { color: #28a745 !important; font-weight: 600; }
-td.status-rejected { color: #dc3545 !important; font-weight: 600; }
-td.status-completed { color: #0dcaf0 !important; font-weight: 600; }
-</style>
 
 </head>
 
@@ -81,157 +61,399 @@ td.status-completed { color: #0dcaf0 !important; font-weight: 600; }
 
 <div class="dashboard">
 
-
     <?php include 'user_sidebar.php'; ?>
 
     <!-- MAIN PANEL -->
     <main class="panel">
 
-        <div class="top-bar">
-            <div>
-                <h3>Good day, <?= htmlspecialchars($user['fullname']) ?> 👋</h3>
-                <p class="text-muted mb-0"><?= $currentDateTime ?></p>
-            </div>
+        <!-- HERO -->
+        <section class="hero-card">
 
-            <a href="../home.php" class="btn btn-outline-dark">
-                Return to Homepage
-            </a>
-        </div>
+            <div class="hero-left">
 
-        <div class="grid">
+                <span class="welcome-badge">
+                    <i class="fas fa-user-circle"></i>
+                    USER DASHBOARD
+                </span>
 
-            <div class="card">
-                <h4>Saved Vehicles</h4>
-                <p>No saved vehicles yet.</p>
-                <div class="card-actions">
-                    <a href="saved_vehicles.php" class="btn btn-outline-dark btn-sm">Browse vehicles</a>
+                <h1>
+                    Welcome back,
+                    <span><?= htmlspecialchars($user['fullname']) ?></span>
+                </h1>
+
+                <p>
+                    Manage your account, view test drive appointments,
+                    update your vehicle preferences, and stay connected with CITI MOTORS.
+                </p>
+
+                <div class="hero-actions">
+
+                    <a href="profile.php?tab=personal" class="btn btn-danger">
+                        <i class="fas fa-user-edit"></i>
+                        Edit Profile
+                    </a>
+
+                    <a href="../home.php" class="btn btn-outline-light">
+                        <i class="fas fa-home"></i>
+                        Homepage
+                    </a>
+
                 </div>
+
             </div>
 
-            <div class="card">
-                <h4>Account Info</h4>
-                <div class="info-row"><strong>Name:</strong> <?= htmlspecialchars($user['fullname']) ?></div>
-                <div class="info-row"><strong>Email:</strong> <?= htmlspecialchars($user['email']) ?></div>
-                <div class="info-row"><strong>Birthday:</strong> <?= !empty($user['date_of_birth']) ? date("F d, Y", strtotime($user['date_of_birth'])) : '<span class="text-muted">Not set</span>' ?></div>
-                <div class="info-row"><strong>Address:</strong> <?= !empty($user['address']) ? htmlspecialchars($user['address']) : '<span class="text-muted">Not set</span>' ?></div>
-                <div class="info-row"><strong>Preferred Branch:</strong> <?= !empty($user['preferred_branch']) ? htmlspecialchars($user['preferred_branch']) : '<span class="text-muted">Not set</span>' ?></div>
-                <div class="card-actions">
-                    <a href="profile.php?tab=personal" class="btn btn-outline-dark btn-sm">Edit profile</a>
+            <div class="hero-right">
+
+                <div class="quick-stat">
+                    <small>Current Date & Time</small>
+                    <h5><?= $currentDateTime ?></h5>
                 </div>
+
+                <div class="quick-stat">
+                    <small>Recent Appointments</small>
+                    <h2><?= $testdrives->num_rows ?></h2>
+                </div>
+
             </div>
 
-            <div class="card">
-                <h4>Vehicle Preferences</h4>
+        </section>
 
-                <?php
-                $models = !empty($user['interested_models']) ? explode(',', $user['interested_models']) : [];
-                $fuel   = $user['fuel_preference'] ?? null;
-                $budget = $user['budget_range']    ?? null;
-                ?>
+        <!-- QUICK STATS -->
+        <section class="stats-grid">
 
-                <?php if (empty($models) && !$fuel && !$budget): ?>
-                    <p class="text-muted small">No preferences set yet.</p>
-                <?php else: ?>
+            <div class="stat-card">
 
-                    <?php if (!empty($models)): ?>
-                        <p class="mb-2"><strong>Interested Models</strong></p>
-                        <div class="d-flex flex-wrap gap-1 mb-3">
-                            <?php foreach ($models as $model): ?>
-                                <span class="badge-pill secondary"><?= htmlspecialchars(trim($model)) ?></span>
-                            <?php endforeach; ?>
+                <div class="stat-icon bg-primary">
+                    <i class="fas fa-car"></i>
+                </div>
+
+                <div>
+                    <p>Saved Vehicles</p>
+                    <h3>0</h3>
+                </div>
+
+            </div>
+
+            <div class="stat-card">
+
+                <div class="stat-icon bg-success">
+                    <i class="fas fa-calendar-check"></i>
+                </div>
+
+                <div>
+                    <p>Appointments</p>
+                    <h3><?= $testdrives->num_rows ?></h3>
+                </div>
+
+            </div>
+
+            <div class="stat-card">
+
+                <div class="stat-icon bg-danger">
+                    <i class="fas fa-gas-pump"></i>
+                </div>
+
+                <div>
+                    <p>Fuel Preference</p>
+                    <h3>
+                        <?= !empty($fuel) ? htmlspecialchars($fuel) : 'N/A' ?>
+                    </h3>
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- MAIN GRID -->
+        <div class="dashboard-grid">
+
+            <!-- LEFT COLUMN -->
+            <div class="left-column">
+
+                <!-- ACCOUNT INFO -->
+                <div class="modern-card">
+
+                    <div class="card-header-custom">
+
+                        <h4>Account Information</h4>
+
+                        <a href="profile.php?tab=personal">
+                            Edit
+                        </a>
+
+                    </div>
+
+                    <div class="profile-info">
+
+                        <div class="profile-item">
+                            <span>Full Name</span>
+                            <strong><?= htmlspecialchars($user['fullname']) ?></strong>
                         </div>
-                    <?php endif; ?>
 
-                    <?php if ($fuel): ?>
-                        <div class="info-row"><strong>Fuel Preference:</strong> <span class="text-muted"><?= htmlspecialchars($fuel) ?></span></div>
-                    <?php endif; ?>
+                        <div class="profile-item">
+                            <span>Email Address</span>
+                            <strong><?= htmlspecialchars($user['email']) ?></strong>
+                        </div>
 
-                    <?php if ($budget): ?>
-                        <div class="info-row"><strong>Budget Range:</strong> <span class="text-muted"><?= htmlspecialchars($budget) ?></span></div>
-                    <?php endif; ?>
+                        <div class="profile-item">
+                            <span>Birthday</span>
+                            <strong>
+                                <?= !empty($user['date_of_birth'])
+                                    ? date("F d, Y", strtotime($user['date_of_birth']))
+                                    : 'Not set' ?>
+                            </strong>
+                        </div>
 
-                <?php endif; ?>
+                        <div class="profile-item">
+                            <span>Address</span>
+                            <strong>
+                                <?= !empty($user['address'])
+                                    ? htmlspecialchars($user['address'])
+                                    : 'Not set' ?>
+                            </strong>
+                        </div>
 
-                <div class="card-actions">
-                    <a href="profile.php?tab=preferences" class="btn btn-outline-dark btn-sm">Update preferences</a>
+                        <div class="profile-item">
+                            <span>Preferred Branch</span>
+                            <strong>
+                                <?= !empty($user['preferred_branch'])
+                                    ? htmlspecialchars($user['preferred_branch'])
+                                    : 'Not set' ?>
+                            </strong>
+                        </div>
+
+                    </div>
+
                 </div>
+
+                <!-- TEST DRIVE -->
+                <div class="modern-card">
+
+                    <div class="card-header-custom">
+
+                        <h4>Recent Test Drive Requests</h4>
+
+                        <span class="mini-badge">
+                            <?= $testdrives->num_rows ?> Recent
+                        </span>
+
+                    </div>
+
+                    <?php if ($testdrives->num_rows > 0): ?>
+
+                    <div class="table-responsive mt-3">
+
+                        <table class="table align-middle">
+
+                            <thead>
+                                <tr>
+                                    <th>Vehicle</th>
+                                    <th>Schedule</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+
+                            <?php
+                            $testdrives->data_seek(0);
+
+                            while($row = $testdrives->fetch_assoc()):
+
+                                $status = strtolower($row['status']);
+                            ?>
+
+                                <tr>
+
+                                    <td>
+
+                                        <strong>
+                                            <?= htmlspecialchars($row['model_name']) ?>
+                                        </strong>
+
+                                        <br>
+
+                                        <small class="text-muted">
+                                            <?= htmlspecialchars($row['model_variant']) ?>
+                                        </small>
+
+                                    </td>
+
+                                    <td>
+
+                                        <?= $row['date'] ?>
+
+                                        <br>
+
+                                        <small class="text-muted">
+                                            <?= $row['time'] ?>
+                                        </small>
+
+                                    </td>
+
+                                    <td>
+
+                                        <span class="status-pill status-<?= $status ?>">
+                                            <?= ucfirst($status) ?>
+                                        </span>
+
+                                    </td>
+
+                                    <td>
+
+                                        <?php if ($status == 'approved' && !empty($row['admin_message'])): ?>
+
+                                            <button class="btn btn-success btn-sm"
+                                                    data-bs-toggle="modal"
+                                                    data-bs-target="#modal<?= $row['id'] ?>">
+
+                                                View
+
+                                            </button>
+
+                                        <?php elseif ($status == 'rejected' && !empty($row['admin_notes'])): ?>
+
+                                            <button class="btn btn-danger btn-sm"
+                                                    data-bs-toggle="modal"
+                                                    data-bs-target="#modal<?= $row['id'] ?>">
+
+                                                View
+
+                                            </button>
+
+                                        <?php else: ?>
+
+                                            <span class="text-muted small">
+                                                —
+                                            </span>
+
+                                        <?php endif; ?>
+
+                                    </td>
+
+                                </tr>
+
+                            <?php endwhile; ?>
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+                    <?php else: ?>
+
+                        <div class="empty-state">
+
+                            <i class="fas fa-calendar-times"></i>
+
+                            <p>No appointment requests yet.</p>
+
+                        </div>
+
+                    <?php endif; ?>
+
+                </div>
+
             </div>
 
-            <!-- TEST DRIVE -->
-            <div class="card full">
-                <h4>Test Drive Appointment (Recent Requests)</h4>
+            <!-- RIGHT COLUMN -->
+            <div class="right-column">
 
-                <?php if ($testdrives->num_rows > 0): ?>
+                <!-- VEHICLE PREFERENCES -->
+                <div class="modern-card">
 
-                <table class="table table-hover mt-3 text-center">
-                    <thead>
-                        <tr>
-                            <th>Vehicle</th>
-                            <th>Date</th>
-                            <th>Time</th>
-                            <th>Status</th>
-                            <th>Details</th>
-                        </tr>
-                    </thead>
+                    <div class="card-header-custom">
 
-                    <tbody>
-                    <?php while($row = $testdrives->fetch_assoc()): 
-                        $status = strtolower($row['status']);
-                    ?>
-                        <tr>
+                        <h4>Vehicle Preferences</h4>
 
-                            <td>
-                                <?= htmlspecialchars($row['model_name']) ?>
-                                <br>
-                                <small>(<?= htmlspecialchars($row['model_variant']) ?>)</small>
-                            </td>
+                        <a href="profile.php?tab=preferences">
+                            Update
+                        </a>
 
-                            <td><?= $row['date'] ?></td>
-                            <td><?= $row['time'] ?></td>
+                    </div>
 
-                            <td class="status-<?= $status ?>">
-                                <?= ucfirst($status) ?>
-                            </td>
+                    <?php if (empty($models) && !$fuel && !$budget): ?>
 
-                            <!-- DETAILS BUTTON -->
-                           <td class="text-center">
+                        <div class="empty-state">
 
-    <div class="d-grid gap-2">
+                            <i class="fas fa-sliders-h"></i>
 
-        <?php if ($status == 'approved' && !empty($row['admin_message'])): ?>
+                            <p>No preferences added yet.</p>
 
-            <button class="btn btn-success btn-sm"
-                    data-bs-toggle="modal"
-                    data-bs-target="#modal<?= $row['id'] ?>">
-                View Message
-            </button>
+                        </div>
 
-        <?php elseif ($status == 'rejected' && !empty($row['admin_notes'])): ?>
+                    <?php else: ?>
 
-            <button class="btn btn-danger btn-sm"
-                    data-bs-toggle="modal"
-                    data-bs-target="#modal<?= $row['id'] ?>">
-                View Reason
-            </button>
+                        <?php if (!empty($models)): ?>
 
-        <?php else: ?>
+                            <div class="mb-4">
 
-            <span class="text-muted small">No details</span>
+                                <p class="section-title">
+                                    Interested Models
+                                </p>
 
-        <?php endif; ?>
+                                <div class="tag-wrapper">
 
-    </div>
+                                    <?php foreach ($models as $model): ?>
 
-</td>
+                                        <span class="custom-tag">
+                                            <?= htmlspecialchars(trim($model)) ?>
+                                        </span>
 
-                        </tr>
-                    <?php endwhile; ?>
-                    </tbody>
-                </table>
+                                    <?php endforeach; ?>
 
-                <?php else: ?>
-                    <p>No appointment scheduled yet.</p>
-                <?php endif; ?>
+                                </div>
+
+                            </div>
+
+                        <?php endif; ?>
+
+                        <?php if ($fuel): ?>
+
+                            <div class="profile-item">
+                                <span>Fuel Preference</span>
+                                <strong><?= htmlspecialchars($fuel) ?></strong>
+                            </div>
+
+                        <?php endif; ?>
+
+                        <?php if ($budget): ?>
+
+                            <div class="profile-item mt-3">
+                                <span>Budget Range</span>
+                                <strong><?= htmlspecialchars($budget) ?></strong>
+                            </div>
+
+                        <?php endif; ?>
+
+                    <?php endif; ?>
+
+                </div>
+
+                <!-- SAVED VEHICLES -->
+                <div class="modern-card">
+
+                    <div class="card-header-custom">
+
+                        <h4>Saved Vehicles</h4>
+
+                    </div>
+
+                    <div class="empty-state">
+
+                        <i class="fas fa-bookmark"></i>
+
+                        <p>No saved vehicles yet.</p>
+
+                        <a href="saved_vehicles.php" class="btn btn-dark btn-sm">
+                            Browse Vehicles
+                        </a>
+
+                    </div>
+
+                </div>
 
             </div>
 
@@ -242,41 +464,64 @@ td.status-completed { color: #0dcaf0 !important; font-weight: 600; }
 </div>
 
 <!-- ================= MODALS ================= -->
-<?php 
+
+<?php
 $testdrives->data_seek(0);
+
 while($row = $testdrives->fetch_assoc()):
+
 $status = strtolower($row['status']);
 ?>
 
 <div class="modal fade" id="modal<?= $row['id'] ?>" tabindex="-1">
-  <div class="modal-dialog">
-    <div class="modal-content bg-dark text-white">
 
-      <div class="modal-header">
-        <h5 class="modal-title">
-            <?= ucfirst($status) ?> Details
-        </h5>
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-      </div>
+    <div class="modal-dialog">
 
-      <div class="modal-body">
+        <div class="modal-content bg-dark text-white border-0">
 
-        <?php if ($status == 'rejected'): ?>
+            <div class="modal-header border-secondary">
 
-            <h6 class="text-danger">Rejection Reason:</h6>
-            <p><?= htmlspecialchars($row['admin_notes'] ?: 'No reason provided') ?></p>
+                <h5 class="modal-title">
+                    <?= ucfirst($status) ?> Details
+                </h5>
 
-        <?php elseif ($status == 'approved'): ?>
+                <button type="button"
+                        class="btn-close btn-close-white"
+                        data-bs-dismiss="modal">
+                </button>
 
-            <h6 class="text-success">Admin Message:</h6>
-            <p><?= htmlspecialchars($row['admin_message'] ?: 'Approved without message') ?></p>
+            </div>
 
-        <?php endif; ?>
+            <div class="modal-body">
 
-      </div>
+                <?php if ($status == 'rejected'): ?>
+
+                    <h6 class="text-danger">
+                        Rejection Reason
+                    </h6>
+
+                    <p>
+                        <?= htmlspecialchars($row['admin_notes'] ?: 'No reason provided') ?>
+                    </p>
+
+                <?php elseif ($status == 'approved'): ?>
+
+                    <h6 class="text-success">
+                        Admin Message
+                    </h6>
+
+                    <p>
+                        <?= htmlspecialchars($row['admin_message'] ?: 'Approved without message') ?>
+                    </p>
+
+                <?php endif; ?>
+
+            </div>
+
+        </div>
 
     </div>
-  </div>
+
 </div>
 
 <?php endwhile; ?>
