@@ -26,7 +26,7 @@ body {
     color:#fff;
     font-family:'Poppins',sans-serif;
     overflow-x: hidden;
-}
+}sas
 
 /* ✅ FIX: sariling container (hindi bootstrap) */
 .price-container {
