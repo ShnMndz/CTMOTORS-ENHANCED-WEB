@@ -431,7 +431,7 @@ $result = $stmt->get_result();
 <div class="content">
 
     <div class="mit-page-header">
-        <div class="mit-diamond"></div>
+        <div class="fas fa-car"></div>
         <h2 class="mit-page-title">Manage Vehicles</h2>
     </div>
     <div class="mit-red-bar"></div>

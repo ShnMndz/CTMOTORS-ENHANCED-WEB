@@ -272,7 +272,7 @@ $result_users = $conn->query("SELECT * FROM users $searchQuery ORDER BY id DESC"
 <div class="content">
 
     <div class="mit-page-header">
-        <div class="mit-diamond"></div>
+        <div class="fa-solid fa-users"></div>
         <h2 class="mit-page-title">Manage Users</h2>
     </div>
     <div class="mit-red-bar"></div>

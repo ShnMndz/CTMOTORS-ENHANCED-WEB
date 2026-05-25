@@ -466,7 +466,7 @@ $pendingCount = $conn->query("
 <div class="content">
 
     <div class="mit-page-header">
-        <div class="mit-diamond"></div>
+        <div class="fas fa-key"></div>
         <h2 class="mit-page-title">
             Test Drive Requests
             <?php if ($pendingCount > 0): ?>

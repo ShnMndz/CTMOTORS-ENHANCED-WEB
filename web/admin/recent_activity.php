@@ -280,7 +280,7 @@ $tableExists = $tableCheck && $tableCheck->num_rows > 0;
 <div class="content">
 
     <div class="mit-page-header">
-        <div class="mit-diamond"></div>
+        <div class="fas fa-history"></div>
         <h2 class="mit-page-title">Recent Activity</h2>
     </div>
     <div class="mit-red-bar"></div>
