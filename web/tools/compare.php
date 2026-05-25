@@ -1,20 +1,12 @@
 <?php
-// ----------------------------
-// Prevent caching
-// ----------------------------
 header("Cache-Control: no-cache, no-store, must-revalidate");
 header("Pragma: no-cache");
 header("Expires: 0");
 
-// ----------------------------
-// DB
-// ----------------------------
 include '../db.php';
 
-// Fetch all vehicles
 $allVehicles = $conn->query("SELECT id, model_name, model_variant FROM vehicles ORDER BY model_name ASC");
 
-// IDs
 $id1 = 0;
 $id2 = 0;
 
@@ -23,246 +15,315 @@ if($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['id1']) && isset($_GET['i
     $id2 = intval($_GET['id2']);
 }
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Compare Vehicles - CITI MOTORS</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Compare Vehicles – CITI MOTORS</title>
 
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css" rel="stylesheet">
 
 <link rel="stylesheet" href="/citimotorsweb/web/global.css">
-
-<style>
-body {
-    background:#f8fafc;
-    font-family:'Poppins', sans-serif;
-}
-
-.compare-container {
-    max-width: 1200px;
-    margin: 40px auto;
-}
-
-/* TABLE */
-.compare-table {
-    width: 100%;
-    background: #fff;
-    border-radius: 12px;
-    overflow: hidden;
-    box-shadow: 0 5px 20px rgba(0,0,0,0.1);
-}
-
-.compare-table th,
-.compare-table td {
-    padding: 15px;
-    text-align: center;
-    vertical-align: top;
-}
-
-/* IMAGE */
-.compare-img {
-    width: 100%;
-    max-width: 250px;
-    height: 150px;
-    object-fit: contain;
-}
-
-/* FEATURES */
-.feature-list {
-    text-align: left;
-    padding-left: 10px;
-}
-
-/* FORM */
-.selection-form {
-    margin-bottom: 30px;
-}
-
-/* 🏆 BADGE */
-.best-value-badge {
-    display: inline-block;
-    margin-bottom: 8px;
-}
-
-.best-value-badge img {
-    width: 40px;
-}
-
-/* 💚 FULL COLUMN HIGHLIGHT */
-.best-column {
-    background: linear-gradient(180deg, rgba(34,197,94,0.12), rgba(34,197,94,0.04));
-    box-shadow: inset 0 0 25px rgba(34,197,94,0.35);
-    border-left: 3px solid #22c55e;
-    border-right: 3px solid #22c55e;
-    transition: 0.3s ease;
-}
-
-/* glow effect for images */
-.best-column img {
-    filter: drop-shadow(0 0 6px rgba(34,197,94,0.6));
-}
-</style>
-
-<script>
-function submitCompare() {
-    document.getElementById('compareForm').submit();
-}
-</script>
-
+<link rel="stylesheet" href="/citimotorsweb/web/tools/compare.css">
 </head>
+
 <body>
 
 <?php include $_SERVER['DOCUMENT_ROOT'].'/citimotorsweb/web/includes/navbar.php'; ?>
 
-<div class="container compare-container">
+<div class="compare-page">
 
-    <h2 class="text-center mb-4">Vehicle Comparison</h2>
+<main class="main">
 
-    <!-- SELECTORS -->
-    <form id="compareForm" method="GET" class="selection-form row g-3 justify-content-center mb-4">
+  <div class="page-hero">
+    <div>
+      <div class="hero-eyebrow">Vehicle Comparison Tool</div>
+      <div class="hero-title">
+        Compare.<br>
+        <em>Decide.</em><br>
+        Drive.
+      </div>
+    </div>
 
-        <div class="col-md-5">
-            <select name="id1" class="form-select" onchange="submitCompare()">
-                <option value="">Select first vehicle</option>
-                <?php $allVehicles->data_seek(0); while($v = $allVehicles->fetch_assoc()): ?>
-                    <option value="<?= $v['id']; ?>" <?= $v['id']==$id1?'selected':''; ?>
-                        <?= ($id2 && $v['id']==$id2)?'disabled':''; ?>>
-                        <?= htmlspecialchars($v['model_name'].' - '.$v['model_variant']); ?>
-                    </option>
-                <?php endwhile; ?>
-            </select>
+    <div class="hero-desc">
+      Select two vehicles from the dropdowns below to see a full spec-by-spec breakdown and find the right match for you.
+    </div>
+  </div>
+
+  <!-- SELECTOR -->
+  <form id="compareForm" method="GET">
+
+    <div class="selector-row">
+
+      <div class="selector-panel">
+        <div class="sel-label">
+          <span>01</span> — First Vehicle
         </div>
 
-        <div class="col-md-5">
-            <select name="id2" class="form-select" onchange="submitCompare()">
-                <option value="">Select second vehicle</option>
-                <?php $allVehicles->data_seek(0); while($v = $allVehicles->fetch_assoc()): ?>
-                    <option value="<?= $v['id']; ?>" <?= $v['id']==$id2?'selected':''; ?>
-                        <?= ($id1 && $v['id']==$id1)?'disabled':''; ?>>
-                        <?= htmlspecialchars($v['model_name'].' - '.$v['model_variant']); ?>
-                    </option>
-                <?php endwhile; ?>
-            </select>
+        <select name="id1" onchange="document.getElementById('compareForm').submit()">
+          <option value="">Select a vehicle…</option>
+
+          <?php $allVehicles->data_seek(0); while($v = $allVehicles->fetch_assoc()): ?>
+
+            <option
+              value="<?= $v['id']; ?>"
+              <?= $v['id'] == $id1 ? 'selected' : ''; ?>
+              <?= ($id2 && $v['id'] == $id2) ? 'disabled' : ''; ?>>
+
+              <?= htmlspecialchars($v['model_name'].' - '.$v['model_variant']); ?>
+
+            </option>
+
+          <?php endwhile; ?>
+        </select>
+      </div>
+
+      <div class="vs-center">VS</div>
+
+      <div class="selector-panel">
+        <div class="sel-label">
+          <span>02</span> — Second Vehicle
         </div>
 
-    </form>
+        <select name="id2" onchange="document.getElementById('compareForm').submit()">
+          <option value="">Select a vehicle…</option>
 
-<?php
-if($id1 && $id2):
+          <?php $allVehicles->data_seek(0); while($v = $allVehicles->fetch_assoc()): ?>
 
-    $stmt = $conn->prepare("SELECT * FROM vehicles WHERE id IN (?, ?)");
-    $stmt->bind_param("ii", $id1, $id2);
-    $stmt->execute();
-    $result = $stmt->get_result();
+            <option
+              value="<?= $v['id']; ?>"
+              <?= $v['id'] == $id2 ? 'selected' : ''; ?>
+              <?= ($id1 && $v['id'] == $id1) ? 'disabled' : ''; ?>>
 
-    $vehicles = [];
-    while($row = $result->fetch_assoc()) $vehicles[$row['id']] = $row;
+              <?= htmlspecialchars($v['model_name'].' - '.$v['model_variant']); ?>
 
-    if(count($vehicles)<2){
-        echo "<div class='alert alert-danger'>Could not fetch both vehicles.</div>";
-    } else {
+            </option>
 
-        $v1 = $vehicles[$id1];
-        $v2 = $vehicles[$id2];
+          <?php endwhile; ?>
+        </select>
+      </div>
 
-        $f1 = array_map('trim', explode("\n", $v1['features']));
-        $f2 = array_map('trim', explode("\n", $v2['features']));
+    </div>
 
-        // BEST VALUE (lower price wins)
-        $bestValueId = ($v1['price'] <= $v2['price']) ? $id1 : $id2;
+  </form>
 
-        // COLUMN CLASSES
-        $col1Class = ($bestValueId == $id1) ? 'best-column' : '';
-        $col2Class = ($bestValueId == $id2) ? 'best-column' : '';
-?>
+  <?php if($id1 && $id2): ?>
 
-<table class="table compare-table">
+    <?php
+      $stmt = $conn->prepare("SELECT * FROM vehicles WHERE id IN (?, ?)");
+      $stmt->bind_param("ii", $id1, $id2);
+      $stmt->execute();
+
+      $result = $stmt->get_result();
+
+      $vehicles = [];
+
+      while($row = $result->fetch_assoc()){
+        $vehicles[$row['id']] = $row;
+      }
+
+      if(count($vehicles) < 2):
+    ?>
+
+      <div class="empty-state">
+        <i class="bi bi-exclamation-circle"></i>
+        <p>Could not load both vehicles. Please try again.</p>
+      </div>
+
+    <?php else:
+
+      $v1 = $vehicles[$id1];
+      $v2 = $vehicles[$id2];
+
+      $f1 = array_filter(array_map('trim', explode("\n", $v1['features'])));
+      $f2 = array_filter(array_map('trim', explode("\n", $v2['features'])));
+
+      $bestValueId = ($v1['price'] <= $v2['price']) ? $id1 : $id2;
+
+      $savings = abs($v1['price'] - $v2['price']);
+    ?>
+
+    <!-- HERO CARDS -->
+    <div class="vehicle-heroes">
+
+      <div class="vehicle-card <?= $bestValueId == $id1 ? 'winner' : 'plain'; ?>">
+
+        <?php if($bestValueId == $id1): ?>
+          <div class="winner-badge">
+            <i class="bi bi-trophy-fill"></i>
+            Best Value
+          </div>
+        <?php endif; ?>
+
+        <div class="card-num">Vehicle 01</div>
+
+        <div class="card-name">
+          <?= htmlspecialchars($v1['model_name']); ?>
+        </div>
+
+        <div class="card-variant">
+          <?= htmlspecialchars($v1['model_variant']); ?>
+        </div>
+
+        <div class="card-img">
+          <img src="../img/<?= htmlspecialchars($v1['image']); ?>">
+        </div>
+
+        <div class="price-lbl">Starting Price</div>
+
+        <div class="price-row">
+
+          <div class="price-tag">
+            ₱<?= number_format($v1['price'],2); ?>
+          </div>
+
+          <?php if($bestValueId == $id1 && $savings > 0): ?>
+
+            <div class="savings-pill">
+              Save ₱<?= number_format($savings,0); ?>
+            </div>
+
+          <?php endif; ?>
+
+        </div>
+
+      </div>
+
+      <div class="vehicle-card <?= $bestValueId == $id2 ? 'winner' : 'plain'; ?>">
+
+        <?php if($bestValueId == $id2): ?>
+          <div class="winner-badge">
+            <i class="bi bi-trophy-fill"></i>
+            Best Value
+          </div>
+        <?php endif; ?>
+
+        <div class="card-num">Vehicle 02</div>
+
+        <div class="card-name">
+          <?= htmlspecialchars($v2['model_name']); ?>
+        </div>
+
+        <div class="card-variant">
+          <?= htmlspecialchars($v2['model_variant']); ?>
+        </div>
+
+        <div class="card-img">
+          <img src="../img/<?= htmlspecialchars($v2['image']); ?>">
+        </div>
+
+        <div class="price-lbl">Starting Price</div>
+
+        <div class="price-row">
+
+          <div class="price-tag">
+            ₱<?= number_format($v2['price'],2); ?>
+          </div>
+
+          <?php if($bestValueId == $id2 && $savings > 0): ?>
+
+            <div class="savings-pill">
+              Save ₱<?= number_format($savings,0); ?>
+            </div>
+
+          <?php endif; ?>
+
+        </div>
+
+      </div>
+
+    </div>
 
     <!-- HEADER -->
-    <tr>
-        <th>Feature</th>
+    <div class="spec-block">
 
-        <th class="<?= $col1Class; ?>">
-            <?php if($bestValueId == $id1): ?>
-                <div class="best-value-badge">
-                    <img src="https://cdn-icons-png.flaticon.com/512/2583/2583344.png">
-                    <div><small class="text-success fw-bold">Best Value</small></div>
-                </div>
-            <?php endif; ?>
-            <?= htmlspecialchars($v1['model_name']); ?>
-        </th>
+      <div class="spec-header">
 
-        <th class="<?= $col2Class; ?>">
-            <?php if($bestValueId == $id2): ?>
-                <div class="best-value-badge">
-                    <img src="https://cdn-icons-png.flaticon.com/512/2583/2583344.png">
-                    <div><small class="text-success fw-bold">Best Value</small></div>
-                </div>
-            <?php endif; ?>
-            <?= htmlspecialchars($v2['model_name']); ?>
-        </th>
-    </tr>
+        <div class="spec-header-cell">
+          <div class="red-bar"></div>
+          <?= htmlspecialchars($v1['model_name']); ?>
+        </div>
 
-    <!-- IMAGE -->
-    <tr>
-        <td>Image</td>
-        <td class="<?= $col1Class; ?>">
-            <img src="../img/<?= htmlspecialchars($v1['image']); ?>" class="compare-img">
-        </td>
-        <td class="<?= $col2Class; ?>">
-            <img src="../img/<?= htmlspecialchars($v2['image']); ?>" class="compare-img">
-        </td>
-    </tr>
+        <div class="spec-header-cell">
+          <div class="red-bar"></div>
+          <?= htmlspecialchars($v2['model_name']); ?>
+        </div>
 
-    <!-- VARIANT -->
-    <tr>
-        <td>Variant</td>
-        <td class="<?= $col1Class; ?>">
-            <?= htmlspecialchars($v1['model_variant']); ?>
-        </td>
-        <td class="<?= $col2Class; ?>">
-            <?= htmlspecialchars($v2['model_variant']); ?>
-        </td>
-    </tr>
+      </div>
 
-    <!-- PRICE -->
-    <tr>
-        <td>Price</td>
-        <td class="<?= $col1Class; ?>">
-            ₱<?= number_format($v1['price'],2); ?>
-        </td>
-        <td class="<?= $col2Class; ?>">
-            ₱<?= number_format($v2['price'],2); ?>
-        </td>
-    </tr>
+    </div>
 
     <!-- FEATURES -->
-    <tr>
-        <td>Key Features</td>
+    <div class="features-block">
 
-        <td class="feature-list <?= $col1Class; ?>">
-            <?php foreach($f1 as $feat): ?>
-                <div><?= htmlspecialchars($feat); ?></div>
-            <?php endforeach; ?>
-        </td>
+      <div class="features-col">
 
-        <td class="feature-list <?= $col2Class; ?>">
-            <?php foreach($f2 as $feat): ?>
-                <div><?= htmlspecialchars($feat); ?></div>
-            <?php endforeach; ?>
-        </td>
-    </tr>
+        <div class="feat-hd">
+          <div class="acc"></div>
+          <?= htmlspecialchars($v1['model_name']); ?> — Features
+        </div>
 
-</table>
+        <?php foreach($f1 as $feat): ?>
 
-<?php
-    }
-endif;
-?>
+          <div class="feat-item">
+            <i class="bi bi-check2"></i>
+            <span><?= htmlspecialchars($feat); ?></span>
+          </div>
+
+        <?php endforeach; ?>
+
+      </div>
+
+      <div class="features-col">
+
+        <div class="feat-hd">
+          <div class="acc"></div>
+          <?= htmlspecialchars($v2['model_name']); ?> — Features
+        </div>
+
+        <?php foreach($f2 as $feat): ?>
+
+          <div class="feat-item">
+            <i class="bi bi-check2"></i>
+            <span><?= htmlspecialchars($feat); ?></span>
+          </div>
+
+        <?php endforeach; ?>
+
+      </div>
+
+    </div>
+
+    <!-- CTA -->
+    <div class="cta-bar">
+
+      <a href="inquiry.php?vehicle_id=<?= $id1; ?>" class="cta-btn ghost">
+        <i class="bi bi-calendar-check"></i>
+        Inquire — <?= htmlspecialchars($v1['model_name']); ?>
+      </a>
+
+      <a href="inquiry.php?vehicle_id=<?= $id2; ?>" class="cta-btn solid">
+        <i class="bi bi-calendar-check"></i>
+        Inquire — <?= htmlspecialchars($v2['model_name']); ?>
+      </a>
+
+    </div>
+
+    <?php endif; ?>
+
+  <?php else: ?>
+
+    <div class="empty-state">
+      <i class="bi bi-arrow-left-right"></i>
+      <p>Select two vehicles above to begin comparing</p>
+    </div>
+
+  <?php endif; ?>
+
+</main>
 
 </div>
 

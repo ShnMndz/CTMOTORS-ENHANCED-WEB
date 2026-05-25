@@ -1,0 +1,628 @@
+/* =========================================================
+   COMPARE PAGE CSS
+   File: /citimotorsweb/web/tools/compare.css
+========================================================= */
+
+:root{
+  --bg:#0c0d0f;
+  --surface:#131519;
+  --surface2:#1a1d23;
+
+  --red:#c8102e;
+  --red-dim:rgba(200,16,46,0.12);
+  --red-border:rgba(200,16,46,0.35);
+
+  --border:rgba(255,255,255,0.06);
+  --border2:rgba(255,255,255,0.11);
+
+  --text:#eef0f3;
+  --text2:#7c8490;
+  --text3:#42464e;
+
+  --green:#2adb7f;
+  --green-dim:rgba(42,219,127,0.08);
+  --green-border:rgba(42,219,127,0.28);
+}
+
+/* =========================================================
+   PAGE WRAPPER
+========================================================= */
+
+.compare-page{
+  background:var(--bg);
+  min-height:100vh;
+  color:var(--text);
+  font-family:'Exo 2',sans-serif;
+  padding-bottom:60px;
+}
+
+.compare-page *{
+  box-sizing:border-box;
+}
+
+/* =========================================================
+   MAIN CONTAINER
+========================================================= */
+
+.compare-page .main{
+  max-width:1200px;
+  margin:0 auto;
+  padding:48px 32px;
+}
+
+/* =========================================================
+   HERO
+========================================================= */
+
+.compare-page .page-hero{
+  display:flex;
+  align-items:flex-end;
+  justify-content:space-between;
+  gap:20px;
+
+  margin-bottom:48px;
+  padding-bottom:32px;
+
+  border-bottom:1px solid var(--border);
+}
+
+.compare-page .hero-eyebrow{
+  font-size:10px;
+  letter-spacing:4px;
+  text-transform:uppercase;
+  font-weight:600;
+  color:var(--red);
+
+  margin-bottom:10px;
+}
+
+.compare-page .hero-title{
+  font-family:'Rajdhani',sans-serif;
+  font-size:62px;
+  font-weight:700;
+  line-height:0.95;
+  letter-spacing:-1px;
+  text-transform:uppercase;
+}
+
+.compare-page .hero-title em{
+  color:var(--red);
+  font-style:normal;
+}
+
+.compare-page .hero-desc{
+  max-width:260px;
+
+  text-align:right;
+
+  font-size:13px;
+  font-weight:300;
+  line-height:1.7;
+
+  color:var(--text2);
+}
+
+/* =========================================================
+   SELECTOR
+========================================================= */
+
+.compare-page .selector-row{
+  display:grid;
+  grid-template-columns:1fr 56px 1fr;
+
+  align-items:stretch;
+
+  gap:0;
+
+  margin-bottom:48px;
+}
+
+.compare-page .selector-panel{
+  background:var(--surface);
+
+  border:1px solid var(--border);
+
+  padding:20px 24px;
+}
+
+.compare-page .selector-panel:first-child{
+  clip-path:polygon(0 0,100% 0,95% 100%,0 100%);
+  border-right:none;
+}
+
+.compare-page .selector-panel:last-child{
+  clip-path:polygon(5% 0,100% 0,100% 100%,0 100%);
+  border-left:none;
+}
+
+.compare-page .sel-label{
+  font-size:10px;
+  font-weight:600;
+  letter-spacing:3px;
+  text-transform:uppercase;
+
+  color:var(--text3);
+
+  margin-bottom:10px;
+}
+
+.compare-page .sel-label span{
+  color:var(--red);
+}
+
+.compare-page .selector-panel select{
+  width:100%;
+
+  background:var(--surface2);
+
+  border:1px solid var(--border2);
+
+  color:var(--text);
+
+  font-size:14px;
+  font-family:'Exo 2',sans-serif;
+
+  padding:11px 14px;
+
+  outline:none;
+  appearance:none;
+  cursor:pointer;
+
+  transition:border-color .2s;
+}
+
+.compare-page .selector-panel select:focus{
+  border-color:var(--red);
+}
+
+.compare-page .vs-center{
+  background:var(--red);
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  color:#fff;
+
+  font-size:20px;
+  font-weight:700;
+  letter-spacing:1px;
+  font-family:'Rajdhani',sans-serif;
+
+  clip-path:polygon(15% 0,85% 0,100% 100%,0 100%);
+
+  position:relative;
+  z-index:2;
+}
+
+/* =========================================================
+   VEHICLE HEROES
+========================================================= */
+
+.compare-page .vehicle-heroes{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+
+  gap:3px;
+
+  margin-bottom:3px;
+}
+
+.compare-page .vehicle-card{
+  background:var(--surface);
+
+  padding:36px 40px 32px;
+
+  position:relative;
+  overflow:hidden;
+}
+
+.compare-page .vehicle-card.plain{
+  border-top:3px solid var(--border2);
+}
+
+.compare-page .vehicle-card.winner{
+  border-top:3px solid var(--green);
+}
+
+.compare-page .vehicle-card::after{
+  content:'';
+
+  position:absolute;
+  bottom:0;
+  right:0;
+
+  width:70px;
+  height:70px;
+
+  border-right:1px solid var(--border2);
+  border-bottom:1px solid var(--border2);
+}
+
+.compare-page .vehicle-card.winner::after{
+  border-right-color:var(--green-border);
+  border-bottom-color:var(--green-border);
+}
+
+.compare-page .winner-badge{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+
+  background:var(--green-dim);
+
+  border:1px solid var(--green-border);
+
+  color:var(--green);
+
+  padding:4px 14px;
+
+  clip-path:polygon(0 0,100% 0,95% 100%,0 100%);
+
+  font-size:10px;
+  font-weight:700;
+  letter-spacing:2.5px;
+  text-transform:uppercase;
+
+  margin-bottom:18px;
+}
+
+.compare-page .card-num{
+  font-size:10px;
+  font-weight:600;
+  letter-spacing:3px;
+  text-transform:uppercase;
+
+  color:var(--text3);
+
+  margin-bottom:6px;
+}
+
+.compare-page .card-name{
+  font-family:'Rajdhani',sans-serif;
+  font-size:44px;
+  font-weight:700;
+  line-height:1;
+  letter-spacing:-0.5px;
+  text-transform:uppercase;
+}
+
+.compare-page .card-variant{
+  margin-top:4px;
+  margin-bottom:24px;
+
+  font-size:11px;
+  font-weight:300;
+  letter-spacing:1.5px;
+  text-transform:uppercase;
+
+  color:var(--text2);
+}
+
+.compare-page .card-img{
+  width:100%;
+  height:168px;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  position:relative;
+
+  margin-bottom:28px;
+}
+
+.compare-page .card-img::after{
+  content:'';
+
+  position:absolute;
+  bottom:0;
+  left:10%;
+
+  width:80%;
+  height:1px;
+
+  background:var(--border);
+}
+
+.compare-page .card-img img{
+  max-width:100%;
+  max-height:100%;
+  object-fit:contain;
+}
+
+.compare-page .price-lbl{
+  font-size:10px;
+  font-weight:600;
+  letter-spacing:2.5px;
+  text-transform:uppercase;
+
+  color:var(--text3);
+
+  margin-bottom:6px;
+}
+
+.compare-page .price-row{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  flex-wrap:wrap;
+}
+
+.compare-page .price-tag{
+  font-family:'Rajdhani',sans-serif;
+  font-size:34px;
+  font-weight:700;
+
+  color:var(--text);
+}
+
+.compare-page .vehicle-card.winner .price-tag{
+  color:var(--green);
+}
+
+.compare-page .savings-pill{
+  background:var(--green-dim);
+
+  border:1px solid var(--green-border);
+
+  color:var(--green);
+
+  padding:3px 12px;
+
+  clip-path:polygon(0 0,100% 0,93% 100%,0 100%);
+
+  font-size:11px;
+  font-weight:600;
+}
+
+/* =========================================================
+   SPEC HEADER
+========================================================= */
+
+.compare-page .spec-block{
+  background:var(--surface);
+
+  margin-bottom:3px;
+}
+
+.compare-page .spec-header{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+
+  gap:3px;
+}
+
+.compare-page .spec-header-cell{
+  background:var(--surface2);
+
+  padding:13px 40px;
+
+  display:flex;
+  align-items:center;
+  gap:10px;
+
+  font-size:10px;
+  font-weight:700;
+  letter-spacing:3px;
+  text-transform:uppercase;
+
+  color:var(--text3);
+}
+
+.compare-page .red-bar{
+  width:18px;
+  height:2px;
+
+  background:var(--red);
+
+  flex-shrink:0;
+}
+
+/* =========================================================
+   FEATURES
+========================================================= */
+
+.compare-page .features-block{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+
+  gap:3px;
+
+  margin-bottom:3px;
+}
+
+.compare-page .features-col{
+  background:var(--surface);
+
+  padding:28px 40px 36px;
+}
+
+.compare-page .feat-hd{
+  display:flex;
+  align-items:center;
+  gap:10px;
+
+  padding-bottom:14px;
+  margin-bottom:16px;
+
+  border-bottom:1px solid var(--border);
+
+  font-size:10px;
+  font-weight:700;
+  letter-spacing:3px;
+  text-transform:uppercase;
+
+  color:var(--text3);
+}
+
+.compare-page .feat-hd .acc{
+  width:18px;
+  height:2px;
+
+  background:var(--red);
+}
+
+.compare-page .feat-item{
+  display:flex;
+  align-items:flex-start;
+  gap:10px;
+
+  padding:9px 0;
+
+  border-bottom:1px solid var(--border);
+
+  font-size:13px;
+}
+
+.compare-page .feat-item:last-child{
+  border-bottom:none;
+}
+
+.compare-page .feat-item i{
+  color:var(--red);
+
+  font-size:15px;
+
+  margin-top:1px;
+
+  flex-shrink:0;
+}
+
+.compare-page .feat-item span{
+  color:var(--text2);
+
+  line-height:1.5;
+}
+
+/* =========================================================
+   EMPTY STATE
+========================================================= */
+
+.compare-page .empty-state{
+  text-align:center;
+
+  padding:80px 20px;
+
+  color:var(--text3);
+}
+
+.compare-page .empty-state i{
+  display:block;
+
+  font-size:48px;
+
+  margin-bottom:20px;
+}
+
+.compare-page .empty-state p{
+  font-size:14px;
+  letter-spacing:1px;
+}
+
+/* =========================================================
+   CTA
+========================================================= */
+
+.compare-page .cta-bar{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+
+  gap:3px;
+
+  margin-top:3px;
+}
+
+.compare-page .cta-btn{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+
+  padding:18px 24px;
+
+  text-decoration:none;
+
+  border:none;
+
+  cursor:pointer;
+
+  transition:all .2s;
+
+  font-family:'Rajdhani',sans-serif;
+  font-size:14px;
+  font-weight:700;
+  letter-spacing:2px;
+  text-transform:uppercase;
+}
+
+.compare-page .cta-btn.ghost{
+  background:var(--surface2);
+
+  border:1px solid var(--border2);
+
+  color:var(--text2);
+}
+
+.compare-page .cta-btn.ghost:hover{
+  border-color:var(--red);
+
+  color:var(--red);
+}
+
+.compare-page .cta-btn.solid{
+  background:var(--red);
+
+  color:#fff;
+
+  clip-path:polygon(3% 0,100% 0,97% 100%,0 100%);
+}
+
+.compare-page .cta-btn.solid:hover{
+  background:#e5122f;
+}
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media(max-width:991px){
+
+  .compare-page .page-hero{
+    flex-direction:column;
+    align-items:flex-start;
+  }
+
+  .compare-page .hero-desc{
+    max-width:100%;
+    text-align:left;
+  }
+
+  .compare-page .selector-row{
+    grid-template-columns:1fr;
+    gap:12px;
+  }
+
+  .compare-page .vs-center{
+    height:50px;
+  }
+
+  .compare-page .vehicle-heroes,
+  .compare-page .features-block,
+  .compare-page .spec-header,
+  .compare-page .cta-bar{
+    grid-template-columns:1fr;
+  }
+
+  .compare-page .hero-title{
+    font-size:44px;
+  }
+
+  .compare-page .card-name{
+    font-size:32px;
+  }
+
+  .compare-page .main{
+    padding:32px 18px;
+  }
+}
