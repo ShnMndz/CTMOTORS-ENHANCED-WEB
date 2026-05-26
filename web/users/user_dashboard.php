@@ -106,7 +106,7 @@ $budget = $user['budget_range'] ?? null;
 
                 <div class="quick-stat">
                     <small>Current Date & Time</small>
-                    <h5><?= $currentDateTime ?></h5>
+                    <h5 id="live-clock"></h5>
                 </div>
 
                 <div class="quick-stat">
@@ -527,6 +527,20 @@ $status = strtolower($row['status']);
 <?php endwhile; ?>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+function updateClock() {
+    const now = new Date();
+    const options = {
+        weekday: 'long', year: 'numeric', month: 'long',
+        day: '2-digit', hour: '2-digit', minute: '2-digit',
+        hour12: true, timeZone: 'Asia/Manila'
+    };
+    document.getElementById('live-clock').textContent =
+        now.toLocaleString('en-US', options).replace(',', ' –');
+}
+updateClock();
+setInterval(updateClock, 1000);
+</script>
 
 </body>
 </html>
