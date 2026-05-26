@@ -40,7 +40,7 @@ $side = $conn->query("
     WHERE id != $featuredId
     $categoryFilter
     ORDER BY created_at DESC
-    LIMIT 4
+    LIMIT 3
 ");
 
 /* =========================
@@ -59,11 +59,9 @@ $latest = $conn->query("
 ========================= */
 function excerpt($text, $limit = 20) {
     $words = explode(' ', strip_tags($text));
-
     if (count($words) <= $limit) {
         return implode(' ', $words);
     }
-
     return implode(' ', array_slice($words, 0, $limit)) . '...';
 }
 ?>
@@ -76,241 +74,113 @@ function excerpt($text, $limit = 20) {
 
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css" rel="stylesheet">
 <link rel="stylesheet" href="/citimotorsweb/web/global.css">
-
-<style>
-body{
-    background:#111;
-    color:#fff;
-    font-family:'Poppins',sans-serif;
-}
-
-.tabs a{
-    border:1px solid #444;
-    padding:6px 14px;
-    border-radius:20px;
-    font-size:13px;
-    color:#ccc;
-    text-decoration:none;
-    transition:.2s;
-}
-
-.tabs a:hover,
-.tabs a.active{
-    background:red;
-    border-color:red;
-    color:#fff;
-}
-
-.featured{
-    position:relative;
-    border-radius:12px;
-    overflow:hidden;
-}
-
-.featured img{
-    width:100%;
-    height:380px;
-    object-fit:cover;
-    opacity:.65;
-}
-
-.featured-text{
-    position:absolute;
-    bottom:20px;
-    left:20px;
-    right:20px;
-}
-
-.featured-badge{
-    background:red;
-    padding:4px 10px;
-    border-radius:5px;
-    font-size:11px;
-}
-
-.side-item{
-    border-bottom:1px solid #333;
-    padding:14px 0;
-    transition:.2s;
-}
-
-.side-item:hover{
-    padding-left:5px;
-}
-
-.card-box{
-    background:#1b1b1b;
-    border-radius:12px;
-    overflow:hidden;
-    height:100%;
-    display:flex;
-    flex-direction:column;
-    transition:.25s;
-}
-
-.card-box:hover{
-    transform:translateY(-4px);
-}
-
-.card-box img{
-    width:100%;
-    height:180px;
-    object-fit:cover;
-}
-
-.card-box h6{
-    padding:10px 12px 0;
-    margin:0;
-}
-
-.card-box p{
-    padding:0 12px 12px;
-    font-size:13px;
-    color:#aaa;
-    margin:0;
-}
-</style>
+<link rel="stylesheet" href="articles.css">
 </head>
 
 <body>
+    <?php include $_SERVER['DOCUMENT_ROOT'].'/citimotorsweb/web/includes/navbar.php'; ?>
 
-<?php include $_SERVER['DOCUMENT_ROOT'].'/citimotorsweb/web/includes/navbar.php'; ?>
-
-<div class="container mt-5">
-
-    <!-- CATEGORY TABS -->
-    <div class="tabs d-flex gap-2 mb-4 flex-wrap">
-        <a href="articles.php" class="<?= empty($category) ? 'active' : '' ?>">All</a>
-        <a href="?category=Announcement" class="<?= $category == 'Announcement' ? 'active' : '' ?>">Announcements</a>
-        <a href="?category=Car News" class="<?= $category == 'Car News' ? 'active' : '' ?>">Car News</a>
-        <a href="?category=Promo" class="<?= $category == 'Promo' ? 'active' : '' ?>">Promos</a>
-        <a href="?category=Tips and Guides" class="<?= $category == 'Tips and Guides' ? 'active' : '' ?>">Service Tips</a>
-    </div>
-
-    <!-- FEATURED + SIDE -->
-    <div class="row">
-
-        <!-- FEATURED -->
-        <?php if (empty($category) && $featured): ?>
-        <div class="col-md-7 mb-4">
-
-            <a href="<?= htmlspecialchars($featured['link'] ?: '#') ?>"
-               target="_blank"
-               class="text-white text-decoration-none">
-
-                <div class="featured">
-
-                    <?php if (!empty($featured['image'])): ?>
-                        <img src="<?= $imgPath . $featured['image'] ?>" alt="">
-                    <?php endif; ?>
-
-                    <div class="featured-text">
-                        <span class="featured-badge">Featured</span>
-
-                        <h4 class="mt-2">
-                            <?= htmlspecialchars($featured['title']) ?>
-                        </h4>
-
-                        <small>
-                            <?= date("F d, Y", strtotime($featured['created_at'])) ?>
-                            •
-                            <?= htmlspecialchars($featured['category']) ?>
-                        </small>
-                    </div>
-
+<div class="hero">
+    <div class="hero-pattern"></div>
+    <div class="hero-accent"></div>
+    
+    <div class="hero-content">
+        <div class="container">
+        
+            <!-- CATEGORY TABS -->
+            <div class="hero-nav">
+                <a href="articles.php" class="nav-pill <?= empty($category) ? 'active' : '' ?>">All</a>
+                <a href="?category=Announcement" class="nav-pill <?= $category == 'Announcement' ? 'active' : '' ?>">Announcements</a>
+                <a href="?category=Car News" class="nav-pill <?= $category == 'Car News' ? 'active' : '' ?>">Car News</a>
+                <a href="?category=Promo" class="nav-pill <?= $category == 'Promo' ? 'active' : '' ?>">Promos</a>
+                <a href="?category=Tips and Guides" class="nav-pill <?= $category == 'Tips and Guides' ? 'active' : '' ?>">Service Tips</a>
+            </div>
+            
+            <!-- FEATURED + SIDEBAR -->
+            <div class="hero-main">
+                
+                <!-- FEATURED -->
+                <?php if (empty($category) && $featured): ?>
+                <div class="hero-featured">
+                    <a href="<?= htmlspecialchars($featured['link'] ?: '#') ?>" target="_blank" style="text-decoration:none;">
+                        <div class="hero-thumb">
+                            <div class="hero-badge">Featured</div>
+                            <?php if (!empty($featured['image'])): ?>
+                                <img src="<?= $imgPath . htmlspecialchars($featured['image']) ?>" alt="">
+                            <?php endif; ?>
+                        </div>
+                        <div class="hero-meta">
+                            <div class="hero-diamond"></div>
+                            <span class="hero-tag"><?= htmlspecialchars($featured['category']) ?></span>
+                            <span class="hero-date"><?= date("M d, Y", strtotime($featured['created_at'])) ?></span>
+                        </div>
+                        <h1 class="hero-title"><?= htmlspecialchars($featured['title']) ?></h1>
+                        <?php if (!empty($featured['content'])): ?>
+                            <p class="hero-excerpt"><?= htmlspecialchars(excerpt($featured['content'], 25)) ?></p>
+                        <?php endif; ?>
+                    </a>
                 </div>
-
-            </a>
-
-        </div>
-        <?php endif; ?>
-
-        <!-- SIDE POSTS -->
-        <div class="<?= empty($category) ? 'col-md-5' : 'col-md-12' ?>">
-
-            <?php while ($row = $side->fetch_assoc()): ?>
-
-            <a href="<?= htmlspecialchars($row['link'] ?: '#') ?>"
-               target="_blank"
-               class="text-white text-decoration-none">
-
-                <div class="side-item">
-
-                    <small class="text-danger fw-semibold">
-                        <?= strtoupper($row['category']) ?>
-                    </small>
-
-                    <div>
-                        <?= htmlspecialchars($row['title']) ?>
-                    </div>
-
-                    <small>
-                        <?= date("F d, Y", strtotime($row['created_at'])) ?>
-                    </small>
-
+                <?php endif; ?>
+                
+                <!-- SIDEBAR -->
+                <div class="hero-sidebar">
+                    <?php while ($row = $side->fetch_assoc()): ?>
+                    <a href="<?= htmlspecialchars($row['link'] ?: '#') ?>" target="_blank" class="side-item">
+                        <div class="side-tag"><?= htmlspecialchars($row['category']) ?></div>
+                        <div class="side-title"><?= htmlspecialchars($row['title']) ?></div>
+                        <div class="side-date"><?= date("M d, Y", strtotime($row['created_at'])) ?></div>
+                    </a>
+                    <?php endwhile; ?>
                 </div>
-
-            </a>
-
-            <?php endwhile; ?>
-
+                
+            </div>
+            
         </div>
-
     </div>
-
-    <!-- LATEST -->
-    <h5 class="mt-5 mb-3">Latest Articles</h5>
-
-    <div class="row">
-
-        <?php while ($row = $latest->fetch_assoc()): ?>
-
-        <div class="col-md-4 mb-4">
-
-            <a href="<?= htmlspecialchars($row['link'] ?: '#') ?>"
-               target="_blank"
-               class="text-white text-decoration-none">
-
-                <div class="card-box">
-
-                    <?php if (!empty($row['image'])): ?>
-                        <img src="<?= $imgPath . $row['image'] ?>" alt="">
-                    <?php endif; ?>
-
-                    <span class="badge bg-danger m-2">
-                        <?= htmlspecialchars($row['category']) ?>
-                    </span>
-
-                    <h6>
-                        <?= htmlspecialchars($row['title']) ?>
-                    </h6>
-
-                    <?php if (!empty($row['content'])): ?>
-                        <p>
-                            <?= htmlspecialchars(excerpt($row['content'])) ?>
-                        </p>
-                    <?php endif; ?>
-
-                </div>
-
-            </a>
-
-        </div>
-
-        <?php endwhile; ?>
-
-    </div>
-
 </div>
 
-<!-- ===== FOOTER ===== -->
-<footer class="footer mt-5">
-    <div class="footer-container text-center">
-        <p>© Disclaimer: This website is made for test only by a student. No copyright infringement intended.</p>
+<!-- LATEST ARTICLES -->
+<div class="articles">
+    <div class="container">
+        
+        <div class="articles-head">
+            <div class="articles-diamond"></div>
+            <h2 class="articles-title">Latest articles</h2>
+        </div>
+        
+        <div class="row g-4">
+            <?php while ($row = $latest->fetch_assoc()): ?>
+            <div class="col-lg-4 col-md-6">
+                <a href="<?= htmlspecialchars($row['link'] ?: '#') ?>" target="_blank" class="article-card">
+                    <div class="article-img">
+                        <?php if (!empty($row['image'])): ?>
+                            <img src="<?= $imgPath . htmlspecialchars($row['image']) ?>" alt="">
+                        <?php endif; ?>
+                    </div>
+                    <div class="article-body">
+                        <div class="article-tag"><?= htmlspecialchars($row['category']) ?></div>
+                        <h3 class="article-title"><?= htmlspecialchars($row['title']) ?></h3>
+                        <?php if (!empty($row['content'])): ?>
+                            <p class="article-excerpt"><?= htmlspecialchars(excerpt($row['content'])) ?></p>
+                        <?php endif; ?>
+                        <div class="article-meta"><?= date("M d, Y", strtotime($row['created_at'])) ?></div>
+                    </div>
+                </a>
+            </div>
+            <?php endwhile; ?>
+        </div>
+        
+    </div>
+</div>
+
+<!-- FOOTER -->
+<footer class="footer">
+    <div class="container text-center">
+        <p>© DISCLAIMER: THIS WEBSITE IS MADE FOR TEST ONLY BY A STUDENT. NO COPYRIGHT INFRINGEMENT INTENDED.</p>
     </div>
 </footer>
-
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
