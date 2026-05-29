@@ -109,7 +109,7 @@ $budget = $user['budget_range'] ?? null;
                     <h5 id="live-clock"></h5>
                 </div>
 
-                <div class="quick-stat">
+                <div class="quick-stat">x
                     <small>Recent Appointments</small>
                     <h2><?= $testdrives->num_rows ?></h2>
                 </div>
