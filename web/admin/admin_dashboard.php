@@ -76,6 +76,9 @@ $recent_activities = $conn->query(
 
 <!-- CONTENT -->
 <div class="content">
+
+ <p class="hero-clock" id="liveDateTime"></p>
+ 
     <section class="hero-card">
         <div>
             <p class="eyebrow">Welcome back</p>
@@ -87,6 +90,8 @@ $recent_activities = $conn->query(
             <a href="recent_activity.php" class="btn btn-outline">View Reports</a>
         </div>
     </section>
+
+    <p class="hero-clock" id="liveDateTime"></p>
 
     <section class="stat-grid">
         <a href="admin_test_drives.php" class="stat-card link-card">
@@ -237,12 +242,14 @@ $recent_activities = $conn->query(
 <audio id="testDriveSound" src="/citimotorsweb/web/sounds/testdrivenotif.mp3" preload="auto"></audio>
 
 <script>
-function updateDateTime(){
-    document.getElementById("liveDate").innerHTML =
-        new Date().toDateString();
+function updateDateTime() {
+    const now = new Date();
+    const date = now.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+    const time = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+    document.getElementById("liveDateTime").innerHTML = `${date} &nbsp;·&nbsp; ${time}`;
 }
 updateDateTime();
-setInterval(updateDateTime, 60000);
+setInterval(updateDateTime, 1000); // update every second for the clock
 
 /* =========================
    SOUND UNLOCK (IMPORTANT)

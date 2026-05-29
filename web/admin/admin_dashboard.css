@@ -397,3 +397,11 @@ button:hover,
         flex-direction: column;
     }
 }
+
+.hero-clock {
+    margin: 8px 0 0;
+    color: #9da4ae;
+    font-size: 13px;
+    letter-spacing: 0.04em;
+    font-variant-numeric: tabular-nums;
+}
