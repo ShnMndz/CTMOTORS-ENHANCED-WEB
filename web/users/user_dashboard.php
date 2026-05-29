@@ -32,7 +32,13 @@ $stmt = $conn->prepare("
 ");
 $stmt->bind_param("i", $id);
 $stmt->execute();
-$testdrives = $stmt->get_result();
+$recentTestDrives = $stmt->get_result();
+
+// TOTAL APPOINTMENT COUNT (not limited to the latest 5)
+$stmtCount = $conn->prepare("SELECT COUNT(*) AS total_appointments FROM test_drives WHERE user_id = ?");
+$stmtCount->bind_param("i", $id);
+$stmtCount->execute();
+$appointmentCount = $stmtCount->get_result()->fetch_assoc()['total_appointments'] ?? 0;
 
 // VEHICLE PREFERENCES
 $models = !empty($user['interested_models']) ? explode(',', $user['interested_models']) : [];
@@ -109,9 +115,9 @@ $budget = $user['budget_range'] ?? null;
                     <h5 id="live-clock"></h5>
                 </div>
 
-                <div class="quick-stat">x
+                <div class="quick-stat">
                     <small>Recent Appointments</small>
-                    <h2><?= $testdrives->num_rows ?></h2>
+                    <h2><?= $recentTestDrives->num_rows ?></h2>
                 </div>
 
             </div>
@@ -142,7 +148,7 @@ $budget = $user['budget_range'] ?? null;
 
                 <div>
                     <p>Appointments</p>
-                    <h3><?= $testdrives->num_rows ?></h3>
+                    <h3><?= $appointmentCount ?></h3>
                 </div>
 
             </div>
@@ -234,12 +240,12 @@ $budget = $user['budget_range'] ?? null;
                         <h4>Recent Test Drive Requests</h4>
 
                         <span class="mini-badge">
-                            <?= $testdrives->num_rows ?> Recent
+                            <?= $recentTestDrives->num_rows ?> Recent
                         </span>
 
                     </div>
 
-                    <?php if ($testdrives->num_rows > 0): ?>
+                    <?php if ($recentTestDrives->num_rows > 0): ?>
 
                     <div class="table-responsive mt-3">
 
@@ -257,9 +263,9 @@ $budget = $user['budget_range'] ?? null;
                             <tbody>
 
                             <?php
-                            $testdrives->data_seek(0);
+                            $recentTestDrives->data_seek(0);
 
-                            while($row = $testdrives->fetch_assoc()):
+                            while($row = $recentTestDrives->fetch_assoc()):
 
                                 $status = strtolower($row['status']);
                             ?>
@@ -466,9 +472,9 @@ $budget = $user['budget_range'] ?? null;
 <!-- ================= MODALS ================= -->
 
 <?php
-$testdrives->data_seek(0);
+$recentTestDrives->data_seek(0);
 
-while($row = $testdrives->fetch_assoc()):
+while($row = $recentTestDrives->fetch_assoc()):
 
 $status = strtolower($row['status']);
 ?>
