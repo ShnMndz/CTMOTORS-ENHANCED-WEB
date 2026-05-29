@@ -263,6 +263,11 @@ function sidebarActive(string $page, string $currentPage): string {
         <span class="sidebar-label">Posts</span>
     </a>
 
+    <a href="admin_calendar.php" class="<?= sidebarActive('calendar', $currentPage ?? '') ?>" title="Calendar">
+        <i class="fas fa-calendar"></i>
+        <span class="sidebar-label">Calendar</span>
+    </a>
+
     <!-- SYSTEM -->
     <div class="sidebar-section">System</div>
 
