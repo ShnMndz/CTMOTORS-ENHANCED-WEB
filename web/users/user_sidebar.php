@@ -121,6 +121,20 @@
 .menu-btn.active i{
     color:#e60012;
 }
+
+/* LOGOUT BUTTON */
+.logout-btn{
+    margin-top:auto;
+    background:#120000;
+    color:#ff4d5e;
+    border:1px solid rgba(230,0,18,0.25);
+}
+
+.logout-btn:hover{
+    background:#1a0000;
+    color:#fff;
+    box-shadow:0 0 15px rgba(230,0,18,0.35);
+}
 </style>
 
 <!-- SIDEBAR -->
@@ -165,6 +179,15 @@
             <i class="fa-solid fa-heart"></i>
             Saved Vehicles
         </a>
+
+        <!-- LOGOUT -->
+<a href="../logout.php"
+   onclick="return confirm('Are you sure you want to logout?')"
+   class="menu-btn logout-btn">
+    <i class="fa-solid fa-right-from-bracket"></i>
+    Logout
+</a>
+
 
     </nav>
 
