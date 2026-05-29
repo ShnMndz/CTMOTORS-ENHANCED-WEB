@@ -32,18 +32,29 @@ function sidebarActive(string $page, string $currentPage): string {
     height: 100vh;
     position: fixed;
     background: linear-gradient(180deg, #111, #0d0d0d);
-    padding: 20px;
     border-right: 1px solid #222;
     box-shadow: 5px 0 20px rgba(0,0,0,0.6);
-    transition: width 0.3s ease, padding 0.3s ease;
+    transition: width 0.3s ease;
     overflow: hidden;
     z-index: 100;
+
+    /* Flex column so header stays fixed and nav scrolls */
+    display: flex;
+    flex-direction: column;
 }
 
 /* COLLAPSED STATE */
 .sidebar.collapsed {
     width: 70px;
-    padding: 20px 10px;
+}
+
+/* -------------------------
+   HEADER (pinned, no scroll)
+------------------------- */
+.sidebar-header {
+    flex-shrink: 0;
+    padding: 20px 20px 0;
+    position: relative;
 }
 
 /* TOGGLE BUTTON */
@@ -79,7 +90,7 @@ function sidebarActive(string $page, string $currentPage): string {
 /* TITLE */
 .sidebar-title {
     color: #e60012;
-    margin-bottom: 25px;
+    margin-bottom: 0;
     margin-top: 8px;
     font-weight: bold;
     letter-spacing: 1px;
@@ -90,8 +101,46 @@ function sidebarActive(string $page, string $currentPage): string {
     padding-top: 20px;
 }
 
-/* LINKS */
-.sidebar a {
+/* -------------------------
+   SCROLLABLE NAV
+------------------------- */
+.sidebar-nav {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 12px 20px 20px;
+
+    scrollbar-width: thin;
+    scrollbar-color: #333 transparent;
+}
+
+.sidebar-nav::-webkit-scrollbar {
+    width: 4px;
+}
+
+.sidebar-nav::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.sidebar-nav::-webkit-scrollbar-thumb {
+    background: #333;
+    border-radius: 4px;
+}
+
+.sidebar-nav::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+/* Hide scrollbar when collapsed */
+.sidebar.collapsed .sidebar-nav {
+    padding: 12px 10px 20px;
+    overflow-y: hidden;
+}
+
+/* -------------------------
+   LINKS
+------------------------- */
+.sidebar-nav a {
     display: flex;
     align-items: center;
     gap: 10px;
@@ -108,19 +157,19 @@ function sidebarActive(string $page, string $currentPage): string {
 }
 
 /* HOVER */
-.sidebar a:hover {
+.sidebar-nav a:hover {
     background: #1a1a1a;
     color: #fff;
     transform: translateX(5px);
 }
 
 /* Disable translateX when collapsed so icons stay centered */
-.sidebar.collapsed a:hover {
+.sidebar.collapsed .sidebar-nav a:hover {
     transform: none;
 }
 
 /* ACTIVE */
-.sidebar a.active {
+.sidebar-nav a.active {
     background: rgba(230,0,18,0.15);
     color: #fff;
     border-left: 3px solid #e60012;
@@ -128,7 +177,7 @@ function sidebarActive(string $page, string $currentPage): string {
 }
 
 /* ICON */
-.sidebar a i {
+.sidebar-nav a i {
     color: #e60012;
     min-width: 18px;
     text-align: center;
@@ -136,7 +185,7 @@ function sidebarActive(string $page, string $currentPage): string {
 }
 
 /* HOVER BAR ANIMATION */
-.sidebar a::before {
+.sidebar-nav a::before {
     content: "";
     position: absolute;
     left: 0;
@@ -149,7 +198,7 @@ function sidebarActive(string $page, string $currentPage): string {
     transition: 0.2s;
 }
 
-.sidebar a:hover::before {
+.sidebar-nav a:hover::before {
     width: 4px;
 }
 
@@ -160,7 +209,7 @@ function sidebarActive(string $page, string $currentPage): string {
 }
 
 /* CENTER ICONS WHEN COLLAPSED */
-.sidebar.collapsed a {
+.sidebar.collapsed .sidebar-nav a {
     justify-content: center;
     padding: 12px 0;
 }
@@ -170,13 +219,13 @@ function sidebarActive(string $page, string $currentPage): string {
 }
 
 /* BADGE */
-.sidebar .badge-notif {
+.sidebar-nav .badge-notif {
     margin-left: auto;
     font-size: 11px;
 }
 
-/* TOOLTIP on collapsed icons (uses title attr via CSS) */
-.sidebar.collapsed a:hover::after {
+/* TOOLTIP on collapsed icons */
+.sidebar.collapsed .sidebar-nav a:hover::after {
     content: attr(title);
     position: absolute;
     left: 70px;
@@ -224,73 +273,83 @@ function sidebarActive(string $page, string $currentPage): string {
 
 <div class="sidebar" id="adminSidebar">
 
-    <!-- TOGGLE BUTTON -->
-    <button class="sidebar-toggle" id="sidebarToggle" title="Collapse sidebar">
-        <i class="fas fa-angles-left" id="toggleIcon"></i>
-    </button>
+    <!-- PINNED HEADER -->
+    <div class="sidebar-header">
 
-    <h4 class="sidebar-title">
-        <i class="fas fa-shield-alt"></i>
-        <span class="sidebar-label">Admin Panel</span>
-    </h4>
+        <!-- TOGGLE BUTTON -->
+        <button class="sidebar-toggle" id="sidebarToggle" title="Collapse sidebar">
+            <i class="fas fa-angles-left" id="toggleIcon"></i>
+        </button>
 
-    <!-- MAIN -->
-    <a href="admin_dashboard.php" class="<?= sidebarActive('dashboard', $currentPage ?? '') ?>" title="Dashboard">
-        <i class="fas fa-chart-line"></i>
-        <span class="sidebar-label">Dashboard</span>
-    </a>
+        <h4 class="sidebar-title">
+            <i class="fas fa-shield-alt"></i>
+            <span class="sidebar-label">Admin Panel</span>
+        </h4>
 
-    <a href="admin_profile.php" class="<?= sidebarActive('profile', $currentPage ?? '') ?>" title="Your Profile">
-        <i class="fas fa-user"></i>
-        <span class="sidebar-label">Your Profile</span>
-    </a>
+    </div>
 
-    <!-- MANAGE -->
-    <div class="sidebar-section">Manage</div>
+    <!-- SCROLLABLE NAV -->
+    <nav class="sidebar-nav">
 
-    <a href="admin_users.php" class="<?= sidebarActive('users', $currentPage ?? '') ?>" title="Manage Users">
-        <i class="fas fa-users"></i>
-        <span class="sidebar-label">Users</span>
-    </a>
+        <!-- MAIN -->
+        <a href="admin_dashboard.php" class="<?= sidebarActive('dashboard', $currentPage ?? '') ?>" title="Dashboard">
+            <i class="fas fa-chart-line"></i>
+            <span class="sidebar-label">Dashboard</span>
+        </a>
 
-    <a href="admin_vehicles.php" class="<?= sidebarActive('vehicles', $currentPage ?? '') ?>" title="Manage Vehicles">
-        <i class="fas fa-car"></i>
-        <span class="sidebar-label">Vehicles</span>
-    </a>
+        <a href="admin_profile.php" class="<?= sidebarActive('profile', $currentPage ?? '') ?>" title="Your Profile">
+            <i class="fas fa-user"></i>
+            <span class="sidebar-label">Your Profile</span>
+        </a>
 
-    <a href="admin_posts.php" class="<?= sidebarActive('posts', $currentPage ?? '') ?>" title="Posts">
-        <i class="fas fa-newspaper"></i>
-        <span class="sidebar-label">Posts</span>
-    </a>
+        <!-- MANAGE -->
+        <div class="sidebar-section">Manage</div>
 
-    <a href="admin_calendar.php" class="<?= sidebarActive('calendar', $currentPage ?? '') ?>" title="Calendar">
-        <i class="fas fa-calendar"></i>
-        <span class="sidebar-label">Calendar</span>
-    </a>
+        <a href="admin_users.php" class="<?= sidebarActive('users', $currentPage ?? '') ?>" title="Manage Users">
+            <i class="fas fa-users"></i>
+            <span class="sidebar-label">Users</span>
+        </a>
 
-    <!-- SYSTEM -->
-    <div class="sidebar-section">System</div>
+        <a href="admin_vehicles.php" class="<?= sidebarActive('vehicles', $currentPage ?? '') ?>" title="Manage Vehicles">
+            <i class="fas fa-car"></i>
+            <span class="sidebar-label">Vehicles</span>
+        </a>
 
-    <a href="recent_activity.php" class="<?= sidebarActive('recent_activity', $currentPage ?? '') ?>" title="Recent Activity">
-        <i class="fas fa-history"></i>
-        <span class="sidebar-label">Recent Activity</span>
-    </a>
+        <a href="admin_posts.php" class="<?= sidebarActive('posts', $currentPage ?? '') ?>" title="Posts">
+            <i class="fas fa-newspaper"></i>
+            <span class="sidebar-label">Posts</span>
+        </a>
 
-    <a href="admin_test_drives.php" class="<?= sidebarActive('test_drives', $currentPage ?? '') ?>" title="Test Drives">
-        <i class="fas fa-key"></i>
-        <span class="sidebar-label">Test Drives</span>
+        <a href="admin_calendar.php" class="<?= sidebarActive('calendar', $currentPage ?? '') ?>" title="Calendar">
+            <i class="fas fa-calendar"></i>
+            <span class="sidebar-label">Calendar</span>
+        </a>
 
-        <?php if ($pending_test_drives_sidebar > 0): ?>
-            <span class="badge bg-danger badge-notif"><?= $pending_test_drives_sidebar ?></span>
-        <?php endif; ?>
-    </a>
+        <!-- SYSTEM -->
+        <div class="sidebar-section">System</div>
 
-    <a href="../logout.php"
-       onclick="return confirm('Are you sure you want to logout?')"
-       title="Logout">
-        <i class="fas fa-sign-out-alt"></i>
-        <span class="sidebar-label">Logout</span>
-    </a>
+        <a href="recent_activity.php" class="<?= sidebarActive('recent_activity', $currentPage ?? '') ?>" title="Recent Activity">
+            <i class="fas fa-history"></i>
+            <span class="sidebar-label">Recent Activity</span>
+        </a>
+
+        <a href="admin_test_drives.php" class="<?= sidebarActive('test_drives', $currentPage ?? '') ?>" title="Test Drives">
+            <i class="fas fa-key"></i>
+            <span class="sidebar-label">Test Drives</span>
+
+            <?php if ($pending_test_drives_sidebar > 0): ?>
+                <span class="badge bg-danger badge-notif"><?= $pending_test_drives_sidebar ?></span>
+            <?php endif; ?>
+        </a>
+
+        <a href="../logout.php"
+           onclick="return confirm('Are you sure you want to logout?')"
+           title="Logout">
+            <i class="fas fa-sign-out-alt"></i>
+            <span class="sidebar-label">Logout</span>
+        </a>
+
+    </nav>
 
 </div>
 
