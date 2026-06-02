@@ -174,6 +174,12 @@
             Test Drive Request
         </a>
 
+            <a href="user_calendar.php"
+            class="menu-btn <?= basename($_SERVER['PHP_SELF']) == 'user_calendar.php' ? 'active' : '' ?>">
+            <i class="fa-solid fa-calendar-check"></i>
+            Calendar
+        </a>
+
         <a href="saved_vehicles.php"
            class="menu-btn <?= basename($_SERVER['PHP_SELF']) == 'saved_vehicles.php' ? 'active' : '' ?>">
             <i class="fa-solid fa-heart"></i>
