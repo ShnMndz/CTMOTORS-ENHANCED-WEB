@@ -78,6 +78,13 @@ if (isset($_SESSION['user_id'])) {
             </a>
         </li>
 
+         <li>
+            <a class="dropdown-item <?= ($current=='car_insurance.php') ? 'active-link' : '' ?>"
+               href="<?= $base ?>/tools/car_insurance.php">
+                Car Insurance
+            </a>
+        </li>
+
     </ul>
 </li>
 
